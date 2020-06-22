@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Kiosk App</string>
+    <string name="post">Post</string>
+    <string name="post_results">POST Results</string>
+    <string name="image_selected">Image selected</string>
+    <string name="title_activity_url_post_acitivy">UrlPostAcitivy</string>
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+    <string name="hello_world">Hello Square World!</string>
+    <string name="title_activity_file_post">FilePostActivity</string>
+    <string name="title_activity_main2">MainActivity2</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="main_teach_text">"Teach which faces to look for. The face may be provided by submitting an image file, or by specifying the Faceprint. The image you use to teach must contain only a single detectable face, an error will be returned if it cannot detect a face, or if it detects multiple faces. "</string>
+    <string name="teach">Teach</string>
+    <string name="teachImageSelectedView">Image to teach that is selected.</string>
+</resources>

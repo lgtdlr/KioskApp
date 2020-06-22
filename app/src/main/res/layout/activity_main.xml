@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/mainTeachTextView"
+        android:layout_width="232dp"
+        android:layout_height="130dp"
+        android:text="@string/main_teach_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/goToTeachButton"
+        app:layout_constraintHorizontal_bias="0.725"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.049" />
+
+    <Button
+        android:id="@+id/goToTeachButton"
+        android:layout_width="99dp"
+        android:layout_height="132dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="40dp"
+        android:text="@string/teach"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:onClick="onTeachClick"/>
+
+    <TextView
+        android:id="@+id/mainIdentifyTextView"
+        android:layout_width="232dp"
+        android:layout_height="130dp"
+        android:text="Once Facebox has learned some faces, you can ask it to identify them in images. Facebox will return an array of faces that it detected, along with their position within the image, and the name and id if the face matched. "
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/goToIdentifyButton"
+        app:layout_constraintHorizontal_bias="0.725"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mainTeachTextView"
+        app:layout_constraintVertical_bias="0.156" />
+
+    <Button
+        android:id="@+id/goToIdentifyButton"
+        android:layout_width="99dp"
+        android:layout_height="132dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="40dp"
+        android:onClick="onIdentifyClick"
+        android:text="Identify"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/goToTeachButton"
+        app:layout_constraintVertical_bias="0.065" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
