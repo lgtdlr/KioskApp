@@ -24,9 +24,9 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 
-public class TeachActivity extends AppCompatActivity {
+public class DetectActivity extends AppCompatActivity {
 
-    private static final String BASE_URL = "http://192.168.102.158:8080/facebox/teach";
+    private static final String BASE_URL = "http://192.168.102.158:5000/face/v1.0/detect";
     private static final int PICK_IMAGE = 100;
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
@@ -41,7 +41,7 @@ public class TeachActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_teach);
+        setContentView(R.layout.activity_detect);
         urlEditText = (EditText)findViewById(R.id.urlEditText);
         nameEditText = (EditText)findViewById(R.id.nameEditText);
         button = (Button)findViewById(R.id.button);
@@ -97,7 +97,7 @@ public class TeachActivity extends AppCompatActivity {
     }
 
     public Boolean uploadFile(String serverURL, File file) {
-        final Intent teachIntent = new Intent(this, TeachActivity.class);
+        final Intent teachIntent = new Intent(this, DetectActivity.class);
 
         try {
 
@@ -140,7 +140,7 @@ public class TeachActivity extends AppCompatActivity {
     }
 
     String postUrl(String serverUrl, String sourceUrl, String name) throws IOException {
-        final Intent teachIntent = new Intent(this, TeachActivity.class);
+        final Intent teachIntent = new Intent(this, DetectActivity.class);
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("name", name)

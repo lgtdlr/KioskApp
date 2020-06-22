@@ -25,7 +25,7 @@ import okhttp3.Response;
 
 public class IdentifyActivity extends AppCompatActivity {
 
-    private static final String BASE_URL = "http://192.168.102.158:8080/facebox/check";
+    private static final String BASE_URL = "http://192.168.102.158:5000/face/v1.0/identify";
     private static final int PICK_IMAGE = 1;
 
     ImageView selectedImage;

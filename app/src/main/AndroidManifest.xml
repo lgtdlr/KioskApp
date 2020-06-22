@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".TeachActivity" />
+        <activity android:name=".DetectActivity" />
         <activity android:name=".IdentifyActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
