@@ -2,6 +2,11 @@ package com.example.kioskapp;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,6 +18,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -90,6 +98,16 @@ public class DetectActivity extends AppCompatActivity {
                 p.hide();
                 imageSelected.isOpaque();
                 Log.i("TAG", s);
+                try {
+                    JSONArray parent = new JSONArray(s);
+                    JSONObject rect = parent.getJSONObject(0).getJSONObject("faceRectangle");
+                    Bitmap imageBitmap = ((BitmapDrawable)imageSelected.getDrawable()).getBitmap();
+                    imageSelected.setImageBitmap(drawRectangles(imageBitmap ,rect));
+                    imageBitmap.recycle();
+                    Log.i("TAG", rect.toString());
+                } catch (Exception e) {
+                    Log.i("TAG", "errror with JSON");
+                }
             } else {
                 p.show();
             }
@@ -118,6 +136,27 @@ public class DetectActivity extends AppCompatActivity {
                 return "Failure";
             }
         }
+    }
+
+    public static Bitmap drawRectangles(Bitmap original, JSONObject rect) {
+        Bitmap bitmap = original.copy(Bitmap.Config.ARGB_8888, true);
+        Canvas canvas = new Canvas(bitmap);
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(Color.RED);
+        paint.setStrokeWidth(10);
+        try {
+            canvas.drawRect(
+                    rect.getInt("left"),
+                    rect.getInt("top"),
+                    rect.getInt("left") + rect.getInt("width"),
+                    rect.getInt("top") + rect.getInt("height"),
+                    paint
+            );
+        } catch (Exception e) { }
+
+        return bitmap;
     }
 
 }
