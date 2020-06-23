@@ -54,7 +54,6 @@ public class DetectActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detect);
         postResponseText = (TextView)findViewById(R.id.postResponseText);
         imageSelected = (ImageView) findViewById(R.id.imageSelected);
-
     }
 
     public void onUploadClick(View view) {
