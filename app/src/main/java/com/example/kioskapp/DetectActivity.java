@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -40,6 +41,7 @@ public class DetectActivity extends AppCompatActivity {
 
     private static final String BASE_URL = "http://192.168.102.158:5000/face/v1.0/detect";
     private static final int PICK_IMAGE = 1;
+    private static final int REQUEST_IMAGE_CAPTURE = 2;
 
     private static TextView postResponseText;
     private static ImageView imageSelected;
@@ -64,6 +66,12 @@ public class DetectActivity extends AppCompatActivity {
         }
     }
 
+    public void onCameraClick(View view) {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if(takePictureIntent.resolveActivity(getPackageManager()) != null)
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -77,6 +85,12 @@ public class DetectActivity extends AppCompatActivity {
 
 
             new PostImageRequest().execute(file);
+        }
+
+        if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            imageSelected.setImageBitmap(imageBitmap);
         }
     }
 
