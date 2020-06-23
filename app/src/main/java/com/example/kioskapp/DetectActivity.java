@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -100,11 +101,16 @@ public class DetectActivity extends AppCompatActivity {
                 Log.i("TAG", s);
                 try {
                     JSONArray parent = new JSONArray(s);
-                    JSONObject rect = parent.getJSONObject(0).getJSONObject("faceRectangle");
+                    LinkedList<JSONObject> rectList = new LinkedList<>();
+
+                    for(int i = 0; i < parent.length(); i++) {
+                        JSONObject rect = parent.getJSONObject(i).getJSONObject("faceRectangle");
+                        rectList.add(rect);
+                    }
+
                     Bitmap imageBitmap = ((BitmapDrawable)imageSelected.getDrawable()).getBitmap();
-                    imageSelected.setImageBitmap(drawRectangles(imageBitmap ,rect));
+                    imageSelected.setImageBitmap(drawRectangles(imageBitmap ,rectList));
                     imageBitmap.recycle();
-                    Log.i("TAG", rect.toString());
                 } catch (Exception e) {
                     Log.i("TAG", "errror with JSON");
                 }
@@ -138,7 +144,7 @@ public class DetectActivity extends AppCompatActivity {
         }
     }
 
-    public static Bitmap drawRectangles(Bitmap original, JSONObject rect) {
+    public static Bitmap drawRectangles(Bitmap original, LinkedList<JSONObject> rectList) {
         Bitmap bitmap = original.copy(Bitmap.Config.ARGB_8888, true);
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
@@ -146,15 +152,18 @@ public class DetectActivity extends AppCompatActivity {
         paint.setStyle(Paint.Style.STROKE);
         paint.setColor(Color.RED);
         paint.setStrokeWidth(10);
-        try {
-            canvas.drawRect(
-                    rect.getInt("left"),
-                    rect.getInt("top"),
-                    rect.getInt("left") + rect.getInt("width"),
-                    rect.getInt("top") + rect.getInt("height"),
-                    paint
-            );
-        } catch (Exception e) { }
+
+        for(JSONObject rect : rectList) {
+            try {
+                canvas.drawRect(
+                        rect.getInt("left"),
+                        rect.getInt("top"),
+                        rect.getInt("left") + rect.getInt("width"),
+                        rect.getInt("top") + rect.getInt("height"),
+                        paint
+                );
+            } catch (Exception e) { }
+        }
 
         return bitmap;
     }
