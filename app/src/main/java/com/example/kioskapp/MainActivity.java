@@ -2,9 +2,11 @@ package com.example.kioskapp;
 
 import android.Manifest;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
@@ -23,6 +25,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ImageView imageView = (ImageView) findViewById(R.id.imageview_id);
+        Drawable myDrawable = getResources().getDrawable(R.drawable.azure);
+        imageView.setImageDrawable(myDrawable);
 
         requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         requestPermissions(new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
