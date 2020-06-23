@@ -14,22 +14,26 @@
         android:textAlignment="center"
         app:layout_constraintBottom_toTopOf="@+id/imageSelected"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.488"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.791" />
 
     <ImageView
         android:id="@+id/imageSelected"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:layout_marginBottom="340dp"
         android:contentDescription="@string/teachImageSelectedView"
+        android:maxWidth="300dp"
+        android:maxHeight="300dp"
+        android:minWidth="300dp"
+        android:minHeight="300dp"
+        android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/postResponseText"
         tools:srcCompat="@tools:sample/avatars" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
