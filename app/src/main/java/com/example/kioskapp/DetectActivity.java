@@ -85,7 +85,7 @@ public class DetectActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             p = new ProgressDialog(DetectActivity.this);
-            p.setMessage("Please wait... Downloading");
+            p.setMessage("Please wait... Uploading");
             p.setIndeterminate(false);
             p.setCancelable(false);
             p.show();

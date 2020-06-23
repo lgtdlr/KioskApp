@@ -6,6 +6,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.Toolbar;
 
@@ -26,9 +28,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Animation animFloat;
+        animFloat = AnimationUtils.loadAnimation(getApplicationContext(),
+                R.anim.floating_animation);
+
         ImageView imageView = (ImageView) findViewById(R.id.imageview_id);
         Drawable myDrawable = getResources().getDrawable(R.drawable.azure);
         imageView.setImageDrawable(myDrawable);
+        imageView.startAnimation(animFloat);
 
         requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         requestPermissions(new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
