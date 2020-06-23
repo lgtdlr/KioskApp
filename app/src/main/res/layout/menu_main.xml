@@ -18,11 +18,12 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
                 android:adjustViewBounds="true"
                 android:cropToPadding="true"
-                android:src="@drawable/main_image" />
+                android:src="@drawable/main_image"
+                app:srcCompat="@drawable/azure" />
 
             <TextView
                 android:text="Services"

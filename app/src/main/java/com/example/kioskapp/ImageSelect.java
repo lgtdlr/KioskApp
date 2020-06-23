@@ -13,9 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class ImageSelect extends AppCompatActivity {
 
-
-
-
     public static String getPath(final Context context, final Uri uri)
     {
 
