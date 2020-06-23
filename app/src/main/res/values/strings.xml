@@ -16,4 +16,18 @@
     <string name="main_teach_text">"Teach which faces to look for. The face may be provided by submitting an image file, or by specifying the Faceprint. The image you use to teach must contain only a single detectable face, an error will be returned if it cannot detect a face, or if it detects multiple faces. "</string>
     <string name="teach">Teach</string>
     <string name="teachImageSelectedView">Image to teach that is selected.</string>
+    <string name="title_activity_bottom_navigation">MainActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="detect_card_title">Detect</string>
+    <string name="detect_card_desc">Detects human faces in an image and returns face rectangles and optionally face IDs, landmarks, and attributes.</string>
+    <string name="identify_card_title">Identify</string>
+    <string name="identify_card_desc">1-to-many identification to find the closest matches of the specific query person face from a large person group or a person group.</string>
+    <string name="card_icon_desc">Card icon</string>
 </resources>
