@@ -1,8 +1,11 @@
 package com.example.kioskapp;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,48 +30,25 @@ import okhttp3.Response;
 public class DetectActivity extends AppCompatActivity {
 
     private static final String BASE_URL = "http://192.168.102.158:5000/face/v1.0/detect";
-    private static final int PICK_IMAGE = 100;
-    public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+    private static final int PICK_IMAGE = 1;
 
-    private static Button button;
     private static TextView postResponseText;
     private static ImageView imageSelected;
-    private static EditText urlEditText, nameEditText;
-    private static String urlInput, nameInput;
 
     private static OkHttpClient client = new OkHttpClient();
+
+    ProgressDialog p;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detect);
-        urlEditText = (EditText)findViewById(R.id.urlEditText);
-        nameEditText = (EditText)findViewById(R.id.nameEditText);
-        button = (Button)findViewById(R.id.button);
         postResponseText = (TextView)findViewById(R.id.postResponseText);
         imageSelected = (ImageView) findViewById(R.id.imageSelected);
 
     }
 
     public void onUploadClick(View view) {
-        nameInput = nameEditText.getText().toString();
-        urlInput = urlEditText.getText().toString();
-        if(nameInput.equals("")){
-            postResponseText.setText("Make sure a name has been entered before selecting a file");
-            return;
-        }
-
-        selectImage();
-    }
-
-    public void onPostClick(View view) throws IOException {
-        nameInput = nameEditText.getText().toString();
-        urlInput = urlEditText.getText().toString();
-
-        postResponseText.setText(postUrl(BASE_URL, urlInput, nameInput));
-    }
-
-    public void selectImage() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
         if (intent.resolveActivity(getPackageManager()) != null) {
@@ -87,91 +67,57 @@ public class DetectActivity extends AppCompatActivity {
 
             File file = new File(fullPhotoPath);
 
-            if (uploadFile(BASE_URL, file)){
-                postResponseText.setText("Successful");
+
+            new PostImageRequest().execute(file);
+        }
+    }
+
+    private class PostImageRequest extends AsyncTask<File, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            p = new ProgressDialog(DetectActivity.this);
+            p.setMessage("Please wait... Downloading");
+            p.setIndeterminate(false);
+            p.setCancelable(false);
+            p.show();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if(imageSelected != null) {
+                p.hide();
+                imageSelected.isOpaque();
+                Log.i("TAG", s);
             } else {
-                return;
+                p.show();
             }
-
         }
-    }
 
-    public Boolean uploadFile(String serverURL, File file) {
-        final Intent teachIntent = new Intent(this, DetectActivity.class);
+        @Override
+        protected String doInBackground(File... files) {
+            try {
+                RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                        .addFormDataPart("file", files[0].getName(), RequestBody.create(files[0], MediaType.get("image/jpeg")))
+                        .addFormDataPart("returnFaceId", "true")
+                        .addFormDataPart("returnFaceLandmarks", "false")
+                        .addFormDataPart("returnRecognitionModel", "false")
+                        .build();
+                Request request = new Request.Builder()
+                        .url(BASE_URL)
+                        .post(requestBody)
+                        .addHeader("Accept", "application/json; charset=utf-8")
+                        .build();
 
-        try {
-
-            RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
-                    .addFormDataPart("file", file.getName(), RequestBody.create(file, MediaType.get("image/jpeg")))
-                    .addFormDataPart("name", nameInput)
-                    .build();
-
-            Request request = new Request.Builder()
-                    .url(serverURL)
-                    .post(requestBody)
-                    .build();
-
-            client.newCall(request).enqueue(new Callback() {
-
-                @Override
-                public void onFailure(final Call call, final IOException e) {
-                    // Handle the error
-                    e.printStackTrace();
-                    startActivity(teachIntent);
-                    return;
+                try (Response response = client.newCall(request).execute()) {
+                    return response.body().string();
                 }
-
-                @Override
-                public void onResponse(final Call call, final Response response) throws IOException {
-                    if (!response.isSuccessful()) {
-                        // Handle the error
-                        startActivity(teachIntent);
-                    }
-                    // Upload successful
-                }
-            });
-
-            return true;
-        } catch (Exception ex) {
-            // Handle the error
-            ex.printStackTrace();
-        }
-        return false;
-    }
-
-    String postUrl(String serverUrl, String sourceUrl, String name) throws IOException {
-        final Intent teachIntent = new Intent(this, DetectActivity.class);
-        RequestBody requestBody = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("name", name)
-                .addFormDataPart("url", sourceUrl)
-                .build();
-
-        Request request = new Request.Builder()
-                .url(serverUrl)
-                .post(requestBody)
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
-
-            @Override
-            public void onFailure(final Call call, final IOException e) {
-                // Handle the error
+            } catch (Exception e) {
                 e.printStackTrace();
-                startActivity(teachIntent);
-                return;
+                return "Failure";
             }
-
-            @Override
-            public void onResponse(final Call call, final Response response) throws IOException {
-                if (!response.isSuccessful()) {
-                    // Handle the error
-                    startActivity(teachIntent);
-                }
-                // Upload successful
-            }
-        });
-        return "Success";
+        }
     }
 
 }

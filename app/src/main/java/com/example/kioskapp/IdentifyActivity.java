@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,7 +26,7 @@ import okhttp3.Response;
 
 public class IdentifyActivity extends AppCompatActivity {
 
-    private static final String BASE_URL = "http://192.168.102.158:5000/face/v1.0/identify";
+    private static final String BASE_URL = "http://192.168.102.158:5000/face/v1.0/detect";
     private static final int PICK_IMAGE = 1;
 
     ImageView selectedImage;
@@ -99,9 +100,11 @@ public class IdentifyActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(PostParameters... params) {
             try {
-                //error here...
                 RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
                         .addFormDataPart("file", params[0].file.getName(), RequestBody.create(params[0].file, MediaType.get("image/jpeg")))
+                        .addFormDataPart("returnFaceId", "true")
+                        .addFormDataPart("returnFaceLandmarks", "false")
+                        .addFormDataPart("returnRecognitonModel", "false")
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0].string)
@@ -127,6 +130,8 @@ public class IdentifyActivity extends AppCompatActivity {
                 p.hide();
                 selectedImage.isOpaque();
                 infoText.setText(string);
+
+                Log.i("TAG", string);
 
                 //Parse JSONObject here
 
