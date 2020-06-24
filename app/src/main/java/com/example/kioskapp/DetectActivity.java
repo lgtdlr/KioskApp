@@ -25,6 +25,7 @@ import androidx.core.content.FileProvider;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -95,6 +96,77 @@ public class DetectActivity extends AppCompatActivity {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             imageSelected.setImageBitmap(imageBitmap);
+
+            new PostCameraRequest().execute(imageSelected);
+        }
+    }
+
+    private class PostCameraRequest extends AsyncTask<ImageView, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            p = new ProgressDialog(DetectActivity.this);
+            p.setMessage("Please wait... uploading");
+            p.setIndeterminate(false);
+            p.setCancelable(false);
+            p.show();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if(imageSelected != null) {
+                p.hide();
+                imageSelected.isOpaque();
+                Log.i("TAG", s);
+                try {
+                    JSONArray parent = new JSONArray(s);
+                    LinkedList<JSONObject> rectList = new LinkedList<>();
+
+                    for(int i = 0; i < parent.length(); i++) {
+                        JSONObject rect = parent.getJSONObject(i).getJSONObject("faceRectangle");
+                        rectList.add(rect);
+                    }
+
+                    Bitmap imageBitmap = ((BitmapDrawable)imageSelected.getDrawable()).getBitmap();
+                    imageSelected.setImageBitmap(drawRectangles(imageBitmap ,rectList));
+                    imageBitmap.recycle();
+                } catch (Exception e) {
+                    Log.i("TAG", "errror with JSON");
+                }
+            } else {
+                p.show();
+            }
+        }
+
+        @Override
+        protected String doInBackground(ImageView... imageViews) {
+            Bitmap bitmap = ((BitmapDrawable) imageViews[0].getDrawable()).getBitmap();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            byte[] byteArray = stream.toByteArray();
+
+            try {
+                RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                        .addFormDataPart("file", "img.jpg", RequestBody.create(MediaType.parse("image/*jpg"), byteArray))
+                        .addFormDataPart("returnFaceId", "true")
+                        .addFormDataPart("returnFaceLandmarks", "true")
+                        .addFormDataPart("returnRecognitionModel", "true")
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(BASE_URL)
+                        .post(requestBody)
+                        .addHeader("Accept", "application/json; charset=utf-8")
+                        .build();
+
+                try (Response response = client.newCall(request).execute()) {
+                    return response.body().string();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "Error";
+            }
         }
     }
 
