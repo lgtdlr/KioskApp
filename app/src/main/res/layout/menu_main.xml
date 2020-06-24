@@ -24,8 +24,8 @@
                 android:adjustViewBounds="true"
                 android:cropToPadding="true"
                 android:src="@drawable/main_image"
-                app:srcCompat="@drawable/azure"
-                tools:srcCompat="@drawable/azure" />
+                app:srcCompat="@drawable/cognitive"
+                tools:srcCompat="@drawable/cognitive" />
 
             <TextView
                 android:text="Services"

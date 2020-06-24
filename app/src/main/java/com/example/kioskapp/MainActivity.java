@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 R.anim.floating_animation);
 
         ImageView imageView = (ImageView) findViewById(R.id.imageview_id);
-        Drawable myDrawable = getResources().getDrawable(R.drawable.azure);
+        Drawable myDrawable = getResources().getDrawable(R.drawable.cognitive);
         imageView.setImageDrawable(myDrawable);
         imageView.startAnimation(animFloat);
 

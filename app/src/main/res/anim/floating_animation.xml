@@ -11,7 +11,7 @@
     <translate
         android:interpolator="@android:anim/linear_interpolator"
         android:fromYDelta="0%p"
-        android:toYDelta="1%p"
+        android:toYDelta="2%p"
         android:duration="2000"
         android:startOffset="0"
         android:repeatCount="infinite"
