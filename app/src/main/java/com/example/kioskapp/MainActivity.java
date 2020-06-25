@@ -9,16 +9,10 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -37,8 +31,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         imageView.setImageDrawable(myDrawable);
         imageView.startAnimation(animFloat);
 
-        requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-        requestPermissions(new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
     }
 
     public void onDetectClick(View view) {
@@ -47,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivity(teachIntent);
     }
 
-    public void onIdentifyClick(View view){
+    public void onIdentifyClick(View view) {
         Intent identifyIntent = new Intent(this, IdentifyActivity.class);
         startActivity(identifyIntent);
     }

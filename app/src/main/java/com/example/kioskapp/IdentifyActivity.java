@@ -41,7 +41,7 @@ public class IdentifyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_identify);
 
         selectedImage = (ImageView) findViewById(R.id.selectedImage);
-        infoText = (TextView)findViewById(R.id.infoText);
+        infoText = (TextView) findViewById(R.id.infoText);
         requestResult = findViewById(R.id.requestResult);
     }
 
@@ -71,7 +71,7 @@ public class IdentifyActivity extends AppCompatActivity {
 
             PostParameters params = new PostParameters(BASE_URL, file);
             AsyncTaskExample asyncTask = new AsyncTaskExample();
-            if(asyncTask.execute(params).equals("Success")){
+            if (asyncTask.execute(params).equals("Success")) {
                 infoText.setText("Let's go");
             }
         }
@@ -97,6 +97,7 @@ public class IdentifyActivity extends AppCompatActivity {
             p.setCancelable(false);
             p.show();
         }
+
         @Override
         protected String doInBackground(PostParameters... params) {
             try {
@@ -126,7 +127,7 @@ public class IdentifyActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String string) {
             super.onPostExecute(string);
-            if(selectedImage !=null) {
+            if (selectedImage != null) {
                 p.hide();
                 selectedImage.isOpaque();
                 infoText.setText(string);
@@ -138,9 +139,10 @@ public class IdentifyActivity extends AppCompatActivity {
                 try {
                     JSONObject mainObject = new JSONObject(string);
                     JSONArray array = mainObject.getJSONArray("faces");
-                } catch (Exception e) { }
+                } catch (Exception e) {
+                }
 
-            }else {
+            } else {
                 p.show();
             }
         }

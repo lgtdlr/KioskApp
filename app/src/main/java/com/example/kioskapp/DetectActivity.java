@@ -10,30 +10,29 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -55,11 +54,36 @@ public class DetectActivity extends AppCompatActivity {
 
     ProgressDialog p;
 
+    public static Bitmap drawRectangles(Bitmap original, LinkedList<JSONObject> rectList) {
+        Bitmap bitmap = original.copy(Bitmap.Config.ARGB_8888, true);
+        Canvas canvas = new Canvas(bitmap);
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(Color.RED);
+        paint.setStrokeWidth(10);
+
+        for (JSONObject rect : rectList) {
+            try {
+                canvas.drawRect(
+                        rect.getInt("left"),
+                        rect.getInt("top"),
+                        rect.getInt("left") + rect.getInt("width"),
+                        rect.getInt("top") + rect.getInt("height"),
+                        paint
+                );
+            } catch (Exception e) {
+            }
+        }
+
+        return bitmap;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detect);
-        postResponseText = (TextView)findViewById(R.id.postResponseText);
+        postResponseText = (TextView) findViewById(R.id.postResponseText);
         imageSelected = (ImageView) findViewById(R.id.imageSelected);
     }
 
@@ -73,7 +97,7 @@ public class DetectActivity extends AppCompatActivity {
 
     public void onCameraClick(View view) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if(takePictureIntent.resolveActivity(getPackageManager()) != null)
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null)
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
     }
 
@@ -92,7 +116,7 @@ public class DetectActivity extends AppCompatActivity {
             new PostImageRequest().execute(file);
         }
 
-        if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             imageSelected.setImageBitmap(imageBitmap);
@@ -115,7 +139,7 @@ public class DetectActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            if(imageSelected != null) {
+            if (imageSelected != null) {
                 p.hide();
                 imageSelected.isOpaque();
                 Log.i("TAG", s);
@@ -123,14 +147,15 @@ public class DetectActivity extends AppCompatActivity {
                     JSONArray parent = new JSONArray(s);
                     LinkedList<JSONObject> rectList = new LinkedList<>();
 
-                    for(int i = 0; i < parent.length(); i++) {
+                    for (int i = 0; i < parent.length(); i++) {
                         JSONObject rect = parent.getJSONObject(i).getJSONObject("faceRectangle");
                         rectList.add(rect);
                     }
 
-                    Bitmap imageBitmap = ((BitmapDrawable)imageSelected.getDrawable()).getBitmap();
-                    imageSelected.setImageBitmap(drawRectangles(imageBitmap ,rectList));
+                    Bitmap imageBitmap = ((BitmapDrawable) imageSelected.getDrawable()).getBitmap();
+                    imageSelected.setImageBitmap(drawRectangles(imageBitmap, rectList));
                     imageBitmap.recycle();
+                    setUiAfterUpdate(s, parent);
                 } catch (Exception e) {
                     Log.i("TAG", "errror with JSON");
                 }
@@ -150,6 +175,7 @@ public class DetectActivity extends AppCompatActivity {
                 RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
                         .addFormDataPart("file", "img.jpg", RequestBody.create(MediaType.parse("image/*jpg"), byteArray))
                         .addFormDataPart("returnFaceId", "true")
+                        .addFormDataPart("returnFaceAttributes", "*")
                         .addFormDataPart("returnFaceLandmarks", "true")
                         .addFormDataPart("returnRecognitionModel", "true")
                         .build();
@@ -182,39 +208,13 @@ public class DetectActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            if(imageSelected != null) {
-                p.hide();
-                imageSelected.isOpaque();
-                Log.i("TAG", s);
-                try {
-                    JSONArray parent = new JSONArray(s);
-                    LinkedList<JSONObject> rectList = new LinkedList<>();
-
-                    for(int i = 0; i < parent.length(); i++) {
-                        JSONObject rect = parent.getJSONObject(i).getJSONObject("faceRectangle");
-                        rectList.add(rect);
-                    }
-
-                    Bitmap imageBitmap = ((BitmapDrawable)imageSelected.getDrawable()).getBitmap();
-                    imageSelected.setImageBitmap(drawRectangles(imageBitmap ,rectList));
-                    imageBitmap.recycle();
-                } catch (Exception e) {
-                    Log.i("TAG", "errror with JSON");
-                }
-            } else {
-                p.show();
-            }
-        }
-
-        @Override
         protected String doInBackground(File... files) {
             try {
                 RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
                         .addFormDataPart("file", files[0].getName(), RequestBody.create(files[0], MediaType.get("image/jpeg")))
                         .addFormDataPart("returnFaceId", "true")
                         .addFormDataPart("returnFaceLandmarks", "false")
+                        .addFormDataPart("returnFaceAttributes", "*")
                         .addFormDataPart("returnRecognitionModel", "false")
                         .build();
                 Request request = new Request.Builder()
@@ -231,30 +231,50 @@ public class DetectActivity extends AppCompatActivity {
                 return "Failure";
             }
         }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if (imageSelected != null) {
+                p.hide();
+                imageSelected.isOpaque();
+                Log.i("TAG", s);
+                try {
+                    JSONArray parent = new JSONArray(s);
+                    LinkedList<JSONObject> rectList = new LinkedList<>();
+
+                    for (int i = 0; i < parent.length(); i++) {
+                        JSONObject rect = parent.getJSONObject(i).getJSONObject("faceRectangle");
+                        rectList.add(rect);
+                    }
+
+                    Bitmap imageBitmap = ((BitmapDrawable) imageSelected.getDrawable()).getBitmap();
+                    imageSelected.setImageBitmap(drawRectangles(imageBitmap, rectList));
+                    imageBitmap.recycle();
+                    setUiAfterUpdate(s, parent);
+                } catch (Exception e) {
+                    Log.i("TAG", "errror with JSON");
+                }
+            } else {
+                p.show();
+            }
+        }
     }
 
-    public static Bitmap drawRectangles(Bitmap original, LinkedList<JSONObject> rectList) {
-        Bitmap bitmap = original.copy(Bitmap.Config.ARGB_8888, true);
-        Canvas canvas = new Canvas(bitmap);
-        Paint paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(Color.RED);
-        paint.setStrokeWidth(10);
+    private void setUiAfterUpdate(String s, JSONArray parent) throws JSONException {
+        ArrayList<String> items = new ArrayList<String>();
 
-        for(JSONObject rect : rectList) {
-            try {
-                canvas.drawRect(
-                        rect.getInt("left"),
-                        rect.getInt("top"),
-                        rect.getInt("left") + rect.getInt("width"),
-                        rect.getInt("top") + rect.getInt("height"),
-                        paint
-                );
-            } catch (Exception e) { }
+        for(int i=0; i < parent.length() ; i++) {
+            JSONObject json_data = parent.getJSONObject(i);
+            int id = json_data.getInt("id");
+            JSONObject faceAttributes = json_data.getJSONObject("faceAttributes");
+            int smile = faceAttributes.getInt("age");
+            items.add("Age: " + smile);
         }
-
-        return bitmap;
+        ListView listView = (ListView)findViewById(R.id.results_list);
+        ArrayAdapter<String> mArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1, items);
+        listView.setAdapter(mArrayAdapter);
+        mArrayAdapter.notifyDataSetChanged();
     }
 
 }
