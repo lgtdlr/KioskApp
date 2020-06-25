@@ -43,7 +43,7 @@ import okhttp3.Response;
 
 public class DetectActivity extends AppCompatActivity {
 
-    private static final String BASE_URL = "http://192.168.102.158:5000/face/v1.0/detect";
+    private static final String BASE_URL = "http://192.168.102.158:5000/face/v1.0/detect?returnFaceAttributes=*";
     private static final int PICK_IMAGE = 1;
     private static final int REQUEST_IMAGE_CAPTURE = 2;
 
