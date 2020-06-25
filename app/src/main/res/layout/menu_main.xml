@@ -23,7 +23,6 @@
                 android:layout_height="250dp"
                 android:adjustViewBounds="true"
                 android:cropToPadding="true"
-                android:src="@drawable/main_image"
                 app:srcCompat="@drawable/cognitive"
                 tools:srcCompat="@drawable/cognitive" />
 
