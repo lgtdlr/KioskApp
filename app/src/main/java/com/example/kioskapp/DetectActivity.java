@@ -266,7 +266,6 @@ public class DetectActivity extends AppCompatActivity {
 
         for(int i=0; i < parent.length() ; i++) {
             JSONObject json_data = parent.getJSONObject(i);
-            int id = json_data.getInt("id");
             JSONObject faceAttributes = json_data.getJSONObject("faceAttributes");
             int smile = faceAttributes.getInt("age");
             items.add("Age: " + smile);
