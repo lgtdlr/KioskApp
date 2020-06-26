@@ -52,8 +52,6 @@ public class DetectActivity extends AppCompatActivity {
 
     private static OkHttpClient client = new OkHttpClient();
 
-    private ArrayList<Face> faces;
-
     ProgressDialog p;
 
     public static Bitmap drawRectangles(Bitmap original, LinkedList<JSONObject> rectList) {
@@ -85,9 +83,7 @@ public class DetectActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detect);
-        postResponseText = (TextView) findViewById(R.id.postResponseText);
         imageSelected = (ImageView) findViewById(R.id.imageSelected);
-        faces = new ArrayList<>();
     }
 
     public void onUploadClick(View view) {
@@ -265,25 +261,28 @@ public class DetectActivity extends AppCompatActivity {
     }
 
     private void setUiAfterUpdate(String s, JSONArray parent) throws JSONException {
-        ArrayList<String> items = new ArrayList<String>();
-        ArrayList<Face> item2 = new ArrayList<>();
+        ArrayList<Face> faces = new ArrayList<>();
+        LinkedList<JSONObject> rectList = new LinkedList<>();
 
         for(int i=0; i < parent.length() ; i++) {
             JSONObject json_data = parent.getJSONObject(i);
             JSONObject faceAttributes = json_data.getJSONObject("faceAttributes");
             JSONObject rectangle = json_data.getJSONObject("faceRectangle");
+            rectList.add(rectangle);
             Bitmap currentBitmap = ((BitmapDrawable) imageSelected.getDrawable()).getBitmap();
             Bitmap faceBitmap = Bitmap.createBitmap(currentBitmap, rectangle.getInt("left"),
                                                                         rectangle.getInt("top"),
                                                                         rectangle.getInt("width"),
                                                                         rectangle.getInt("height"));
             int smile = faceAttributes.getInt("age");
-            item2.add(new Face(faceBitmap, "Age: " + smile));
+            faces.add(new Face(faceBitmap, "Age: " + smile));
         }
         ListView listView = (ListView)findViewById(R.id.results_list);
-        FaceListAdapter adapter = new FaceListAdapter(DetectActivity.this, R.layout.detect_adapter_view_layout, item2);
+        FaceListAdapter adapter = new FaceListAdapter(DetectActivity.this, R.layout.detect_adapter_view_layout, faces);
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+
+
     }
 
 }
