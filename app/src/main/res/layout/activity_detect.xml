@@ -31,7 +31,6 @@
         android:maxHeight="300dp"
         android:minWidth="300dp"
         android:minHeight="300dp"
-        android:scaleType="fitXY"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
