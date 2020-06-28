@@ -41,6 +41,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivity(teachIntent);
     }
 
+    public void onVerifyClick(View view) {
+        //start new activity
+        Intent verifyIntent = new Intent(this, VerifyActivity.class);
+        startActivity(verifyIntent);
+    }
+
     public void onIdentifyClick(View view) {
         Intent identifyIntent = new Intent(this, IdentifyActivity.class);
         startActivity(identifyIntent);

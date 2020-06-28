@@ -9,5 +9,6 @@
     <dimen name="headerTextSize">25sp</dimen>
     <dimen name="headerMoreTextSize">18sp</dimen>
     <dimen name="card_margin">5dp</dimen>
+    <dimen name="view_margin">5dp</dimen>
 
 </resources>
