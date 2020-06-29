@@ -7,6 +7,69 @@
     android:padding="5dp">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cameraCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/identifyCard"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:minHeight="120dp"
+        android:onClick="onCameraClick"
+        app:cardBackgroundColor="@color/whiteBodyColor"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="2dp"
+        app:contentPadding="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.513"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/identifyCard">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center|start"
+                android:adjustViewBounds="false"
+                android:contentDescription="@string/card_icon_desc"
+                android:cropToPadding="false"
+                android:src="@drawable/card_icon" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="239dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/camera_card_desc"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView5"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/textView5"
+                    style="@style/viewParent.headerText"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/camera_card_title"
+                    android:textColor="@color/primaryTextColor"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
         android:id="@+id/detectCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

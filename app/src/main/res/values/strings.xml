@@ -32,4 +32,6 @@
     <string name="card_icon_desc">Card icon</string>
     <string name="verify_card_desc">Verify if two faces belong to the same person, or if a face belongs to a person.</string>
     <string name="verify_card_title">Verify</string>
+    <string name="camera_card_desc">Experimental OpenCV camera activity</string>
+    <string name="camera_card_title">Camera</string>
 </resources>

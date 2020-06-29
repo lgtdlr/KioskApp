@@ -91,7 +91,6 @@ public class DetectActivity extends AppCompatActivity {
 
     public void onUploadClick(View view) {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == -1){
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
             return;
         }

@@ -2,18 +2,24 @@ package com.example.kioskapp;
 
 import android.Manifest;
 import android.content.Intent;
+import android.graphics.Camera;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.navigation.NavigationView;
+
+import org.opencv.android.OpenCVLoader;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -21,6 +27,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (!OpenCVLoader.initDebug()) {
+            Log.e(this.getClass().getSimpleName(), "  OpenCVLoader.initDebug(), not working.");
+        } else {
+            Log.d(this.getClass().getSimpleName(), "  OpenCVLoader.initDebug(), working.");
+        }
+        Toast.makeText(MainActivity.this, "OpenCV Load Status: " + String.valueOf(OpenCVLoader.initDebug()), Toast.LENGTH_LONG).show();
 
         Animation animFloat;
         animFloat = AnimationUtils.loadAnimation(getApplicationContext(),
@@ -31,9 +44,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         imageView.setImageDrawable(myDrawable);
         imageView.startAnimation(animFloat);
 
-        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-        requestPermissions(new String[]{Manifest.permission.CAMERA}, 1);
     }
 
     public void onDetectClick(View view) {
@@ -51,6 +62,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onIdentifyClick(View view) {
         Intent identifyIntent = new Intent(this, IdentifyActivity.class);
         startActivity(identifyIntent);
+    }
+
+    public void onCameraClick(View view) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == -1){
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, 1);
+            return;
+        }
+        Intent cameraIntent = new Intent(this, CameraActivity.class);
+        startActivity(cameraIntent);
     }
 
     @Override

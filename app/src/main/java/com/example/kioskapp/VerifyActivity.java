@@ -117,7 +117,6 @@ public class VerifyActivity extends AppCompatActivity {
 
                 } else if (items[i].equals("Gallery")) {
                     if (ContextCompat.checkSelfPermission(VerifyActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == -1){
-                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                         requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
                         return;
                     }
@@ -196,10 +195,9 @@ public class VerifyActivity extends AppCompatActivity {
                 face1Selected.isOpaque();
                 Log.i("ASHWIN", s);
                 try {
-                    //JSONArray parent = new JSONArray(s);
-                    postVerifyText.setText(s);
-                    //Boolean isIdentical = parent.getJSONObject(0).getBoolean("isIdentical");
-                    //Double confidence = parent.getJSONObject(0).getDouble("confidence");
+                    JSONObject parent = new JSONObject(s);
+                    Boolean isIdentical = parent.getBoolean("isIdentical");
+                    Double confidence = parent.getDouble("confidence");
 //                    if (isIdentical){
 //                        postVerifyText.setText("Success");
 //                    } else if {
