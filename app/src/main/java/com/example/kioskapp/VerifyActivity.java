@@ -1,5 +1,6 @@
 package com.example.kioskapp;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -73,6 +75,7 @@ public class VerifyActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verify);
+        requestPermissions(new String[]{Manifest.permission.CAMERA}, 1);
         postVerifyText = (TextView) findViewById(R.id.postVerifyText);
         verifyResults = (TextView) findViewById(R.id.verifyResults);
         face1Selected = (ImageView) findViewById(R.id.face1Selected);
@@ -98,6 +101,10 @@ public class VerifyActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (items[i].equals("Camera")) {
+                    if (ContextCompat.checkSelfPermission(VerifyActivity.this, Manifest.permission.CAMERA) == -1){
+                        requestPermissions(new String[]{Manifest.permission.CAMERA}, 1);
+                        return;
+                    }
 
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     if(faceSelected == 1){
@@ -108,7 +115,11 @@ public class VerifyActivity extends AppCompatActivity {
 
 
                 } else if (items[i].equals("Gallery")) {
-
+                    if (ContextCompat.checkSelfPermission(VerifyActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == -1){
+                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                        requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                        return;
+                    }
                     Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     //Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                     intent.setType("image/*");
