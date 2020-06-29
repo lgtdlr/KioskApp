@@ -247,7 +247,9 @@ public class DetectActivity extends AppCompatActivity {
                         rectList.add(rect);
                     }
 
+                    Log.i("Updating screen", "...");
                     setUiAfterUpdate(s, parent);
+                    Log.i("Updating screen", "Success");
                     Bitmap imageBitmap = ((BitmapDrawable) imageSelected.getDrawable()).getBitmap();
                     imageSelected.setImageBitmap(drawRectangles(imageBitmap, rectList));
                     imageBitmap.recycle();
@@ -267,6 +269,7 @@ public class DetectActivity extends AppCompatActivity {
         for(int i=0; i < parent.length() ; i++) {
             JSONObject json_data = parent.getJSONObject(i);
             JSONObject faceAttributes = json_data.getJSONObject("faceAttributes");
+            JSONObject emotions = faceAttributes.getJSONObject("emotion");
             JSONObject rectangle = json_data.getJSONObject("faceRectangle");
             rectList.add(rectangle);
             Bitmap currentBitmap = ((BitmapDrawable) imageSelected.getDrawable()).getBitmap();
@@ -274,8 +277,11 @@ public class DetectActivity extends AppCompatActivity {
                                                                         rectangle.getInt("top"),
                                                                         rectangle.getInt("width"),
                                                                         rectangle.getInt("height"));
-            int smile = faceAttributes.getInt("age");
-            faces.add(new Face(faceBitmap, "Age: " + smile));
+            int age = faceAttributes.getInt("age");
+            String gender = faceAttributes.getString("gender");
+            Log.i("Adding faces", "Wait...");
+            faces.add(new Face(faceBitmap, "Age: " + age, gender, getEmotion(emotions), getEmotionScore(emotions)));
+            Log.i("Adding faces", "Success");
         }
         ListView listView = (ListView)findViewById(R.id.results_list);
         FaceListAdapter adapter = new FaceListAdapter(DetectActivity.this, R.layout.detect_adapter_view_layout, faces);
@@ -283,6 +289,97 @@ public class DetectActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
 
 
+    }
+
+    private String getEmotion(JSONObject attributes) throws JSONException {
+        Log.i("Parsing emotions", "...");
+        String emotionType = "";
+        double emotionValue = 0.0;
+
+        if (attributes.getDouble("anger") > emotionValue)
+        {
+            emotionValue = attributes.getDouble("anger");
+            emotionType = "Anger";
+        }
+        if (attributes.getDouble("contempt") > emotionValue)
+        {
+            emotionValue = attributes.getDouble("contempt");
+            emotionType = "Contempt";
+        }
+        if (attributes.getDouble("disgust") > emotionValue)
+        {
+            emotionValue = attributes.getDouble("disgust");
+            emotionType = "Disgust";
+        }
+        if (attributes.getDouble("fear") > emotionValue)
+        {
+            emotionValue = attributes.getDouble("fear");
+            emotionType = "Fear";
+        }
+        if (attributes.getDouble("happiness") > emotionValue)
+        {
+            emotionValue = attributes.getDouble("happiness");
+            emotionType = "Happiness";
+        }
+        if (attributes.getDouble("neutral") > emotionValue)
+        {
+            emotionValue = attributes.getDouble("neutral");
+            emotionType = "Neutral";
+        }
+        if (attributes.getDouble("sadness") > emotionValue)
+        {
+            emotionValue = attributes.getDouble("sadness");
+            emotionType = "Sadness";
+        }
+        if (attributes.getDouble("surprise") > emotionValue)
+        {
+            emotionValue = attributes.getDouble("surprise");
+            emotionType = "Surprise";
+        }
+        Log.i("Parsing emotions", "Success");
+        return emotionType;
+    }
+
+    private double getEmotionScore(JSONObject attributes) throws JSONException {
+        Log.i("Parsing emotions for score", "...");
+        double emotionValue = 0.0;
+
+        if (attributes.getDouble("anger") > emotionValue)
+        {
+            emotionValue = attributes.getDouble("anger");
+        }
+        if (attributes.getDouble("contempt") > emotionValue)
+        {
+            emotionValue = attributes.getDouble("contempt");
+        }
+        if (attributes.getDouble("disgust") > emotionValue)
+        {
+            emotionValue = attributes.getDouble("disgust");
+        }
+        if (attributes.getDouble("fear") > emotionValue)
+        {
+            emotionValue = attributes.getDouble("fear");
+        }
+        if (attributes.getDouble("happiness") > emotionValue)
+        {
+            emotionValue = attributes.getDouble("happiness");
+        }
+        if (attributes.getDouble("neutral") > emotionValue)
+        {
+            emotionValue = attributes.getDouble("neutral");
+        }
+        if (attributes.getDouble("sadness") > emotionValue)
+        {
+            emotionValue = attributes.getDouble("sadness");
+        }
+        if (attributes.getDouble("surprise") > emotionValue)
+        {
+            emotionValue = attributes.getDouble("surprise");
+        }
+        Log.i("Parsing emotions for score", "Success");
+
+        Log.i("Emotion score", "is " + emotionValue);
+        return emotionValue;
     }
 
 }
