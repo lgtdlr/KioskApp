@@ -62,6 +62,7 @@ public class VerifyActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA_ONE=1, SELECT_FILE_ONE=0, REQUEST_CAMERA_TWO=3, SELECT_FILE_TWO=2;
     ArrayList<String> faceIds = new ArrayList<>();
     Map<String, Object> Ids = new HashMap();
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     private static TextView postVerifyText, verifyResults;
     private static ImageView face1Selected, face2Selected;
@@ -156,11 +157,16 @@ public class VerifyActivity extends AppCompatActivity {
         protected String doInBackground(String... strings) {
             try {
 
-                RequestBody requestBody = new MultipartBody.Builder()
+                /*RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
                         .addFormDataPart("faceId1", strings[0])
                         .addFormDataPart("faceId2", strings[1])
-                        .build();
+                        .build();*/
+                JSONObject json = new JSONObject();
+                json.put("faceId1", strings[0]);
+                json.put("faceId2", strings[1]);
+
+                RequestBody requestBody = RequestBody.create(json.toString(), JSON);
 
                 Log.i("faceId1", strings[0]);
                 Log.i("faceId2", strings[1]);
@@ -172,7 +178,7 @@ public class VerifyActivity extends AppCompatActivity {
                         .addHeader("Accept", "application/json; charset=utf-8")
                         .build();
 
-                Log.i("requestBody", request.toString());
+                Log.i("requestBody", requestBody.toString());
 
                 try (Response response = client.newCall(request).execute()) {
                     return response.body().string();
@@ -188,7 +194,7 @@ public class VerifyActivity extends AppCompatActivity {
             super.onPostExecute(s);
                 p.hide();
                 face1Selected.isOpaque();
-                Log.i("TAG", s);
+                Log.i("ASHWIN", s);
                 try {
                     //JSONArray parent = new JSONArray(s);
                     postVerifyText.setText(s);
