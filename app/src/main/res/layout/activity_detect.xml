@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DetectActivity">
+    tools:context=".DetectActivity"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    style="@style/parent.contentLayout">
 
     <ImageView
         android:id="@+id/imageSelected"
         android:layout_width="300dp"
         android:layout_height="300dp"
-        android:layout_marginBottom="20dp"
         android:background="#D3D3D3"
         android:contentDescription="@string/teachImageSelectedView"
         android:maxWidth="300dp"
@@ -22,7 +23,6 @@
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline2"
-        app:layout_constraintVertical_bias="0.0"
         tools:srcCompat="@tools:sample/avatars" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -48,18 +48,19 @@
         android:onClick="onCameraClick"
         app:layout_constraintBottom_toTopOf="@+id/guideline5"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.045"
+        app:layout_constraintHorizontal_bias="0.095"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline3"
         app:srcCompat="@drawable/ic_menu_camera" />
 
     <ListView
         android:id="@+id/results_list"
-        android:layout_width="384dp"
-        android:layout_height="159dp"
+        android:layout_width="300dp"
+        android:layout_height="150dp"
         android:layout_marginTop="16dp"
-        android:background="#d3d3d3"
+        android:background="#00D3D3D3"
         android:verticalSpacing="5dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.481"
@@ -72,27 +73,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="380dp" />
+        app:layout_constraintGuide_begin="348dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="65dp" />
+        app:layout_constraintGuide_begin="16dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="568dp" />
+        app:layout_constraintGuide_begin="536dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="656dp" />
+        app:layout_constraintGuide_begin="643dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

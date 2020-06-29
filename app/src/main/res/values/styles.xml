@@ -29,6 +29,9 @@
     <style name="parent.contentLayout">
         <item name="android:background">@color/contentBodyColor</item>
         <item name="android:padding">@dimen/normalPadding</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:fitsSystemWindows">true</item>
     </style>
 
     <style name="viewParent.headerText">
@@ -40,5 +43,7 @@
     <style name="ButtonStyle">
         <item name="android:textColor">#ffffff</item>
     </style>
+
+
 
 </resources>

@@ -52,7 +52,7 @@ public class FaceListAdapter extends ArrayAdapter<Face> {
         ProgressBar emotionBar = (ProgressBar) convertView.findViewById(R.id.emotion_bar_id);
 
         tvAge.setText(face_description);
-        tvEmotion.setText(emotion);
+        tvEmotion.setText("Emotion: " + emotion);
         emotionBar.setProgress((int) (emotionScore*100));
         faceImage.setImageBitmap(bitmap);
 

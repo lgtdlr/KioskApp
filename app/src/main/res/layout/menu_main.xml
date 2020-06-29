@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -10,7 +11,11 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -27,14 +32,12 @@
                 tools:srcCompat="@drawable/cognitive" />
 
             <TextView
-                android:text="Services"
+                style="@style/viewParent.headerText"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
-                style="@style/viewParent.headerText" />
+                android:text="Services" />
 
-            <include layout="@layout/card_services"/>
-            <include layout="@layout/card_services"/>
-
+            <include layout="@layout/card_services" />
 
 
         </LinearLayout>
