@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp">
+    android:padding="5dp">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/detectCard"
@@ -19,11 +19,10 @@
         app:cardCornerRadius="16dp"
         app:cardElevation="2dp"
         app:contentPadding="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline12"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.513"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.444">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -78,6 +77,7 @@
         android:layout_below="@id/detectCard"
         android:layout_alignParentBottom="true"
         android:layout_margin="8dp"
+        android:layout_marginTop="8dp"
         android:clickable="true"
         android:focusable="true"
         android:minHeight="120dp"
@@ -86,11 +86,10 @@
         app:cardCornerRadius="16dp"
         app:cardElevation="2dp"
         app:contentPadding="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline13"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.538"
+        app:layout_constraintHorizontal_bias="0.513"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline12">
+        app:layout_constraintTop_toBottomOf="@+id/detectCard">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -141,10 +140,11 @@
         android:id="@+id/identifyCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/detectCard"
+        android:layout_below="@id/verifyCard"
         android:layout_alignParentBottom="true"
         android:layout_margin="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
         android:clickable="true"
         android:focusable="true"
@@ -154,11 +154,9 @@
         app:cardCornerRadius="16dp"
         app:cardElevation="2dp"
         app:contentPadding="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline14"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.517"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline13">
+        app:layout_constraintTop_toBottomOf="@+id/verifyCard">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -202,26 +200,5 @@
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline12"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="163dp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline13"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="311dp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline14"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="473dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
