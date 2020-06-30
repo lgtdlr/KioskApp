@@ -1,3 +1,5 @@
 include ':app'
 rootProject.name = "KioskApp"
-include ':openCVLibrary343'
+def opencvsdk='../OpenCV-android-sdk'
+include ':opencv'
+project(':opencv').projectDir = new File(opencvsdk + '/sdk')

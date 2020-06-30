@@ -28,11 +28,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (!OpenCVLoader.initDebug()) {
-            Log.e(this.getClass().getSimpleName(), "  OpenCVLoader.initDebug(), not working.");
-        } else {
-            Log.d(this.getClass().getSimpleName(), "  OpenCVLoader.initDebug(), working.");
-        }
         Toast.makeText(MainActivity.this, "OpenCV Load Status: " + String.valueOf(OpenCVLoader.initDebug()), Toast.LENGTH_LONG).show();
 
         Animation animFloat;
@@ -69,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             requestPermissions(new String[]{Manifest.permission.CAMERA}, 1);
             return;
         }
-        Intent cameraIntent = new Intent(this, CameraActivity.class);
+        Intent cameraIntent = new Intent(this, DetectCameraActivity.class);
         startActivity(cameraIntent);
     }
 

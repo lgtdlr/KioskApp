@@ -10,18 +10,18 @@
     style="@style/parent.contentLayout">
 
     <org.opencv.android.JavaCameraView
-        android:id="@+id/java_camera_view"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/guideline"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintTop_toTopOf="@+id/guideline2"
-        opencv:camera_id="front"
-        opencv:layout_constraintBottom_toBottomOf="parent"
-        opencv:layout_constraintEnd_toEndOf="parent"
-        opencv:layout_constraintStart_toStartOf="parent"
-        opencv:show_fps="true" />
+    android:id="@+id/java_camera_view"
+    android:layout_width="300dp"
+    android:layout_height="300dp"
+    android:visibility="visible"
+    app:layout_constraintBottom_toTopOf="@+id/guideline"
+    app:layout_constraintHorizontal_bias="0.495"
+    app:layout_constraintTop_toTopOf="@+id/guideline2"
+    opencv:camera_id="front"
+    opencv:layout_constraintBottom_toBottomOf="parent"
+    opencv:layout_constraintEnd_toEndOf="parent"
+    opencv:layout_constraintStart_toStartOf="parent"
+    opencv:show_fps="true" />
 
     <org.opencv.android.CameraGLSurfaceView
         android:id="@+id/native_surface_view"

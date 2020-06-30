@@ -3,15 +3,8 @@
     <color name="colorPrimary">#FCFCFC</color>
     <color name="colorPrimaryDark">#2A2E43</color>
     <color name="colorAccent">#FF402D</color>
-    <color name="bottomNavigationTextColor">#B2B2B2</color>
-    <color name="bottomNavigationTintColor">#B2B2B2</color>
-    <color name="bottomNavigationSelectedColor">#FC4926</color>
-    <color name="statusBarColor">#000</color>
     <color name="whiteBodyColor">#FCFCFC</color>
-    <color name="darkTextColor">#020000</color>
     <color name="primaryTextColor">#25C0DE</color>
-    <color name="whiteTextColor">#fff</color>
-    <color name="frutorial_title">#4c4c4c</color>
 
     <!--colors for light mode-->
 <!--    <color name="contentBodyColor">#FCFCFC</color>-->
@@ -21,5 +14,4 @@
     <!--colors for dark mode-->
     <color name="contentBodyColor">#2A2E43</color>
     <color name="contentTextColor">#fff</color>
-    <color name="bottomNavigationBackground">#2A2E43</color>
 </resources>
