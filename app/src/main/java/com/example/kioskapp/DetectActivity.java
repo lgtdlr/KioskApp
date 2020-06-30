@@ -2,6 +2,7 @@ package com.example.kioskapp;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -20,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -89,26 +91,50 @@ public class DetectActivity extends AppCompatActivity {
         imageSelected = (ImageView) findViewById(R.id.imageSelected);
     }
 
+    private void selectImage() {
+        final CharSequence[] items={"Camera","Gallery", "Cancel"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(DetectActivity.this);
+        builder.setTitle("Add Image");
+
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (items[i].equals("Camera")) {
+                    if (ContextCompat.checkSelfPermission(DetectActivity.this, Manifest.permission.CAMERA) == -1){
+                        requestPermissions(new String[]{Manifest.permission.CAMERA}, 1);
+                        return;
+                    }
+
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+
+
+                } else if (items[i].equals("Gallery")) {
+                    if (ContextCompat.checkSelfPermission(DetectActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == -1){
+                        requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                        return;
+                    }
+                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    //Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                    intent.setType("image/*");
+                    startActivityForResult(intent, PICK_IMAGE);
+
+                } else if (items[i].equals("Cancel")) {
+                    dialogInterface.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+
     public void onUploadClick(View view) {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == -1){
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-            return;
-        }
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("image/*");
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(intent, PICK_IMAGE);
-        }
+        selectImage();
     }
 
     public void onCameraClick(View view) {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == -1){
-            requestPermissions(new String[]{Manifest.permission.CAMERA}, 1);
-            return;
-        }
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null)
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        selectImage();
     }
 
     @Override
