@@ -87,14 +87,9 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
         if(!OpenCVLoader.initDebug()) {
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, baseCallback);
         } else {
-            try {
-                baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
 
-        imageView = findViewById(R.id.imageView2);
 
         javaCameraView.setCvCameraViewListener(this);
     }
@@ -109,28 +104,29 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
 
         MatOfRect faceDetections = new MatOfRect();
 
-        if (buttonPressed){
+        if (buttonPressed) {
             faceDetector.detectMultiScale(mRgba, faceDetections);
 
 
-            for(Rect rect: faceDetections.toArray()) {
+            for (Rect rect : faceDetections.toArray()) {
                 Imgproc.rectangle(mRgba, new Point(rect.x, rect.y),
                         new Point(rect.x + rect.width, rect.y + rect.height),
                         new Scalar(255, 0, 0));
             }
+        }
 
             mBitmap = Bitmap.createBitmap(mRgba.cols(), mRgba.rows(), Bitmap.Config.ARGB_8888);
             Utils.matToBitmap(mRgba, mBitmap);
 
-            updateUI();
+            //updateUI();
             buttonPressed = false;
-        }
+
 
 //        Utils.matToBitmap(mRgba, mBitmap);
         return mRgba;
     }
 
-    public void updateUI() {
+    private void updateUI() {
         imageView.setImageBitmap(mBitmap);
     }
 
@@ -172,11 +168,7 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
                 break;
 
                 default: {
-                    try {
-                        super.onManagerConnected(status);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    super.onManagerConnected(status);
                 }
                 break;
             }
@@ -218,6 +210,11 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
     }
 
     public void onRefreshClick(View view) {
+        new PostCameraRequest().execute(mBitmap);
+
+    }
+
+    public void onRectToggle(View view) {
 //        new PostCameraRequest().execute(mBitmap);
         if (buttonPressed == false){
             buttonPressed = true;
@@ -227,63 +224,63 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
 
     }
 
-//    private class PostCameraRequest extends AsyncTask<Bitmap, String, String> {
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//            p = new ProgressDialog(DetectCameraActivity.this);
-//            p.setMessage("Please wait... uploading");
-//            p.setIndeterminate(false);
-//            p.setCancelable(false);
-//            p.show();
-//        }
-//
-//        @Override
-//        protected void onPostExecute(String s) {
-//            super.onPostExecute(s);
-//                Log.i("TAG", s);
-//                try {
-//                    JSONArray parent = new JSONArray(s);
+    private class PostCameraRequest extends AsyncTask<Bitmap, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            p = new ProgressDialog(DetectCameraActivity.this);
+            p.setMessage("Please wait... uploading");
+            p.setIndeterminate(false);
+            p.setCancelable(false);
+            p.show();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            p.hide();
+                Log.i("TAG", s);
+                try {
+                    JSONArray parent = new JSONArray(s);
 //                    LinkedList<JSONObject> rectList = new LinkedList<>();
-//
-//                    imageBitmap.recycle();
-//                    setUiAfterUpdate(s, parent);
-//                } catch (Exception e) {
-//                    Log.i("TAG", "errror with JSON");
-//                }
-//        }
-//
-//        @Override
-//        protected String doInBackground(ImageView... imageViews) {
-//            Bitmap bitmap = ((BitmapDrawable) imageViews[0].getDrawable()).getBitmap();
-//            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-//            byte[] byteArray = stream.toByteArray();
-//
-//            try {
-//                RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
-//                        .addFormDataPart("file", "img.jpg", RequestBody.create(MediaType.parse("image/*jpg"), byteArray))
-//                        .addFormDataPart("returnFaceId", "true")
-//                        .addFormDataPart("returnFaceAttributes", "*")
-//                        .addFormDataPart("returnFaceLandmarks", "true")
-//                        .addFormDataPart("returnRecognitionModel", "true")
-//                        .build();
-//
-//                Request request = new Request.Builder()
-//                        .url(BASE_URL)
-//                        .post(requestBody)
-//                        .addHeader("Accept", "application/json; charset=utf-8")
-//                        .build();
-//
-//                try (Response response = client.newCall(request).execute()) {
-//                    return response.body().string();
-//                }
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                return "Error";
-//            }
-//        }
-//    }
+
+                    setUiAfterUpdate(s, parent);
+                } catch (Exception e) {
+                    Log.i("Failed to update UI", e.getLocalizedMessage());
+                }
+        }
+
+        @Override
+        protected String doInBackground(Bitmap... bitmaps) {
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmaps[0].compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            byte[] byteArray = stream.toByteArray();
+
+            try {
+                RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                        .addFormDataPart("file", "img.jpg", RequestBody.create(MediaType.parse("image/*jpg"), byteArray))
+                        .addFormDataPart("returnFaceId", "true")
+                        .addFormDataPart("returnFaceAttributes", "*")
+                        .addFormDataPart("returnFaceLandmarks", "true")
+                        .addFormDataPart("returnRecognitionModel", "true")
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(BASE_URL)
+                        .post(requestBody)
+                        .addHeader("Accept", "application/json; charset=utf-8")
+                        .build();
+
+                try (Response response = client.newCall(request).execute()) {
+                    return response.body().string();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "Error";
+            }
+        }
+    }
+
     private void setUiAfterUpdate(String s, JSONArray parent) throws JSONException {
         ArrayList<Face> faces = new ArrayList<>();
         LinkedList<JSONObject> rectList = new LinkedList<>();
