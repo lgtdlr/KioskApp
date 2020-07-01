@@ -52,6 +52,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.internal.Util;
 
 public class DetectCameraActivity extends CameraActivity implements CvCameraViewListener2 {
 
@@ -68,7 +69,8 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
     File cascFile;
     CascadeClassifier faceDetector;
     private static Bitmap mBitmap;
-    private Boolean buttonPressed = true;
+    private Boolean buttonPressed = false;
+    ImageView imageView;
 
     private Mat mRgba, mGray;
 
@@ -85,8 +87,14 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
         if(!OpenCVLoader.initDebug()) {
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, baseCallback);
         } else {
-            baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            try {
+                baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
+        imageView = findViewById(R.id.imageView2);
 
         javaCameraView.setCvCameraViewListener(this);
     }
@@ -110,10 +118,20 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
                         new Point(rect.x + rect.width, rect.y + rect.height),
                         new Scalar(255, 0, 0));
             }
+
+            mBitmap = Bitmap.createBitmap(mRgba.cols(), mRgba.rows(), Bitmap.Config.ARGB_8888);
+            Utils.matToBitmap(mRgba, mBitmap);
+
+            updateUI();
+            buttonPressed = false;
         }
 
 //        Utils.matToBitmap(mRgba, mBitmap);
         return mRgba;
+    }
+
+    public void updateUI() {
+        imageView.setImageBitmap(mBitmap);
     }
 
     private BaseLoaderCallback baseCallback = new BaseLoaderCallback(this) {
@@ -154,7 +172,11 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
                 break;
 
                 default: {
-                    super.onManagerConnected(status);
+                    try {
+                        super.onManagerConnected(status);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
             }

@@ -61,21 +61,6 @@
         app:layout_constraintTop_toTopOf="@+id/guideline3"
         app:srcCompat="@drawable/ic_menu_camera" />
 
-    <ListView
-        android:id="@+id/results_list"
-        android:layout_width="300dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="16dp"
-        android:background="#00D3D3D3"
-        android:verticalSpacing="5dp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/guideline3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.481"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline"
-        app:layout_constraintVertical_bias="0.0" />
-
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
         android:layout_width="wrap_content"
@@ -103,5 +88,14 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="643dp" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        app:srcCompat="@drawable/cognitive"
+        tools:layout_editor_absoluteX="117dp"
+        tools:layout_editor_absoluteY="385dp"
+        tools:src="@tools:sample/avatars" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
