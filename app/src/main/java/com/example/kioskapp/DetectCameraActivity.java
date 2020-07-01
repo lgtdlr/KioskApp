@@ -91,11 +91,7 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
         if(!OpenCVLoader.initDebug()) {
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, baseCallback);
         } else {
-            try {
-                baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
 
 
@@ -174,11 +170,7 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
                 break;
 
                 default: {
-                    try {
-                        super.onManagerConnected(status);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    super.onManagerConnected(status);
                 }
                 break;
             }
