@@ -91,7 +91,11 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
         if(!OpenCVLoader.initDebug()) {
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, baseCallback);
         } else {
-            baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            try {
+                baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
 
@@ -123,7 +127,6 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
             Utils.matToBitmap(mRgba, mBitmap);
 
             //updateUI();
-
 
 //        Utils.matToBitmap(mRgba, mBitmap);
         return mRgba;
@@ -171,7 +174,11 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
                 break;
 
                 default: {
-                    super.onManagerConnected(status);
+                    try {
+                        super.onManagerConnected(status);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
             }
@@ -218,10 +225,10 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
     }
 
     public void onRectToggle(View view) {
-        if (buttonPressed == false){
+        if (buttonPressed == false) {
             buttonPressed = true;
         } else {
-            buttonPressed =false;
+            buttonPressed = false;
         }
     }
 
