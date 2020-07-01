@@ -6,5 +6,6 @@
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="normalPadding">20dp</dimen>
     <dimen name="headerTextSize">25sp</dimen>
+    <dimen name="view_margin">5dp</dimen>
 
 </resources>
