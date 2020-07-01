@@ -36,12 +36,17 @@ public class FaceListAdapter extends ArrayAdapter<Face> {
         String gender = getItem(position).getGender();
         String emotion = getItem(position).getEmotion();
         double emotionScore = getItem(position).getEmotionScore();
+        String emotion2 = getItem(position).getEmotion2();
+        double emotion2Score = getItem(position).getEmotion2Score();
+        String emotion3 = getItem(position).getEmotion3();
+        double emotion3Score = getItem(position).getEmotion3Score();
+
         String face_description = String.format("%s\nGender: %s",
                 age,
                 gender
         );
 
-        Face face = new Face(bitmap, age, gender, emotion, emotionScore);
+        Face face = new Face(bitmap, age, gender, emotion, emotionScore, emotion2, emotion2Score, emotion3, emotion3Score);
 
         LayoutInflater inflater = LayoutInflater.from(context);
         convertView = inflater.inflate(resource, parent, false);
@@ -50,10 +55,18 @@ public class FaceListAdapter extends ArrayAdapter<Face> {
         TextView tvAge = (TextView) convertView.findViewById(R.id.age_id);
         TextView tvEmotion = (TextView) convertView.findViewById(R.id.emotion_id);
         ProgressBar emotionBar = (ProgressBar) convertView.findViewById(R.id.emotion_bar_id);
+        TextView tv2Emotion = (TextView) convertView.findViewById(R.id.emotion_id_2);
+        ProgressBar emotion2Bar = (ProgressBar) convertView.findViewById(R.id.emotion_bar_id_2);
+        TextView tv3Emotion = (TextView) convertView.findViewById(R.id.emotion_id_3);
+        ProgressBar emotion3Bar = (ProgressBar) convertView.findViewById(R.id.emotion_bar_id_3);
 
         tvAge.setText(face_description);
         tvEmotion.setText("Emotion: " + emotion);
         emotionBar.setProgress((int) (emotionScore*100));
+        tv2Emotion.setText("Emotion: " + emotion2);
+        emotion2Bar.setProgress((int) (emotion2Score*100));
+        tv3Emotion.setText("Emotion: " + emotion3);
+        emotion3Bar.setProgress((int) (emotion3Score*100));
         faceImage.setImageBitmap(bitmap);
 
         return convertView;
