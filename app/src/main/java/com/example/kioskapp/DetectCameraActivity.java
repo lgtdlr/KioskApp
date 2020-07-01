@@ -54,6 +54,9 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.internal.Util;
 
+import static org.opencv.android.CameraBridgeViewBase.CAMERA_ID_BACK;
+import static org.opencv.android.CameraBridgeViewBase.CAMERA_ID_FRONT;
+
 public class DetectCameraActivity extends CameraActivity implements CvCameraViewListener2 {
 
     private static final String BASE_URL = "http://192.168.102.158:5000/face/v1.0/detect?returnFaceAttributes=*";
@@ -71,6 +74,7 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
     private static Bitmap mBitmap;
     private Boolean buttonPressed = false;
     ImageView imageView;
+    int cameraIndex = CAMERA_ID_FRONT;
 
     private Mat mRgba, mGray;
 
@@ -119,7 +123,6 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
             Utils.matToBitmap(mRgba, mBitmap);
 
             //updateUI();
-            buttonPressed = false;
 
 
 //        Utils.matToBitmap(mRgba, mBitmap);
@@ -215,13 +218,23 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
     }
 
     public void onRectToggle(View view) {
-//        new PostCameraRequest().execute(mBitmap);
         if (buttonPressed == false){
             buttonPressed = true;
         } else {
             buttonPressed =false;
         }
+    }
 
+    public void onCameraSwitch(View view) {
+        Log.i("CameraIndex", "is " + cameraIndex);
+        if (cameraIndex == CAMERA_ID_FRONT){
+            cameraIndex = CAMERA_ID_BACK;
+        } else {
+            cameraIndex = CAMERA_ID_FRONT;
+        }
+        mOpenCvCameraView.disableView();
+        mOpenCvCameraView.setCameraIndex(cameraIndex);
+        mOpenCvCameraView.enableView();
     }
 
     private class PostCameraRequest extends AsyncTask<Bitmap, String, String> {
