@@ -43,8 +43,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -91,7 +95,11 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
         if(!OpenCVLoader.initDebug()) {
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, baseCallback);
         } else {
-            baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            try {
+                baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
 
@@ -170,7 +178,11 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
                 break;
 
                 default: {
-                    super.onManagerConnected(status);
+                    try {
+                        super.onManagerConnected(status);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
             }
@@ -310,7 +322,12 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
             int age = faceAttributes.getInt("age");
             String gender = faceAttributes.getString("gender");
             Log.i("Adding faces", "Wait...");
-            faces.add(new Face(faceBitmap, "Age: " + age, gender, getEmotion(emotions), getEmotionScore(emotions)));
+            HashMap<String, Double> emotionsMap = getEmotions(emotions);
+
+            Set<Map.Entry<String, Double>> set = emotionsMap.entrySet();
+
+
+            //faces.add(new Face(faceBitmap, "Age: " + age, gender, getEmotion(emotions), getEmotionScore(emotions)));
             Log.i("Adding faces", "Success");
         }
         ListView listView = (ListView)findViewById(R.id.results_list);
@@ -321,7 +338,22 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
 
     }
 
-    private String getEmotion(JSONObject attributes) throws JSONException {
+    private HashMap<String, Double> getEmotions(JSONObject attributes) throws JSONException {
+        HashMap<String, Double> emotionsMap = new HashMap<>();
+
+        emotionsMap.put("anger", attributes.getDouble("anger"));
+        emotionsMap.put("contempt", attributes.getDouble("contempt"));
+        emotionsMap.put("disgust", attributes.getDouble("anger"));
+        emotionsMap.put("fear", attributes.getDouble("fear"));
+        emotionsMap.put("happiness", attributes.getDouble("happiness"));
+        emotionsMap.put("neutral", attributes.getDouble("neutral"));
+        emotionsMap.put("sadness", attributes.getDouble("sadness"));
+        emotionsMap.put("surprise", attributes.getDouble("surprise"));
+
+        return emotionsMap;
+    }
+
+    /*private String getEmotion(JSONObject attributes) throws JSONException {
         Log.i("Parsing emotions", "...");
         String emotionType = "";
         double emotionValue = 0.0;
@@ -410,5 +442,5 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
 
         Log.i("Emotion score", "is " + emotionValue);
         return emotionValue;
-    }
+    }*/
 }
