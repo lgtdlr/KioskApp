@@ -322,9 +322,10 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
             int age = faceAttributes.getInt("age");
             String gender = faceAttributes.getString("gender");
             Log.i("Adding faces", "Wait...");
-            HashMap<String, Double> emotionsMap = getEmotions(emotions);
-
-            Set<Map.Entry<String, Double>> set = emotionsMap.entrySet();
+            ArrayList<Emotion> emotionsList = getEmotions(emotions);
+            Log.i("EMOTIONS", emotionsList.get(0).getType() + " " + emotionsList.get(0).getValue());
+            Log.i("EMOTIONS", emotionsList.get(1).getType() + " " + emotionsList.get(1).getValue());
+            Log.i("EMOTIONS", emotionsList.get(2).getType() + " " + emotionsList.get(2).getValue());
 
 
             //faces.add(new Face(faceBitmap, "Age: " + age, gender, getEmotion(emotions), getEmotionScore(emotions)));
@@ -338,19 +339,21 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
 
     }
 
-    private HashMap<String, Double> getEmotions(JSONObject attributes) throws JSONException {
-        HashMap<String, Double> emotionsMap = new HashMap<>();
+    private ArrayList<Emotion> getEmotions(JSONObject attributes) throws JSONException {
+        ArrayList<Emotion> emotionsList = new ArrayList<>();
 
-        emotionsMap.put("anger", attributes.getDouble("anger"));
-        emotionsMap.put("contempt", attributes.getDouble("contempt"));
-        emotionsMap.put("disgust", attributes.getDouble("anger"));
-        emotionsMap.put("fear", attributes.getDouble("fear"));
-        emotionsMap.put("happiness", attributes.getDouble("happiness"));
-        emotionsMap.put("neutral", attributes.getDouble("neutral"));
-        emotionsMap.put("sadness", attributes.getDouble("sadness"));
-        emotionsMap.put("surprise", attributes.getDouble("surprise"));
+        emotionsList.add(new Emotion("anger", attributes.getDouble("anger")));
+        emotionsList.add(new Emotion("contempt", attributes.getDouble("contempt")));
+        emotionsList.add(new Emotion("disgust", attributes.getDouble("anger")));
+        emotionsList.add(new Emotion("fear", attributes.getDouble("fear")));
+        emotionsList.add(new Emotion("happiness", attributes.getDouble("happiness")));
+        emotionsList.add(new Emotion("neutral", attributes.getDouble("neutral")));
+        emotionsList.add(new Emotion("sadness", attributes.getDouble("sadness")));
+        emotionsList.add(new Emotion("surprise", attributes.getDouble("surprise")));
 
-        return emotionsMap;
+        Collections.sort(emotionsList);
+
+        return emotionsList;
     }
 
     /*private String getEmotion(JSONObject attributes) throws JSONException {

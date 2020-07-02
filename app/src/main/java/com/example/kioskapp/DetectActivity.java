@@ -317,7 +317,7 @@ public class DetectActivity extends AppCompatActivity {
             int age = faceAttributes.getInt("age");
             String gender = faceAttributes.getString("gender");
             Log.i("Adding faces", "Wait...");
-            faces.add(new Face(faceBitmap, "Age: " + age, gender, getEmotion(emotions), getEmotionScore(emotions)));
+            //faces.add(new Face(faceBitmap, "Age: " + age, gender, getEmotion(emotions), getEmotionScore(emotions)));
             Log.i("Adding faces", "Success");
         }
         ListView listView = (ListView)findViewById(R.id.results_list);

@@ -24,9 +24,9 @@ public class Emotion implements Comparable {
     public int compareTo(Object o) {
         o = (Emotion) o;
         if(value > ((Emotion) o).value)
-            return 1;
-        if(value < ((Emotion) o).value)
             return -1;
+        if(value < ((Emotion) o).value)
+            return 1;
         else
             return 0;
     }
