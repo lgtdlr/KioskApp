@@ -328,7 +328,10 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
             Log.i("EMOTIONS", emotionsList.get(2).getType() + " " + emotionsList.get(2).getValue());
 
 
-            //faces.add(new Face(faceBitmap, "Age: " + age, gender, getEmotion(emotions), getEmotionScore(emotions)));
+            faces.add(new Face(faceBitmap, "Age: " + age, gender, emotionsList.get(0).getType(),
+                   emotionsList.get(0).getValue(), emotionsList.get(1).getType(), emotionsList.get(1).getValue(),
+                    emotionsList.get(2).getType(), emotionsList.get(2).getValue()));
+
             Log.i("Adding faces", "Success");
         }
         ListView listView = (ListView)findViewById(R.id.results_list);

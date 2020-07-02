@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -317,7 +318,13 @@ public class DetectActivity extends AppCompatActivity {
             int age = faceAttributes.getInt("age");
             String gender = faceAttributes.getString("gender");
             Log.i("Adding faces", "Wait...");
-            //faces.add(new Face(faceBitmap, "Age: " + age, gender, getEmotion(emotions), getEmotionScore(emotions)));
+
+            ArrayList<Emotion> emotionsList = getEmotions(emotions);
+
+            faces.add(new Face(faceBitmap, "Age: " + age, gender, emotionsList.get(0).getType(),
+                    emotionsList.get(0).getValue(), emotionsList.get(1).getType(), emotionsList.get(1).getValue(),
+                    emotionsList.get(2).getType(), emotionsList.get(2).getValue()));
+
             Log.i("Adding faces", "Success");
         }
         ListView listView = (ListView)findViewById(R.id.results_list);
@@ -326,6 +333,23 @@ public class DetectActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
 
 
+    }
+
+    private ArrayList<Emotion> getEmotions(JSONObject attributes) throws JSONException {
+        ArrayList<Emotion> emotionsList = new ArrayList<>();
+
+        emotionsList.add(new Emotion("anger", attributes.getDouble("anger")));
+        emotionsList.add(new Emotion("contempt", attributes.getDouble("contempt")));
+        emotionsList.add(new Emotion("disgust", attributes.getDouble("anger")));
+        emotionsList.add(new Emotion("fear", attributes.getDouble("fear")));
+        emotionsList.add(new Emotion("happiness", attributes.getDouble("happiness")));
+        emotionsList.add(new Emotion("neutral", attributes.getDouble("neutral")));
+        emotionsList.add(new Emotion("sadness", attributes.getDouble("sadness")));
+        emotionsList.add(new Emotion("surprise", attributes.getDouble("surprise")));
+
+        Collections.sort(emotionsList);
+
+        return emotionsList;
     }
 
     private String getEmotion(JSONObject attributes) throws JSONException {
