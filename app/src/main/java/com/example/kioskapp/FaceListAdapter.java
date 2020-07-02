@@ -60,13 +60,27 @@ public class FaceListAdapter extends ArrayAdapter<Face> {
         TextView tv3Emotion = (TextView) convertView.findViewById(R.id.emotion_id_3);
         ProgressBar emotion3Bar = (ProgressBar) convertView.findViewById(R.id.emotion_bar_id_3);
 
+        emotion2Bar.setVisibility(View.VISIBLE);
+        emotion3Bar.setVisibility(View.VISIBLE);
+        tv2Emotion.setVisibility(View.VISIBLE);
+        tv3Emotion.setVisibility(View.VISIBLE);
+
+
         tvAge.setText(face_description);
         tvEmotion.setText("Emotion: " + emotion);
-        emotionBar.setProgress((int) (emotionScore*100));
+        emotionBar.setProgress((int) (emotionScore*1000));
         tv2Emotion.setText("Emotion: " + emotion2);
-        emotion2Bar.setProgress((int) (emotion2Score*100));
+        emotion2Bar.setProgress((int) (emotion2Score*1000));
+        if(emotion2Bar.getProgress() == 0) {
+            emotion2Bar.setVisibility(View.GONE);
+            tv2Emotion.setVisibility(View.GONE);
+        }
         tv3Emotion.setText("Emotion: " + emotion3);
-        emotion3Bar.setProgress((int) (emotion3Score*100));
+        emotion3Bar.setProgress((int) (emotion3Score*1000));
+        if(emotion3Bar.getProgress() == 0) {
+            emotion3Bar.setVisibility(View.GONE);
+            tv3Emotion.setVisibility(View.GONE);
+        }
         faceImage.setImageBitmap(bitmap);
 
         return convertView;
