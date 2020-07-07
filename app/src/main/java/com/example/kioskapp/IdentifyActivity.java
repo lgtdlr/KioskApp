@@ -35,7 +35,7 @@ public class IdentifyActivity extends AppCompatActivity {
 
     ProgressDialog p;
 
-    private static final String BASE_URL = "http://192.168.102.158:5000/face/v1.0/persongroups/1000/persons";
+    private static final String BASE_URL = "http://192.168.102.158:5000/face/v1.0/persongroups/5000/persons";
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     private static OkHttpClient client = new OkHttpClient();
