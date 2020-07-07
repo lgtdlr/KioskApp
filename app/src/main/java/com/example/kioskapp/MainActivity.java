@@ -68,6 +68,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivity(cameraIntent);
     }
 
+    public void onObjectClick(View view) {
+        Intent identifyIntent = new Intent(this, DetectorActivity.class);
+        startActivity(identifyIntent);
+    }
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         return false;

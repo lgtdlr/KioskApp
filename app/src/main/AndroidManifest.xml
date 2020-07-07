@@ -43,6 +43,9 @@
         <activity
             android:name=".DetectCameraActivity"
             android:screenOrientation="landscape" />
+        <activity android:name=".DetectCameraActivity"
+            android:screenOrientation="landscape"></activity>
+        <activity android:name=".DetectorActivity"></activity>
         <activity
             android:name=".VerifyActivity"
             android:screenOrientation="portrait" />

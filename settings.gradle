@@ -1,4 +1,4 @@
-include ':app'
+include ':app' ,':tensorflow-lite'
 rootProject.name = "KioskApp"
 def opencvsdk='../OpenCV-android-sdk'
 include ':opencv'
