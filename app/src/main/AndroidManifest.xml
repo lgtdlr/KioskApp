@@ -23,6 +23,13 @@
         android:name="android.hardware.camera2"
         android:required="false" />
 
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:resizeable="true"
+        android:smallScreens="true" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -32,8 +39,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".DetectCameraActivity"
-            android:screenOrientation="landscape"></activity>
+        <activity android:name=".TrainActivity"></activity>
+        <activity
+            android:name=".DetectCameraActivity"
+            android:screenOrientation="landscape" />
         <activity
             android:name=".VerifyActivity"
             android:screenOrientation="portrait" />
@@ -51,11 +60,5 @@
             </intent-filter>
         </activity>
     </application>
-
-    <supports-screens android:resizeable="true"
-        android:smallScreens="true"
-        android:normalScreens="true"
-        android:largeScreens="true"
-        android:anyDensity="true" />
 
 </manifest>
