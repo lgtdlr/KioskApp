@@ -8,8 +8,8 @@
 
     <string name="detect_card_title">Detect</string>
     <string name="detect_card_desc">Detects human faces in an image and returns face rectangles and optionally face IDs, landmarks, and attributes.</string>
-    <string name="identify_card_title">Identify</string>
-    <string name="identify_card_desc">1-to-many identification to find the closest matches of the specific query person face from a large person group or a person group.</string>
+    <string name="identify_card_title">Train</string>
+    <string name="identify_card_desc">Train faces for future recognition</string>
     <string name="card_icon_desc">Card icon</string>
     <string name="verify_card_desc">Verify if two faces belong to the same person, or if a face belongs to a person.</string>
     <string name="verify_card_title">Verify</string>
