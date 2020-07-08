@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal"
+    android:background="@drawable/bottom_sheet_bg"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:padding="8dp"
@@ -23,7 +24,8 @@
             android:id="@+id/bottom_sheet_arrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:src="@drawable/icn_chevron_up"/>
 
     </LinearLayout>
 
