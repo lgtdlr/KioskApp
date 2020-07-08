@@ -23,9 +23,14 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.jar.Attributes;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -40,6 +45,7 @@ public class RealIdentifyActivity extends AppCompatActivity implements View.OnCl
 
     private static final String ID_URL = "http://192.168.102.158:5000/face/v1.0/detect?recognitionModel=Recognition_02";
     private static final String IDENTIFY_URL = "http://192.168.102.158:5000/face/v1.0/identify";
+    private static final String NAME_URL = "http://192.168.102.158:5000/face/v1.0/persongroups/5000/persons/";
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
@@ -218,7 +224,7 @@ public class RealIdentifyActivity extends AppCompatActivity implements View.OnCl
                     Toast.makeText(RealIdentifyActivity.this, "Unknown person detected", Toast.LENGTH_SHORT).show();
                 } else {
                     String personId = candidates.getJSONObject(0).getString("personId");
-
+                    new NameRequest().execute(personId);
                 }
 
 
@@ -250,6 +256,53 @@ public class RealIdentifyActivity extends AppCompatActivity implements View.OnCl
                 return response.body().string();
             } catch (IOException e) {
                 e.printStackTrace();
+                return "Error";
+            }
+        }
+    }
+
+    private class NameRequest extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            p = new ProgressDialog(RealIdentifyActivity.this);
+            p.setMessage("Getting identity...");
+            p.setIndeterminate(false);
+            p.setCancelable(false);
+            p.show();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            p.hide();
+
+            try {
+                JSONObject parent = new JSONObject(s);
+                String name = parent.getString("name");
+                Toast.makeText(RealIdentifyActivity.this, "Hello " + name, Toast.LENGTH_LONG).show();
+            } catch (Exception e) { }
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            try {
+                String url = NAME_URL + strings[0];
+                HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+                connection.setRequestProperty("Accept", "application/json; charset=utf-8");
+                connection.setRequestMethod("GET");
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+                String line = "";
+                String str = "";
+
+                while((line = reader.readLine()) != null) {
+                    str += line;
+                }
+
+                return str;
+            } catch (Exception e) {
                 return "Error";
             }
         }
