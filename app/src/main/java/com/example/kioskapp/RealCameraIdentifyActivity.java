@@ -268,11 +268,9 @@ public class RealCameraIdentifyActivity extends CameraActivity implements CvCame
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
-            if(imageSelected != null) {
                 p.hide();
                 Log.i("ASHWIN", s.toString());
 
-                imageSelected.isOpaque();
                 try {
                     JSONArray parent = new JSONArray(s);
                     JSONObject person = parent.getJSONObject(0);
@@ -283,8 +281,6 @@ public class RealCameraIdentifyActivity extends CameraActivity implements CvCame
 
 
                 }
-
-            }
         }
 
         @Override
