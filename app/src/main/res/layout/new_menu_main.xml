@@ -364,9 +364,9 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@android:color/darker_gray"
-                        android:orientation="vertical"
-                        android:onClick="onPlaceholderClick"/>
+                        android:background="?attr/colorControlHighlight"
+                        android:onClick="onPlaceholderClick"
+                        android:orientation="vertical" />
 
                 </androidx.cardview.widget.CardView>
 
