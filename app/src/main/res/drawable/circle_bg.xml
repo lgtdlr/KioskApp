@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/color_circle" />
+            <padding android:top="@dimen/margin_18"
+                android:bottom="@dimen/margin_18"
+                android:left="@dimen/margin_18"
+                android:right="@dimen/margin_18"/>
+        </shape>
+    </item>
+
+</layer-list>

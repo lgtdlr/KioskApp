@@ -34,10 +34,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         animFloat = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.floating_animation);
 
-        ImageView imageView = (ImageView) findViewById(R.id.imageview_id);
-        Drawable myDrawable = getResources().getDrawable(R.drawable.cognitive);
-        imageView.setImageDrawable(myDrawable);
-        imageView.startAnimation(animFloat);
+        //ImageView imageView = (ImageView) findViewById(R.id.imageview_id);
+        //Drawable myDrawable = getResources().getDrawable(R.drawable.cognitive);
+        //imageView.setImageDrawable(myDrawable);
+        //imageView.startAnimation(animFloat);
 
         requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
     }
@@ -51,6 +51,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onVerifyClick(View view) {
         //start new activity
         Intent verifyIntent = new Intent(this, VerifyActivity.class);
+        startActivity(verifyIntent);
+    }
+
+    public void onTrainClick(View view) {
+        //start new activity
+        Intent verifyIntent = new Intent(this, TrainActivity.class);
         startActivity(verifyIntent);
     }
 
@@ -81,5 +87,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
 
+    }
+
+    public void onPlaceholderClick(View view) {
+        Toast.makeText(MainActivity.this, "New services coming soon", Toast.LENGTH_LONG).show();
     }
 }
