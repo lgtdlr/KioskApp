@@ -47,7 +47,7 @@
                     android:layout_width="239dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="Base object detection activity using default TensorFlow Lite models"
+                    android:text="Simple indentification"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -59,7 +59,7 @@
                     android:id="@+id/textView7"
                     style="@style/viewParent.headerText"
                     android:layout_marginStart="8dp"
-                    android:text="Train"
+                    android:text="Identify"
                     android:textColor="@color/primaryTextColor"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
