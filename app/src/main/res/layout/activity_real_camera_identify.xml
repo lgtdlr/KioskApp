@@ -6,10 +6,10 @@
     style="@style/parent.contentLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DetectCameraActivity">
+    tools:context=".RealCameraIdentifyActivity">
 
     <org.opencv.android.JavaCameraView
-        android:id="@+id/java_camera_view"
+        android:id="@+id/identify_java_camera_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="visible"
@@ -20,7 +20,7 @@
         opencv:show_fps="true" />
 
     <org.opencv.android.CameraGLSurfaceView
-        android:id="@+id/native_surface_view"
+        android:id="@+id/identify_native_surface_view"
         android:layout_width="600dp"
         android:layout_height="600dp"
         android:visibility="gone"
@@ -29,16 +29,6 @@
         opencv:layout_constraintStart_toStartOf="parent"
         opencv:layout_constraintTop_toTopOf="parent"
         opencv:show_fps="true" />
-
-    <ListView
-        android:id="@+id/results_list"
-        android:layout_width="300dp"
-        android:layout_height="150dp"
-        android:background="#00D3D3D3"
-        android:verticalSpacing="5dp"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline9" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/uploadButton"
@@ -53,7 +43,7 @@
         app:srcCompat="@android:drawable/stat_sys_upload" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/camera_button_id"
+        android:id="@+id/identify_camera_button_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
@@ -65,7 +55,7 @@
         app:srcCompat="@android:drawable/ic_menu_camera" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/camera_button_id2"
+        android:id="@+id/idenfity_camera_button_id2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
