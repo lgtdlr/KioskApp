@@ -54,14 +54,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivity(verifyIntent);
     }
 
-    public void onTrainClick(View view) {
+    /*public void onTrainClick(View view) {
         //start new activity
         Intent verifyIntent = new Intent(this, TrainActivity.class);
         startActivity(verifyIntent);
-    }
+    }*/
 
     public void onIdentifyClick(View view) {
-        Intent identifyIntent = new Intent(this, IdentifyActivity.class);
+        Intent identifyIntent = new Intent(this, RealIdentifyActivity.class);
         startActivity(identifyIntent);
     }
 
@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void onTrainClick(View view) {
-        Intent trainIntent = new Intent(this, RealIdentifyActivity.class);
+        Intent trainIntent = new Intent(this, IdentifyActivity.class);
         startActivity(trainIntent);
     }
 
