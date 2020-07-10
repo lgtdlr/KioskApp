@@ -40,6 +40,8 @@ public class IdentifyActivity extends AppCompatActivity {
 
     private static OkHttpClient client = new OkHttpClient();
 
+    boolean trainButtonClicked = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,17 +49,26 @@ public class IdentifyActivity extends AppCompatActivity {
         requestPermissions(new String[]{Manifest.permission.CAMERA}, 1);
 
         Button button = findViewById(R.id.button2);
+        Button liveTrainButton = findViewById(R.id.live_train_button_id);
+
         editText = findViewById(R.id.editText);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Intent intent = new Intent(IdentifyActivity.this, TrainActivity.class);
-                intent.putExtra("mytext", editText.getText().toString());
-                startActivity(intent);*/
                 new NewPersonRequest().execute(editText.getText().toString());
             }
         });
+
+        liveTrainButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                trainButtonClicked = true;
+                new NewPersonRequest().execute(editText.getText().toString());
+            }
+        });
+
+
     }
 
     private class NewPersonRequest extends AsyncTask<String, String, String> {
@@ -78,7 +89,13 @@ public class IdentifyActivity extends AppCompatActivity {
             try {
                 JSONObject parent = new JSONObject(s);
                 String personId = parent.getString("personId");
-                Intent intent = new Intent(IdentifyActivity.this, TrainActivity.class);
+                Intent intent;
+                if(trainButtonClicked) {
+                    intent = new Intent(IdentifyActivity.this, LiveTrainActivity.class);
+                } else
+                    intent = new Intent(IdentifyActivity.this, TrainActivity.class);
+
+                trainButtonClicked = false;
                 intent.putExtra("myName", editText.getText().toString());
                 intent.putExtra("personId", personId);
                 startActivity(intent);
