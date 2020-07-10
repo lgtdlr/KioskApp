@@ -24,12 +24,16 @@ import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.objdetect.CascadeClassifier;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
@@ -89,7 +93,7 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
                     + extras.getString("personId")
                     + "/persistedFaces";
 
-            Toast.makeText(this, "Add faces for " + extras.getString("myName"), Toast.LENGTH_LONG);
+            Toast.makeText(this, "Add faces for " + extras.getString("myName"), Toast.LENGTH_LONG).show();
         }
 
         if(!OpenCVLoader.initDebug()) {
@@ -195,7 +199,7 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
         }
 
         if(view.getId() == R.id.train_id) {
-
+            new TrainRequest().execute("");
         }
     }
 
@@ -240,7 +244,7 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
             super.onPostExecute(s);
             p.hide();
 
-            Toast.makeText(LiveTrainActivity.this, "Face added!", Toast.LENGTH_SHORT);
+            Toast.makeText(LiveTrainActivity.this, "Face added!", Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -269,6 +273,50 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
                     return response.body().string();
                 }
             } catch (Exception e) {
+                return "Error";
+            }
+        }
+    }
+
+    private class TrainRequest extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            p = new ProgressDialog(LiveTrainActivity.this);
+            p.setMessage("Please wait... uploading");
+            p.setIndeterminate(false);
+            p.setCancelable(false);
+            p.show();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            p.hide();
+
+            Toast.makeText(LiveTrainActivity.this, "Training is being performed on server..", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            try {
+                HttpURLConnection connection = (HttpURLConnection) new URL(TRAIN_URL).openConnection();
+                connection.setRequestProperty("accept", "application/json; charset=utf-8");
+                connection.setRequestMethod("POST");
+                connection.setDoOutput(true);
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+                String line = "";
+                String str = "";
+
+                while((line = reader.readLine()) != null) {
+                    str += line;
+                }
+
+                return str;
+            } catch (IOException e) {
+                e.printStackTrace();
                 return "Error";
             }
         }
