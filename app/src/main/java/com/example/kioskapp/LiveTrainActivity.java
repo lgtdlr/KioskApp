@@ -5,12 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraActivity;
@@ -18,9 +20,11 @@ import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.objdetect.CascadeClassifier;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -30,7 +34,11 @@ import java.util.Collections;
 import java.util.List;
 
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static org.opencv.android.CameraBridgeViewBase.CAMERA_ID_BACK;
 import static org.opencv.android.CameraBridgeViewBase.CAMERA_ID_FRONT;
@@ -39,9 +47,9 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
 
     private static OkHttpClient client = new OkHttpClient();
 
-    private static final String ID_URL = "http://192.168.102.158:5000/face/v1.0/detect?recognitionModel=Recognition_02";
-    private static final String IDENTIFY_URL = "http://192.168.102.158:5000/face/v1.0/identify";
-    private static final String NAME_URL = "http://192.168.102.158:5000/face/v1.0/persongroups/5000/persons/";
+    private String URL = "";
+    private String TRAIN_URL = "http://192.168.102.158:5000/face/v1.0/persongroups/5000/train";
+
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
@@ -73,6 +81,16 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
         javaCameraView = (JavaCameraView) findViewById(R.id.java_camera_view2);
+
+        Bundle extras = getIntent().getExtras();
+
+        if(extras != null) {
+            URL = "http://192.168.102.158:5000/face/v1.0/persongroups/5000/persons/"
+                    + extras.getString("personId")
+                    + "/persistedFaces";
+
+            Toast.makeText(this, "Add faces for " + extras.getString("myName"), Toast.LENGTH_LONG);
+        }
 
         if(!OpenCVLoader.initDebug()) {
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, baseCallback);
@@ -154,20 +172,33 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
 
+        mBitmap = Bitmap.createBitmap(mRgba.cols(), mRgba.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(mRgba, mBitmap);
+
         return mRgba;
     }
 
     public void onCameraSwitch(View view) {
-        Log.i("CameraIndex", "is " + cameraIndex);
-        if (cameraIndex == CAMERA_ID_FRONT){
-            cameraIndex = CAMERA_ID_BACK;
-        } else {
-            cameraIndex = CAMERA_ID_FRONT;
+        if(view.getId() == R.id.camera_button_id6) {
+            if (cameraIndex == CAMERA_ID_FRONT){
+                cameraIndex = CAMERA_ID_BACK;
+            } else {
+                cameraIndex = CAMERA_ID_FRONT;
+            }
+            mOpenCvCameraView.disableView();
+            mOpenCvCameraView.setCameraIndex(cameraIndex);
+            mOpenCvCameraView.enableView();
         }
-        mOpenCvCameraView.disableView();
-        mOpenCvCameraView.setCameraIndex(cameraIndex);
-        mOpenCvCameraView.enableView();
+
+        if(view.getId() == R.id.camera_button_id5) {
+            new PostImageRequest().execute(mBitmap);
+        }
+
+        if(view.getId() == R.id.train_id) {
+
+        }
     }
+
 
     @Override
     public void onResume () {
@@ -191,5 +222,55 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
         super.onDestroy();
         if (mOpenCvCameraView != null)
             mOpenCvCameraView.disableView();
+    }
+
+    private class PostImageRequest extends AsyncTask<Bitmap, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            p = new ProgressDialog(LiveTrainActivity.this);
+            p.setMessage("Please wait... uploading");
+            p.setIndeterminate(false);
+            p.setCancelable(false);
+            p.show();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            p.hide();
+
+            Toast.makeText(LiveTrainActivity.this, "Face added!", Toast.LENGTH_SHORT);
+        }
+
+        @Override
+        protected String doInBackground(Bitmap... bitmaps) {
+            Bitmap bitmap = bitmaps[0];
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            byte[] byteArray = stream.toByteArray();
+
+            try {
+                RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                        .addFormDataPart("file", "img.jpg", RequestBody.create(MediaType.parse("image/*jpg"), byteArray))
+                        .addFormDataPart("returnFaceId", "true")
+                        .addFormDataPart("returnFaceAttributes", "*")
+                        .addFormDataPart("returnFaceLandmarks", "true")
+                        .addFormDataPart("returnRecognitionModel", "true")
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(URL)
+                        .post(requestBody)
+                        .addHeader("Accept", "application/json; charset=utf-8")
+                        .build();
+
+                try (Response response = client.newCall(request).execute()) {
+                    return response.body().string();
+                }
+            } catch (Exception e) {
+                return "Error";
+            }
+        }
     }
 }

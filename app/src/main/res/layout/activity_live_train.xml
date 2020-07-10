@@ -47,7 +47,7 @@
         android:clickable="true"
         android:elevation="10dp"
         android:focusable="true"
-        android:onClick="onRectToggle"
+        android:onClick="onCameraSwitch"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@android:drawable/stat_sys_upload" />
@@ -59,7 +59,7 @@
         android:clickable="true"
         android:elevation="10dp"
         android:focusable="true"
-        android:onClick="onRefreshClick"
+        android:onClick="onCameraSwitch"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@android:drawable/ic_menu_camera" />
