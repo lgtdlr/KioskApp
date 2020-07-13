@@ -84,7 +84,6 @@
         android:layout_width="254dp"
         android:layout_height="213dp"
         android:background="#00D3D3D3"
-        android:rotation="-90"
         android:verticalSpacing="5dp"
         android:visibility="visible"
         app:layout_constraintEnd_toStartOf="@+id/linearLayout"

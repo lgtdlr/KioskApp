@@ -318,7 +318,7 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            p.hide();
+            //p.hide();
                 Log.i("TAG", s);
                 try {
                     JSONArray parent = new JSONArray(s);
