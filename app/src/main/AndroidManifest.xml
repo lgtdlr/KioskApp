@@ -39,17 +39,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".LiveTrainActivity"
-            android:screenOrientation="portrait" />
+        <activity android:name=".LiveTrainActivity" />
         <activity android:name=".RealIdentifyActivity"
             android:screenOrientation="portrait"/>
-        <activity
-            android:name=".RealCameraIdentifyActivity"
-            android:screenOrientation="portrait" />
+        <activity android:name=".RealCameraIdentifyActivity" />
         <activity android:name=".TrainActivity" />
-        <activity
-            android:name=".DetectCameraActivity"
-            android:screenOrientation="portrait"/>
+        <activity android:name=".DetectCameraActivity" />
         <activity android:name=".DetectorActivity" />
         <activity
             android:name=".VerifyActivity"

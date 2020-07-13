@@ -107,11 +107,7 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
         if(!OpenCVLoader.initDebug()) {
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, baseCallback);
         } else {
-            try {
-                baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
 
         runOnUiThread(new Runnable() {
@@ -225,11 +221,7 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
                 break;
 
                 default: {
-                    try {
-                        super.onManagerConnected(status);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    super.onManagerConnected(status);
                 }
                 break;
             }
@@ -379,16 +371,32 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
         ArrayList<Face> faces = new ArrayList<>();
         LinkedList<JSONObject> rectList = new LinkedList<>();
 
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            mBitmap = (RotateBitmap(mBitmap, 90));
+        }
         for(int i=0; i < parent.length() ; i++) {
             JSONObject json_data = parent.getJSONObject(i);
             JSONObject faceAttributes = json_data.getJSONObject("faceAttributes");
             JSONObject emotions = faceAttributes.getJSONObject("emotion");
             JSONObject rectangle = json_data.getJSONObject("faceRectangle");
             rectList.add(rectangle);
-            Bitmap faceBitmap = Bitmap.createBitmap(mBitmap, rectangle.getInt("left") - 20,
-                    rectangle.getInt("top") - 20,
-                    rectangle.getInt("width")+20,
-                    rectangle.getInt("height")+20);
+
+            Bitmap faceBitmap;
+            if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                faceBitmap = Bitmap.createBitmap(mBitmap, rectangle.getInt("left"),
+                        rectangle.getInt("top"),
+                        rectangle.getInt("width"),
+                        rectangle.getInt("height"));
+
+
+            } else {
+                faceBitmap = Bitmap.createBitmap(mBitmap, rectangle.getInt("left") - 20,
+                        rectangle.getInt("top") - 20,
+                        rectangle.getInt("width")+40,
+                        rectangle.getInt("height")+40);
+            }
+
             int age = faceAttributes.getInt("age");
             String gender = faceAttributes.getString("gender");
             Log.i("Adding faces", "Wait...");
@@ -397,11 +405,7 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
             Log.i("EMOTIONS", emotionsList.get(1).getType() + " " + emotionsList.get(1).getValue());
             Log.i("EMOTIONS", emotionsList.get(2).getType() + " " + emotionsList.get(2).getValue());
 
-            int orientation = getResources().getConfiguration().orientation;
-            if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-                // In landscape
-                faceBitmap = (RotateBitmap(faceBitmap, 90));
-            }
+
 
             faces.add(new Face(faceBitmap, "Age: " + age, gender, emotionsList.get(0).getType(),
                    emotionsList.get(0).getValue(), emotionsList.get(1).getType(), emotionsList.get(1).getValue(),

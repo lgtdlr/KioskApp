@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }*/
 
     public void onIdentifyClick(View view) {
-        Intent identifyIntent = new Intent(this, RealCameraIdentifyActivity.class);
+        Intent identifyIntent = new Intent(this, RealIdentifyActivity.class);
         startActivity(identifyIntent);
     }
 
