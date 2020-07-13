@@ -60,19 +60,6 @@ public class TrainActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_train);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Name");
-        final EditText input = new EditText(this);
-
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-            }
-        });
 
         TextView textView = findViewById(R.id.textView6);
         Bundle extras = getIntent().getExtras();

@@ -1,19 +1,23 @@
 package com.example.kioskapp;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -93,6 +97,25 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
         mOpenCvCameraView.setCvCameraViewListener(this);
         javaCameraView = (JavaCameraView) findViewById(R.id.java_camera_view2);
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Name");
+        final EditText input = new EditText(this);
+        
+
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+
+        builder.show();
+
         Bundle extras = getIntent().getExtras();
 
         if(extras != null) {
@@ -106,7 +129,11 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
         if(!OpenCVLoader.initDebug()) {
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, baseCallback);
         } else {
-            baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            try {
+                baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
 
@@ -151,7 +178,11 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
                 break;
 
                 default: {
-                    super.onManagerConnected(status);
+                    try {
+                        super.onManagerConnected(status);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
             }
