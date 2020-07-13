@@ -128,10 +128,12 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
         mGray = inputFrame.gray();
         Mat mRgbaT = mRgba.t();
 
-        //Core.flip(mRgba.t(), mRgbaT, 1);
-//        if (cameraIndex == CAMERA_ID_FRONT){
-//            Core.flip(mRgba, mRgba, 1);
-//        }
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT && cameraIndex == CAMERA_ID_FRONT) {
+            // In portrait
+            Core.flip(mRgba, mRgba, 1);
+
+        }
         //Imgproc.resize(mRgbaT, mRgbaT, mRgba.size());
 
 
@@ -261,9 +263,13 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
     }
 
     public void onRefreshClick(View view) {
-        if (cameraIndex == CAMERA_ID_FRONT){
-            new PostCameraRequest().execute(mBitmap);
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // In portrait
+            new PostCameraRequest().execute(RotateBitmap(mBitmap, 90));
+
         } else {
+            // In landscape
             new PostCameraRequest().execute(mBitmap);
         }
     }
@@ -383,11 +389,11 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
             Log.i("EMOTIONS", emotionsList.get(1).getType() + " " + emotionsList.get(1).getValue());
             Log.i("EMOTIONS", emotionsList.get(2).getType() + " " + emotionsList.get(2).getValue());
 
-//            if (cameraIndex == CAMERA_ID_FRONT){
-//                faceBitmap = (RotateBitmap(faceBitmap, 90));
-//            } else {
-//                faceBitmap = (RotateBitmap(faceBitmap, 90));
-//            }
+            int orientation = getResources().getConfiguration().orientation;
+            if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                // In landscape
+                faceBitmap = (RotateBitmap(faceBitmap, 90));
+            }
 
             faces.add(new Face(faceBitmap, "Age: " + age, gender, emotionsList.get(0).getType(),
                    emotionsList.get(0).getValue(), emotionsList.get(1).getType(), emotionsList.get(1).getValue(),

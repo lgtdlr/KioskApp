@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
@@ -128,10 +129,11 @@ public class RealCameraIdentifyActivity extends CameraActivity implements CvCame
 
         //detect faces
 
+        int orientation = getResources().getConfiguration().orientation;
         MatOfRect faceDetections = new MatOfRect();
-//        if (cameraIndex == CAMERA_ID_FRONT){
-//            Core.flip(mRgba, mRgba, 1);
-//        }
+        if (cameraIndex == CAMERA_ID_FRONT && orientation == Configuration.ORIENTATION_PORTRAIT) {
+            Core.flip(mRgba, mRgba, 1);
+        }
 
         if (buttonPressed) {
             faceDetector.detectMultiScale(mRgba, faceDetections);
@@ -237,9 +239,13 @@ public class RealCameraIdentifyActivity extends CameraActivity implements CvCame
     }
 
     public void onRefreshClick(View view) {
-        if (cameraIndex == CAMERA_ID_FRONT){
-            new PostCameraRequest().execute(mBitmap);
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // In portrait
+            new PostCameraRequest().execute(RotateBitmap(mBitmap, 90));
+
         } else {
+            // In lanscape
             new PostCameraRequest().execute(mBitmap);
         }
 

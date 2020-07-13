@@ -40,16 +40,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
         <activity android:name=".LiveTrainActivity"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="portrait" />
         <activity android:name=".RealIdentifyActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".RealCameraIdentifyActivity"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="portrait" />
         <activity android:name=".TrainActivity" />
         <activity
             android:name=".DetectCameraActivity"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="portrait"/>
         <activity android:name=".DetectorActivity" />
         <activity
             android:name=".VerifyActivity"

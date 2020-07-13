@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.os.AsyncTask;
@@ -174,9 +175,14 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
         Mat mRgbaT = mRgba.t();
-//        if (cameraIndex == CAMERA_ID_FRONT){
-//            Core.flip(mRgba, mRgba, 1);
-//        }
+
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT && cameraIndex == CAMERA_ID_FRONT) {
+            // In portrait
+            Core.flip(mRgba, mRgba, 1);
+
+        }
+
         Imgproc.resize(mRgbaT, mRgbaT, mRgba.size());
 
 
