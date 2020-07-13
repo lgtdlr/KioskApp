@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".DetectActivity"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    style="@style/parent.contentLayout">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <ImageView
         android:id="@+id/imageSelected"

@@ -384,7 +384,8 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/color_circle"
         app:navigationIcon="@drawable/ic_menu_black_24dp"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark" >
+        app:theme="@style/ThemeOverlay.AppCompat.Dark"
+        android:onClick="onMenuClick">
 
         <RelativeLayout
             android:layout_width="wrap_content"

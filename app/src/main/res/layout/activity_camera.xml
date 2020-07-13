@@ -3,18 +3,84 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:opencv="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/parent.contentLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#000000"
+    android:clipChildren="true"
     tools:context=".DetectCameraActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#000000"
+        android:onClick="onBackClick"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/identify_native_surface_view"
+        app:navigationIcon="@drawable/ic_baseline_arrow_back_ios_24"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+        <!--        <RelativeLayout-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content">-->
+
+        <!--        </RelativeLayout>-->
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/java_camera_view">
+
+        <Button
+            android:id="@+id/camera_train_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:fontFamily="sans-serif"
+            android:onClick="onCameraTrainButtonClick"
+            android:text="Train"
+            android:textColor="#80FFFFFF" />
+
+        <Button
+            android:id="@+id/camera_identify_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:fontFamily="sans-serif"
+            android:onClick="onCameraIdentifyButtonClick"
+            android:text="Identify"
+            android:textColor="#80FFFFFF" />
+
+        <Button
+            android:id="@+id/camera_detect_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:fontFamily="sans-serif"
+            android:text="Detect"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <org.opencv.android.JavaCameraView
         android:id="@+id/java_camera_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="500dp"
         android:visibility="visible"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
         opencv:camera_id="front"
-        opencv:layout_constraintBottom_toBottomOf="parent"
         opencv:layout_constraintEnd_toEndOf="parent"
         opencv:layout_constraintStart_toStartOf="parent"
         opencv:show_fps="true" />
@@ -32,50 +98,13 @@
 
     <ListView
         android:id="@+id/results_list"
-        android:layout_width="300dp"
-        android:layout_height="150dp"
+        android:layout_width="250dp"
+        android:layout_height="100dp"
         android:background="#00D3D3D3"
         android:verticalSpacing="5dp"
         android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline9" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/uploadButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:elevation="10dp"
-        android:focusable="true"
-        android:onClick="onRectToggle"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@android:drawable/stat_sys_upload" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/camera_button_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:elevation="10dp"
-        android:focusable="true"
-        android:onClick="onRefreshClick"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_camera" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/camera_button_id2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        android:clickable="true"
-        android:elevation="10dp"
-        android:focusable="true"
-        android:onClick="onCameraSwitch"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/uploadButton"
-        opencv:srcCompat="@android:drawable/stat_notify_sync_noanim" />
+        app:layout_constraintBottom_toBottomOf="@+id/java_camera_view"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline9"
@@ -83,5 +112,56 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="1dp" />
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="89dp"
+        android:layout_height="112dp"
+        android:layout_marginBottom="16dp"
+        android:background="#00FFFFFF"
+        android:onClick="onRefreshClick"
+        android:scaleType="fitCenter"
+        android:src="@drawable/btn_shutter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintVertical_bias="0.462" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/camera_button_id2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="onCameraSwitch"
+        app:backgroundTint="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageButton"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintVertical_bias="0.484"
+        opencv:srcCompat="@android:drawable/stat_notify_sync_noanim" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/uploadButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="onRectToggle"
+        app:backgroundTint="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageButton"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintVertical_bias="0.484"
+        app:srcCompat="@drawable/detect_frame" />
+
+    <TextView
+        android:id="@+id/fps_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

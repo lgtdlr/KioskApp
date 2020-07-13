@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,7 +23,9 @@ import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
 import java.io.BufferedReader;
@@ -81,6 +85,8 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_train);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.java_camera_view2);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
@@ -99,11 +105,7 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
         if(!OpenCVLoader.initDebug()) {
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, baseCallback);
         } else {
-            try {
-                baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
 
 
@@ -148,11 +150,7 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
                 break;
 
                 default: {
-                    try {
-                        super.onManagerConnected(status);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    super.onManagerConnected(status);
                 }
                 break;
             }
@@ -175,6 +173,12 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
+        Mat mRgbaT = mRgba.t();
+        if (cameraIndex == CAMERA_ID_FRONT){
+            Core.flip(mRgba, mRgba, 1);
+        }
+        Imgproc.resize(mRgbaT, mRgbaT, mRgba.size());
+
 
         mBitmap = Bitmap.createBitmap(mRgba.cols(), mRgba.rows(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(mRgba, mBitmap);
@@ -195,7 +199,11 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
         }
 
         if(view.getId() == R.id.camera_button_id5) {
-            new PostImageRequest().execute(mBitmap);
+            if (cameraIndex == CAMERA_ID_FRONT){
+                new PostImageRequest().execute(RotateBitmap(mBitmap, 90));
+            } else {
+                new PostImageRequest().execute(RotateBitmap(mBitmap, 90));
+            }
         }
 
         if(view.getId() == R.id.train_id) {
@@ -226,6 +234,21 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
         super.onDestroy();
         if (mOpenCvCameraView != null)
             mOpenCvCameraView.disableView();
+    }
+
+    public void onCameraIdentifyButtonClick(View view) {
+        Intent intent = new Intent(this, RealCameraIdentifyActivity.class);
+        startActivity(intent);
+    }
+
+    public void onCameraDetectButtonClick(View view) {
+        Intent intent = new Intent(this, DetectCameraActivity.class);
+        startActivity(intent);
+    }
+
+    public void onBackClick(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     private class PostImageRequest extends AsyncTask<Bitmap, String, String> {
@@ -320,5 +343,11 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
                 return "Error";
             }
         }
+    }
+
+    public static Bitmap RotateBitmap(Bitmap source, float angle){
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 }

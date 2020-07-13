@@ -2,9 +2,13 @@ package com.example.kioskapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -26,6 +30,7 @@ import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.core.MatOfRect;
@@ -79,6 +84,11 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
     private Boolean buttonPressed = false;
     ImageView imageView;
     int cameraIndex = CAMERA_ID_FRONT;
+    TextView fps;
+    int mFPS;
+    long startTime = 0;
+    long currentTime = 1000;
+
 
     private Mat mRgba, mGray;
 
@@ -87,6 +97,8 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.java_camera_view);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
@@ -95,12 +107,15 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
         if(!OpenCVLoader.initDebug()) {
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, baseCallback);
         } else {
-            try {
-                baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                fps = (TextView) findViewById(R.id.fps_id);
+            }
+        });
 
 
         javaCameraView.setCvCameraViewListener(this);
@@ -111,6 +126,21 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
+        Mat mRgbaT = mRgba.t();
+
+        //Core.flip(mRgba.t(), mRgbaT, 1);
+        if (cameraIndex == CAMERA_ID_FRONT){
+            Core.flip(mRgba, mRgba, 1);
+        }
+        //Imgproc.resize(mRgbaT, mRgbaT, mRgba.size());
+
+
+
+//        Core.flip(inputFrame.gray().t(),mGray,1); //rotate clockwise
+//        Core.flip(inputFrame.rgba().t(),mRgba,1);
+//
+//        Core.flip(mRgba.t(),mRgba,0);             //rotate counter clockwise
+//this is a solution for  allowing face detection in portrait view if it isn't working at all.
 
         //detect faces
 
@@ -127,17 +157,28 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
             }
         }
 
-            mBitmap = Bitmap.createBitmap(mRgba.cols(), mRgba.rows(), Bitmap.Config.ARGB_8888);
-            Utils.matToBitmap(mRgba, mBitmap);
+        mBitmap = Bitmap.createBitmap(mRgba.cols(), mRgba.rows(), Bitmap.Config.ARGB_8888);
+
+        Utils.matToBitmap(mRgba, mBitmap);
 
             //updateUI();
 
 //        Utils.matToBitmap(mRgba, mBitmap);
-        return mRgba;
-    }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (currentTime - startTime >= 1000) {
+                    fps.setText("FPS: " + String.valueOf(mFPS));
+                    mFPS = 0;
+                    startTime = System.currentTimeMillis();
+                }
+                currentTime = System.currentTimeMillis();
+                mFPS += 1;
 
-    private void updateUI() {
-        imageView.setImageBitmap(mBitmap);
+            }
+        });
+
+        return mRgba;
     }
 
     private BaseLoaderCallback baseCallback = new BaseLoaderCallback(this) {
@@ -178,11 +219,7 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
                 break;
 
                 default: {
-                    try {
-                        super.onManagerConnected(status);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    super.onManagerConnected(status);
                 }
                 break;
             }
@@ -224,8 +261,11 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
     }
 
     public void onRefreshClick(View view) {
-        new PostCameraRequest().execute(mBitmap);
-
+        if (cameraIndex == CAMERA_ID_FRONT){
+            new PostCameraRequest().execute(RotateBitmap(mBitmap, 90));
+        } else {
+            new PostCameraRequest().execute(RotateBitmap(mBitmap, 90));
+        }
     }
 
     public void onRectToggle(View view) {
@@ -237,7 +277,6 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
     }
 
     public void onCameraSwitch(View view) {
-        Log.i("CameraIndex", "is " + cameraIndex);
         if (cameraIndex == CAMERA_ID_FRONT){
             cameraIndex = CAMERA_ID_BACK;
         } else {
@@ -246,6 +285,23 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
         mOpenCvCameraView.disableView();
         mOpenCvCameraView.setCameraIndex(cameraIndex);
         mOpenCvCameraView.enableView();
+    }
+
+    public void onCameraTrainButtonClick(View view) {
+        //start new activity
+        Intent intent = new Intent(this, LiveTrainActivity.class);
+        startActivity(intent);
+    }
+
+    public void onCameraIdentifyButtonClick(View view) {
+        //start new activity
+        Intent intent = new Intent(this, RealCameraIdentifyActivity.class);
+        startActivity(intent);
+    }
+
+    public void onBackClick(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     private class PostCameraRequest extends AsyncTask<Bitmap, String, String> {
@@ -315,10 +371,10 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
             JSONObject emotions = faceAttributes.getJSONObject("emotion");
             JSONObject rectangle = json_data.getJSONObject("faceRectangle");
             rectList.add(rectangle);
-            Bitmap faceBitmap = Bitmap.createBitmap(mBitmap, rectangle.getInt("left"),
-                    rectangle.getInt("top"),
-                    rectangle.getInt("width"),
-                    rectangle.getInt("height"));
+            Bitmap faceBitmap = Bitmap.createBitmap(mBitmap, rectangle.getInt("left") - 20,
+                    rectangle.getInt("top") - 20,
+                    rectangle.getInt("width")+20,
+                    rectangle.getInt("height")+20);
             int age = faceAttributes.getInt("age");
             String gender = faceAttributes.getString("gender");
             Log.i("Adding faces", "Wait...");
@@ -327,6 +383,11 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
             Log.i("EMOTIONS", emotionsList.get(1).getType() + " " + emotionsList.get(1).getValue());
             Log.i("EMOTIONS", emotionsList.get(2).getType() + " " + emotionsList.get(2).getValue());
 
+            if (cameraIndex == CAMERA_ID_FRONT){
+                faceBitmap = (RotateBitmap(faceBitmap, 90));
+            } else {
+                faceBitmap = (RotateBitmap(faceBitmap, 90));
+            }
 
             faces.add(new Face(faceBitmap, "Age: " + age, gender, emotionsList.get(0).getType(),
                    emotionsList.get(0).getValue(), emotionsList.get(1).getType(), emotionsList.get(1).getValue(),
@@ -357,6 +418,12 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
         Collections.sort(emotionsList);
 
         return emotionsList;
+    }
+
+    public static Bitmap RotateBitmap(Bitmap source, float angle){
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
     /*private String getEmotion(JSONObject attributes) throws JSONException {

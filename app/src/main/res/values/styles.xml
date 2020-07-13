@@ -23,7 +23,6 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <!--styles for education app-->
     <style name="viewParent">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>

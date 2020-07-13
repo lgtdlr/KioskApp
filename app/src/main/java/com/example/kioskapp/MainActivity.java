@@ -6,6 +6,7 @@ import android.graphics.Camera;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -16,6 +17,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -44,8 +47,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void onDetectClick(View view) {
         //start new activity
-        Intent teachIntent = new Intent(this, DetectActivity.class);
-        startActivity(teachIntent);
+        Intent intent = new Intent(this, DetectActivity.class);
+        startActivity(intent);
     }
 
     public void onVerifyClick(View view) {
@@ -96,5 +99,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void onPlaceholderClick(View view) {
         Toast.makeText(MainActivity.this, "New services coming soon", Toast.LENGTH_LONG).show();
+    }
+
+    public void onMenuClick(View view) {
+        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout.openDrawer(GravityCompat.START);
     }
 }

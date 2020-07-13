@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -27,6 +29,7 @@ import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.core.MatOfRect;
@@ -100,6 +103,8 @@ public class RealCameraIdentifyActivity extends CameraActivity implements CvCame
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_real_camera_identify);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.identify_java_camera_view);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
@@ -108,11 +113,7 @@ public class RealCameraIdentifyActivity extends CameraActivity implements CvCame
         if(!OpenCVLoader.initDebug()) {
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, baseCallback);
         } else {
-            try {
-                baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
 
 
@@ -128,6 +129,9 @@ public class RealCameraIdentifyActivity extends CameraActivity implements CvCame
         //detect faces
 
         MatOfRect faceDetections = new MatOfRect();
+        if (cameraIndex == CAMERA_ID_FRONT){
+            Core.flip(mRgba, mRgba, 1);
+        }
 
         if (buttonPressed) {
             faceDetector.detectMultiScale(mRgba, faceDetections);
@@ -191,11 +195,7 @@ public class RealCameraIdentifyActivity extends CameraActivity implements CvCame
                 break;
 
                 default: {
-                    try {
-                        super.onManagerConnected(status);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    super.onManagerConnected(status);
                 }
                 break;
             }
@@ -237,7 +237,11 @@ public class RealCameraIdentifyActivity extends CameraActivity implements CvCame
     }
 
     public void onRefreshClick(View view) {
-        new PostCameraRequest().execute(mBitmap);
+        if (cameraIndex == CAMERA_ID_FRONT){
+            new PostCameraRequest().execute(RotateBitmap(mBitmap, 90));
+        } else {
+            new PostCameraRequest().execute(RotateBitmap(mBitmap, 90));
+        }
 
     }
 
@@ -259,6 +263,22 @@ public class RealCameraIdentifyActivity extends CameraActivity implements CvCame
         mOpenCvCameraView.disableView();
         mOpenCvCameraView.setCameraIndex(cameraIndex);
         mOpenCvCameraView.enableView();
+    }
+
+    public void onCameraDetectButtonClick(View view) {
+        //start new activity
+        Intent intent = new Intent(this, DetectCameraActivity.class);
+        startActivity(intent);
+    }
+
+    public void onCameraTrainButtonClick(View view) {
+        Intent intent = new Intent(this, LiveTrainActivity.class);
+        startActivity(intent);
+    }
+
+    public void onBackClick(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     private class PostCameraRequest extends AsyncTask<Bitmap, String, String> {
@@ -431,6 +451,12 @@ public class RealCameraIdentifyActivity extends CameraActivity implements CvCame
                 return "Error";
             }
         }
+    }
+
+    public static Bitmap RotateBitmap(Bitmap source, float angle){
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
 //    private void setUiAfterUpdate(String s, JSONArray parent) throws JSONException {
