@@ -81,14 +81,15 @@
 
     <ListView
         android:id="@+id/results_list"
-        android:layout_width="250dp"
-        android:layout_height="100dp"
+        android:layout_width="254dp"
+        android:layout_height="213dp"
         android:background="#00D3D3D3"
         android:rotation="-90"
         android:verticalSpacing="5dp"
         android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="@+id/java_camera_view"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/linearLayout"
+        app:layout_constraintTop_toTopOf="@+id/guideline9"
+        tools:ignore="MissingConstraints" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline9"

@@ -308,11 +308,11 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            p = new ProgressDialog(DetectCameraActivity.this);
-            p.setMessage("Please wait... uploading");
-            p.setIndeterminate(false);
-            p.setCancelable(false);
-            p.show();
+//            p = new ProgressDialog(DetectCameraActivity.this);
+//            p.setMessage("Please wait... uploading");
+//            p.setIndeterminate(false);
+//            p.setCancelable(false);
+//            p.show();
         }
 
         @Override

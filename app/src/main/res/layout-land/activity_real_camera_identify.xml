@@ -76,17 +76,6 @@
         opencv:layout_constraintTop_toTopOf="parent"
         opencv:show_fps="true" />
 
-    <ListView
-        android:id="@+id/results_list"
-        android:layout_width="250dp"
-        android:layout_height="100dp"
-        android:background="#00D3D3D3"
-        android:rotation="-90"
-        android:verticalSpacing="5dp"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="@+id/identify_java_camera_view"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline9"
         android:layout_width="wrap_content"
