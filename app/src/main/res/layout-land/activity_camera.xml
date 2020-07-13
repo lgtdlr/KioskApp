@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:opencv="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:clipChildren="true"
+    tools:context=".DetectCameraActivity">
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="88dp"
+        android:layout_height="247dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/java_camera_view"
+        app:layout_constraintTop_toTopOf="@+id/guideline9"
+        app:layout_constraintVertical_bias="0.492">
+
+        <Button
+            android:id="@+id/camera_train_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:fontFamily="sans-serif"
+            android:onClick="onCameraTrainButtonClick"
+            android:rotation="-90"
+            android:text="Train"
+            android:textColor="#80FFFFFF" />
+
+        <Button
+            android:id="@+id/camera_identify_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:fontFamily="sans-serif"
+            android:onClick="onCameraIdentifyButtonClick"
+            android:rotation="-90"
+            android:text="Identify"
+            android:textColor="#80FFFFFF" />
+
+        <Button
+            android:id="@+id/camera_detect_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:fontFamily="sans-serif"
+            android:rotation="-90"
+            android:text="Detect"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <org.opencv.android.JavaCameraView
+        android:id="@+id/java_camera_view"
+        android:layout_width="483dp"
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        opencv:camera_id="front"
+        opencv:layout_constraintStart_toStartOf="parent"
+        opencv:show_fps="true" />
+
+    <org.opencv.android.CameraGLSurfaceView
+        android:id="@+id/native_surface_view"
+        android:layout_width="600dp"
+        android:layout_height="600dp"
+        android:visibility="gone"
+        opencv:camera_id="any"
+        opencv:layout_constraintEnd_toEndOf="parent"
+        opencv:layout_constraintStart_toStartOf="parent"
+        opencv:layout_constraintTop_toTopOf="parent"
+        opencv:show_fps="true" />
+
+    <ListView
+        android:id="@+id/results_list"
+        android:layout_width="250dp"
+        android:layout_height="100dp"
+        android:background="#00D3D3D3"
+        android:rotation="-90"
+        android:verticalSpacing="5dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="@+id/java_camera_view"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="1dp" />
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="89dp"
+        android:layout_height="112dp"
+        android:background="#00FFFFFF"
+        android:onClick="onRefreshClick"
+        android:rotation="-90"
+        android:scaleType="fitCenter"
+        android:src="@drawable/btn_shutter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/linearLayout"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/camera_button_id2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="onCameraSwitch"
+        android:rotation="-90"
+        app:backgroundTint="#00FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/imageButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/linearLayout"
+        opencv:srcCompat="@android:drawable/stat_notify_sync_noanim" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/uploadButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="onRectToggle"
+        android:rotation="-90"
+        app:backgroundTint="#00FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/linearLayout"
+        app:layout_constraintTop_toBottomOf="@+id/imageButton"
+        app:srcCompat="@drawable/detect_frame" />
+
+    <TextView
+        android:id="@+id/fps_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

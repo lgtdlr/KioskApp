@@ -174,9 +174,9 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
         Mat mRgbaT = mRgba.t();
-        if (cameraIndex == CAMERA_ID_FRONT){
-            Core.flip(mRgba, mRgba, 1);
-        }
+//        if (cameraIndex == CAMERA_ID_FRONT){
+//            Core.flip(mRgba, mRgba, 1);
+//        }
         Imgproc.resize(mRgbaT, mRgbaT, mRgba.size());
 
 
@@ -200,9 +200,9 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
 
         if(view.getId() == R.id.camera_button_id5) {
             if (cameraIndex == CAMERA_ID_FRONT){
-                new PostImageRequest().execute(RotateBitmap(mBitmap, 90));
+                new PostImageRequest().execute(mBitmap);
             } else {
-                new PostImageRequest().execute(RotateBitmap(mBitmap, 90));
+                new PostImageRequest().execute(mBitmap);
             }
         }
 

@@ -129,9 +129,9 @@ public class RealCameraIdentifyActivity extends CameraActivity implements CvCame
         //detect faces
 
         MatOfRect faceDetections = new MatOfRect();
-        if (cameraIndex == CAMERA_ID_FRONT){
-            Core.flip(mRgba, mRgba, 1);
-        }
+//        if (cameraIndex == CAMERA_ID_FRONT){
+//            Core.flip(mRgba, mRgba, 1);
+//        }
 
         if (buttonPressed) {
             faceDetector.detectMultiScale(mRgba, faceDetections);
@@ -238,9 +238,9 @@ public class RealCameraIdentifyActivity extends CameraActivity implements CvCame
 
     public void onRefreshClick(View view) {
         if (cameraIndex == CAMERA_ID_FRONT){
-            new PostCameraRequest().execute(RotateBitmap(mBitmap, 90));
+            new PostCameraRequest().execute(mBitmap);
         } else {
-            new PostCameraRequest().execute(RotateBitmap(mBitmap, 90));
+            new PostCameraRequest().execute(mBitmap);
         }
 
     }

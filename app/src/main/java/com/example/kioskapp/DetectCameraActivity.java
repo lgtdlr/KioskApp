@@ -129,9 +129,9 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
         Mat mRgbaT = mRgba.t();
 
         //Core.flip(mRgba.t(), mRgbaT, 1);
-        if (cameraIndex == CAMERA_ID_FRONT){
-            Core.flip(mRgba, mRgba, 1);
-        }
+//        if (cameraIndex == CAMERA_ID_FRONT){
+//            Core.flip(mRgba, mRgba, 1);
+//        }
         //Imgproc.resize(mRgbaT, mRgbaT, mRgba.size());
 
 
@@ -262,9 +262,9 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
 
     public void onRefreshClick(View view) {
         if (cameraIndex == CAMERA_ID_FRONT){
-            new PostCameraRequest().execute(RotateBitmap(mBitmap, 90));
+            new PostCameraRequest().execute(mBitmap);
         } else {
-            new PostCameraRequest().execute(RotateBitmap(mBitmap, 90));
+            new PostCameraRequest().execute(mBitmap);
         }
     }
 
@@ -383,11 +383,11 @@ public class DetectCameraActivity extends CameraActivity implements CvCameraView
             Log.i("EMOTIONS", emotionsList.get(1).getType() + " " + emotionsList.get(1).getValue());
             Log.i("EMOTIONS", emotionsList.get(2).getType() + " " + emotionsList.get(2).getValue());
 
-            if (cameraIndex == CAMERA_ID_FRONT){
-                faceBitmap = (RotateBitmap(faceBitmap, 90));
-            } else {
-                faceBitmap = (RotateBitmap(faceBitmap, 90));
-            }
+//            if (cameraIndex == CAMERA_ID_FRONT){
+//                faceBitmap = (RotateBitmap(faceBitmap, 90));
+//            } else {
+//                faceBitmap = (RotateBitmap(faceBitmap, 90));
+//            }
 
             faces.add(new Face(faceBitmap, "Age: " + age, gender, emotionsList.get(0).getType(),
                    emotionsList.get(0).getValue(), emotionsList.get(1).getType(), emotionsList.get(1).getValue(),
