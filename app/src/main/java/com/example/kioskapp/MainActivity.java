@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -22,6 +23,9 @@ import org.opencv.android.OpenCVLoader;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    Animation animFloat, animDropDown;
+    ImageView wave, fullWave, redOverlay;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,27 +33,70 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         Toast.makeText(MainActivity.this, "OpenCV Load Status: " + OpenCVLoader.initDebug(), Toast.LENGTH_LONG).show();
 
-        Animation animFloat;
-        animFloat = AnimationUtils.loadAnimation(getApplicationContext(),
-                R.anim.floating_animation);
+        animDropDown = new ScaleAnimation(
+                1f, 1f, // Start and end values for the X axis scaling
+                1f, 15f, // Start and end values for the Y axis scaling
+                Animation.RELATIVE_TO_SELF, 0f, // Pivot point of X scaling
+                Animation.RELATIVE_TO_SELF, 0f); // Pivot point of Y scaling
+        animDropDown.setDuration(3000);
 
-        ImageView imageView = (ImageView) findViewById(R.id.main_imageview_placeholder);
-        //Drawable myDrawable = getResources().getDrawable(R.drawable.cognitive);
-        //imageView.setImageDrawable(myDrawable);
-        imageView.startAnimation(animFloat);
+        animFloat = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.floating_animation);
+
+        wave = (ImageView) findViewById(R.id.main_imageview_placeholder);
+        fullWave = (ImageView) findViewById(R.id.main_imageview_dropdown);
+        redOverlay = (ImageView) findViewById(R.id.red_overlay);
+
+        redOverlay.setVisibility(View.GONE);
+        fullWave.setVisibility(View.GONE);
+        wave.startAnimation(animFloat);
 
         requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        redOverlay.setVisibility(View.GONE);
+        fullWave.setVisibility(View.GONE);
+    }
+
     public void onDetectClick(View view) {
         //start new activity
+        fullWave.setVisibility(View.VISIBLE);
         Intent intent = new Intent(this, DetectActivity.class);
-        startActivity(intent);
+        animDropDown.setAnimationListener(new Animation.AnimationListener(){
+            @Override
+            public void onAnimationStart(Animation animation){}
+
+            @Override
+            public void onAnimationRepeat(Animation animation){}
+
+            @Override
+            public void onAnimationEnd(Animation animation){
+                redOverlay.setVisibility(View.VISIBLE);
+                startActivity(intent);
+            }
+        });
+        fullWave.startAnimation(animDropDown);
     }
 
     public void onIdentifyClick(View view) {
-        Intent identifyIntent = new Intent(this, IdentifyActivity.class);
-        startActivity(identifyIntent);
+        Intent intent = new Intent(this, IdentifyActivity.class);
+        animDropDown.setAnimationListener(new Animation.AnimationListener(){
+
+            @Override
+            public void onAnimationStart(Animation animation){}
+
+            @Override
+            public void onAnimationRepeat(Animation animation){}
+
+            @Override
+            public void onAnimationEnd(Animation animation){
+                redOverlay.setVisibility(View.VISIBLE);
+                startActivity(intent);
+            }
+        });
+        fullWave.startAnimation(animDropDown);
     }
 
     public void onCameraClick(View view) {
@@ -58,18 +105,60 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             requestPermissions(new String[]{Manifest.permission.CAMERA}, 1);
             return;
         }
-        Intent cameraIntent = new Intent(this, LiveDetectActivity.class);
-        startActivity(cameraIntent);
+        Intent intent = new Intent(this, LiveDetectActivity.class);
+        animDropDown.setAnimationListener(new Animation.AnimationListener(){
+
+            @Override
+            public void onAnimationStart(Animation animation){}
+
+            @Override
+            public void onAnimationRepeat(Animation animation){}
+
+            @Override
+            public void onAnimationEnd(Animation animation){
+                redOverlay.setVisibility(View.VISIBLE);
+                startActivity(intent);
+            }
+        });
+        fullWave.startAnimation(animDropDown);
     }
 
     public void onObjectClick(View view) {
-        Intent identifyIntent = new Intent(this, ObjectDetectActivity.class);
-        startActivity(identifyIntent);
+        Intent intent = new Intent(this, ObjectDetectActivity.class);
+        animDropDown.setAnimationListener(new Animation.AnimationListener(){
+
+            @Override
+            public void onAnimationStart(Animation animation){}
+
+            @Override
+            public void onAnimationRepeat(Animation animation){}
+
+            @Override
+            public void onAnimationEnd(Animation animation){
+                redOverlay.setVisibility(View.VISIBLE);
+                startActivity(intent);
+            }
+        });
+        fullWave.startAnimation(animDropDown);
     }
 
     public void onTrainClick(View view) {
-        Intent trainIntent = new Intent(this, TrainActivity.class);
-        startActivity(trainIntent);
+        Intent intent = new Intent(this, TrainActivity.class);
+        animDropDown.setAnimationListener(new Animation.AnimationListener(){
+
+            @Override
+            public void onAnimationStart(Animation animation){}
+
+            @Override
+            public void onAnimationRepeat(Animation animation){}
+
+            @Override
+            public void onAnimationEnd(Animation animation){
+                redOverlay.setVisibility(View.VISIBLE);
+                startActivity(intent);
+            }
+        });
+        fullWave.startAnimation(animDropDown);
     }
 
     @Override

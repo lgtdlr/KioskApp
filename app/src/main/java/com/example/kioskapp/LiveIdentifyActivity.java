@@ -158,7 +158,7 @@ public class LiveIdentifyActivity extends CameraActivity implements CvCameraView
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                fpsTextView = (TextView) findViewById(R.id.fps_id3);
+                fpsTextView = (TextView) findViewById(R.id.fps_id);
             }
         });
 

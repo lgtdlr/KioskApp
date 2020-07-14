@@ -10,7 +10,7 @@
     tools:context=".LiveIdentifyActivity">
 
     <TextView
-        android:id="@+id/fps_id3"
+        android:id="@+id/fps_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#FFFFFF"
