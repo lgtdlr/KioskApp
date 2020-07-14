@@ -35,7 +35,6 @@ public class TrainActivity extends AppCompatActivity {
         requestPermissions(new String[]{Manifest.permission.CAMERA}, 1);
 
         Button button = findViewById(R.id.button2);
-        Button liveTrainButton = findViewById(R.id.live_train_button_id);
 
         editText = findViewById(R.id.editText);
 
@@ -46,13 +45,6 @@ public class TrainActivity extends AppCompatActivity {
             }
         });
 
-        liveTrainButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                trainButtonClicked = true;
-                new NewPersonRequest().execute(editText.getText().toString());
-            }
-        });
 
 
     }
