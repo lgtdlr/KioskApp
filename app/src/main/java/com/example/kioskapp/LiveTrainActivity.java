@@ -115,7 +115,11 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
                 break;
 
                 default: {
-                    super.onManagerConnected(status);
+                    try {
+                        super.onManagerConnected(status);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
             }
@@ -172,7 +176,11 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
         if (!OpenCVLoader.initDebug()) {
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, baseCallback);
         } else {
-            baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            try {
+                baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         //Draw FPS for portrait activity
