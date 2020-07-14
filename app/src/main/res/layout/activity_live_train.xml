@@ -84,7 +84,7 @@
         opencv:show_fps="true" />
 
     <org.opencv.android.CameraGLSurfaceView
-        android:id="@+id/identify_native_surface_view"
+        android:id="@+id/native_surface_view"
         android:layout_width="600dp"
         android:layout_height="600dp"
         android:visibility="gone"
