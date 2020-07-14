@@ -10,6 +10,15 @@
     tools:context=".LiveIdentifyActivity">
 
 
+    <TextView
+        android:id="@+id/fps_id3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:visibility="gone"
+        opencv:layout_constraintStart_toStartOf="parent"
+        opencv:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="88dp"

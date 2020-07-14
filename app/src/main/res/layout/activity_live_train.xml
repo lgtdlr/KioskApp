@@ -13,7 +13,6 @@
         android:id="@+id/fps_id2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
         android:textColor="#FFFFFF"
         opencv:layout_constraintStart_toStartOf="parent"
         opencv:layout_constraintTop_toBottomOf="@+id/toolbar" />
