@@ -6,15 +6,6 @@
     -->
     <string name="teachImageSelectedView">Image to teach that is selected.</string>
 
-    <string name="detect_card_title">Detect</string>
-    <string name="detect_card_desc">Detects human faces in an image and returns face rectangles and optionally face IDs, landmarks, and attributes.</string>
-    <string name="identify_card_title">Train</string>
-    <string name="identify_card_desc">Train faces for future recognition</string>
     <string name="card_icon_desc">Card icon</string>
-    <string name="verify_card_desc">Verify if two faces belong to the same person, or if a face belongs to a person.</string>
-    <string name="verify_card_title">Verify</string>
-    <string name="camera_card_desc">Experimental OpenCV camera activity</string>
-    <string name="camera_card_title">Camera</string>
-    <string name="tfe_od_app_name" translation_description="Object Detection demo app [CHAR_LIMIT=40]">TFL Detect</string>
     <string name="tfe_od_camera_error" translation_description="Error regarding camera support[CHAR_LIMIT=40]">This device doesn\'t support Camera2 API.</string>
 </resources>

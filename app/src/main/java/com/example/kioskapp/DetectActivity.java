@@ -15,11 +15,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,12 +28,9 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -51,13 +45,9 @@ public class DetectActivity extends AppCompatActivity {
     private static final String BASE_URL = "http://192.168.102.158:5000/face/v1.0/detect?returnFaceAttributes=*";
     private static final int PICK_IMAGE = 1;
     private static final int REQUEST_IMAGE_CAPTURE = 2;
-
-    private static TextView postResponseText;
-    private static ImageView imageSelected;
-
     private static OkHttpClient client = new OkHttpClient();
-
     ProgressDialog p;
+    private ImageView imageSelected;
 
     public static Bitmap drawRectangles(Bitmap original, LinkedList<JSONObject> rectList) {
         Bitmap bitmap = original.copy(Bitmap.Config.ARGB_8888, true);
@@ -93,7 +83,7 @@ public class DetectActivity extends AppCompatActivity {
     }
 
     private void selectImage() {
-        final CharSequence[] items={"Camera","Gallery", "Cancel"};
+        final CharSequence[] items = {"Camera", "Gallery", "Cancel"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(DetectActivity.this);
         builder.setTitle("Add Image");
@@ -103,7 +93,7 @@ public class DetectActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (items[i].equals("Camera")) {
-                    if (ContextCompat.checkSelfPermission(DetectActivity.this, Manifest.permission.CAMERA) == -1){
+                    if (ContextCompat.checkSelfPermission(DetectActivity.this, Manifest.permission.CAMERA) == -1) {
                         requestPermissions(new String[]{Manifest.permission.CAMERA}, 1);
                         return;
                     }
@@ -113,12 +103,11 @@ public class DetectActivity extends AppCompatActivity {
 
 
                 } else if (items[i].equals("Gallery")) {
-                    if (ContextCompat.checkSelfPermission(DetectActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == -1){
+                    if (ContextCompat.checkSelfPermission(DetectActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == -1) {
                         requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
                         return;
                     }
                     Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    //Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                     intent.setType("image/*");
                     startActivityForResult(intent, PICK_IMAGE);
 
@@ -162,6 +151,58 @@ public class DetectActivity extends AppCompatActivity {
         }
     }
 
+    private void setUiAfterUpdate(JSONArray parent) throws JSONException {
+        ArrayList<Face> faces = new ArrayList<>();
+        LinkedList<JSONObject> rectList = new LinkedList<>();
+
+        for (int i = 0; i < parent.length(); i++) {
+            JSONObject json_data = parent.getJSONObject(i);
+            JSONObject faceAttributes = json_data.getJSONObject("faceAttributes");
+            JSONObject emotions = faceAttributes.getJSONObject("emotion");
+            JSONObject rectangle = json_data.getJSONObject("faceRectangle");
+            rectList.add(rectangle);
+            Bitmap currentBitmap = ((BitmapDrawable) imageSelected.getDrawable()).getBitmap();
+            Bitmap faceBitmap = Bitmap.createBitmap(currentBitmap, rectangle.getInt("left"),
+                    rectangle.getInt("top"),
+                    rectangle.getInt("width"),
+                    rectangle.getInt("height"));
+            int age = faceAttributes.getInt("age");
+            String gender = faceAttributes.getString("gender");
+            Log.i("Adding faces", "Wait...");
+
+            ArrayList<Emotion> emotionsList = getEmotions(emotions);
+
+            faces.add(new Face(faceBitmap, "Age: " + age, gender, emotionsList.get(0).getType(),
+                    emotionsList.get(0).getValue(), emotionsList.get(1).getType(), emotionsList.get(1).getValue(),
+                    emotionsList.get(2).getType(), emotionsList.get(2).getValue()));
+
+            Log.i("Adding faces", "Success");
+        }
+        ListView listView = (ListView) findViewById(R.id.results_list);
+        FaceListAdapter adapter = new FaceListAdapter(DetectActivity.this, R.layout.detect_adapter_view_layout, faces);
+        listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+
+
+    }
+
+    private ArrayList<Emotion> getEmotions(JSONObject attributes) throws JSONException {
+        ArrayList<Emotion> emotionsList = new ArrayList<>();
+
+        emotionsList.add(new Emotion("anger", attributes.getDouble("anger")));
+        emotionsList.add(new Emotion("contempt", attributes.getDouble("contempt")));
+        emotionsList.add(new Emotion("disgust", attributes.getDouble("anger")));
+        emotionsList.add(new Emotion("fear", attributes.getDouble("fear")));
+        emotionsList.add(new Emotion("happiness", attributes.getDouble("happiness")));
+        emotionsList.add(new Emotion("neutral", attributes.getDouble("neutral")));
+        emotionsList.add(new Emotion("sadness", attributes.getDouble("sadness")));
+        emotionsList.add(new Emotion("surprise", attributes.getDouble("surprise")));
+
+        Collections.sort(emotionsList);
+
+        return emotionsList;
+    }
+
     private class PostCameraRequest extends AsyncTask<ImageView, String, String> {
         @Override
         protected void onPreExecute() {
@@ -192,7 +233,7 @@ public class DetectActivity extends AppCompatActivity {
                     Bitmap imageBitmap = ((BitmapDrawable) imageSelected.getDrawable()).getBitmap();
                     imageSelected.setImageBitmap(drawRectangles(imageBitmap, rectList));
                     imageBitmap.recycle();
-                    setUiAfterUpdate(s, parent);
+                    setUiAfterUpdate(parent);
                 } catch (Exception e) {
                     Log.i("TAG", "errror with JSON");
                 }
@@ -286,7 +327,7 @@ public class DetectActivity extends AppCompatActivity {
                     }
 
                     Log.i("Updating screen", "...");
-                    setUiAfterUpdate(s, parent);
+                    setUiAfterUpdate(parent);
                     Log.i("Updating screen", "Success");
                     Bitmap imageBitmap = ((BitmapDrawable) imageSelected.getDrawable()).getBitmap();
                     imageSelected.setImageBitmap(drawRectangles(imageBitmap, rectList));
@@ -298,149 +339,6 @@ public class DetectActivity extends AppCompatActivity {
                 p.show();
             }
         }
-    }
-
-    private void setUiAfterUpdate(String s, JSONArray parent) throws JSONException {
-        ArrayList<Face> faces = new ArrayList<>();
-        LinkedList<JSONObject> rectList = new LinkedList<>();
-
-        for(int i=0; i < parent.length() ; i++) {
-            JSONObject json_data = parent.getJSONObject(i);
-            JSONObject faceAttributes = json_data.getJSONObject("faceAttributes");
-            JSONObject emotions = faceAttributes.getJSONObject("emotion");
-            JSONObject rectangle = json_data.getJSONObject("faceRectangle");
-            rectList.add(rectangle);
-            Bitmap currentBitmap = ((BitmapDrawable) imageSelected.getDrawable()).getBitmap();
-            Bitmap faceBitmap = Bitmap.createBitmap(currentBitmap, rectangle.getInt("left"),
-                                                                        rectangle.getInt("top"),
-                                                                        rectangle.getInt("width"),
-                                                                        rectangle.getInt("height"));
-            int age = faceAttributes.getInt("age");
-            String gender = faceAttributes.getString("gender");
-            Log.i("Adding faces", "Wait...");
-
-            ArrayList<Emotion> emotionsList = getEmotions(emotions);
-
-            faces.add(new Face(faceBitmap, "Age: " + age, gender, emotionsList.get(0).getType(),
-                    emotionsList.get(0).getValue(), emotionsList.get(1).getType(), emotionsList.get(1).getValue(),
-                    emotionsList.get(2).getType(), emotionsList.get(2).getValue()));
-
-            Log.i("Adding faces", "Success");
-        }
-        ListView listView = (ListView)findViewById(R.id.results_list);
-        FaceListAdapter adapter = new FaceListAdapter(DetectActivity.this, R.layout.detect_adapter_view_layout, faces);
-        listView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-
-
-    }
-
-    private ArrayList<Emotion> getEmotions(JSONObject attributes) throws JSONException {
-        ArrayList<Emotion> emotionsList = new ArrayList<>();
-
-        emotionsList.add(new Emotion("anger", attributes.getDouble("anger")));
-        emotionsList.add(new Emotion("contempt", attributes.getDouble("contempt")));
-        emotionsList.add(new Emotion("disgust", attributes.getDouble("anger")));
-        emotionsList.add(new Emotion("fear", attributes.getDouble("fear")));
-        emotionsList.add(new Emotion("happiness", attributes.getDouble("happiness")));
-        emotionsList.add(new Emotion("neutral", attributes.getDouble("neutral")));
-        emotionsList.add(new Emotion("sadness", attributes.getDouble("sadness")));
-        emotionsList.add(new Emotion("surprise", attributes.getDouble("surprise")));
-
-        Collections.sort(emotionsList);
-
-        return emotionsList;
-    }
-
-    private String getEmotion(JSONObject attributes) throws JSONException {
-        Log.i("Parsing emotions", "...");
-        String emotionType = "";
-        double emotionValue = 0.0;
-
-        if (attributes.getDouble("anger") > emotionValue)
-        {
-            emotionValue = attributes.getDouble("anger");
-            emotionType = "Anger";
-        }
-        if (attributes.getDouble("contempt") > emotionValue)
-        {
-            emotionValue = attributes.getDouble("contempt");
-            emotionType = "Contempt";
-        }
-        if (attributes.getDouble("disgust") > emotionValue)
-        {
-            emotionValue = attributes.getDouble("disgust");
-            emotionType = "Disgust";
-        }
-        if (attributes.getDouble("fear") > emotionValue)
-        {
-            emotionValue = attributes.getDouble("fear");
-            emotionType = "Fear";
-        }
-        if (attributes.getDouble("happiness") > emotionValue)
-        {
-            emotionValue = attributes.getDouble("happiness");
-            emotionType = "Happiness";
-        }
-        if (attributes.getDouble("neutral") > emotionValue)
-        {
-            emotionValue = attributes.getDouble("neutral");
-            emotionType = "Neutral";
-        }
-        if (attributes.getDouble("sadness") > emotionValue)
-        {
-            emotionValue = attributes.getDouble("sadness");
-            emotionType = "Sadness";
-        }
-        if (attributes.getDouble("surprise") > emotionValue)
-        {
-            emotionValue = attributes.getDouble("surprise");
-            emotionType = "Surprise";
-        }
-        Log.i("Parsing emotions", "Success");
-        return emotionType;
-    }
-
-    private double getEmotionScore(JSONObject attributes) throws JSONException {
-        Log.i("Parsing emotions for score", "...");
-        double emotionValue = 0.0;
-
-        if (attributes.getDouble("anger") > emotionValue)
-        {
-            emotionValue = attributes.getDouble("anger");
-        }
-        if (attributes.getDouble("contempt") > emotionValue)
-        {
-            emotionValue = attributes.getDouble("contempt");
-        }
-        if (attributes.getDouble("disgust") > emotionValue)
-        {
-            emotionValue = attributes.getDouble("disgust");
-        }
-        if (attributes.getDouble("fear") > emotionValue)
-        {
-            emotionValue = attributes.getDouble("fear");
-        }
-        if (attributes.getDouble("happiness") > emotionValue)
-        {
-            emotionValue = attributes.getDouble("happiness");
-        }
-        if (attributes.getDouble("neutral") > emotionValue)
-        {
-            emotionValue = attributes.getDouble("neutral");
-        }
-        if (attributes.getDouble("sadness") > emotionValue)
-        {
-            emotionValue = attributes.getDouble("sadness");
-        }
-        if (attributes.getDouble("surprise") > emotionValue)
-        {
-            emotionValue = attributes.getDouble("surprise");
-        }
-        Log.i("Parsing emotions for score", "Success");
-
-        Log.i("Emotion score", "is " + emotionValue);
-        return emotionValue;
     }
 
 }

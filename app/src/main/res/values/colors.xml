@@ -4,7 +4,6 @@
     <color name="colorPrimaryDark">#2A2E43</color>
     <color name="colorAccent">#FF402D</color>
     <color name="whiteBodyColor">#FCFCFC</color>
-    <color name="primaryTextColor">#25C0DE</color>
 
     <!--colors for light mode-->
 <!--    <color name="contentBodyColor">#FCFCFC</color>-->
@@ -13,11 +12,6 @@
 
     <!--colors for dark mode-->
     <color name="contentBodyColor">#2A2E43</color>
-    <color name="contentTextColor">#fff</color>
-
-    <color name="tfe_color_primary">#ffa800</color>
-    <color name="tfe_color_primary_dark">#ff6f00</color>
-    <color name="tfe_color_accent">#425066</color>
 
     <color name="tfe_semi_transparent">#66000000</color>
 

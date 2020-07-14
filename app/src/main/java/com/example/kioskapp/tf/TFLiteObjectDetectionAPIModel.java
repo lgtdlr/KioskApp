@@ -20,6 +20,11 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.RectF;
 import android.os.Trace;
+
+import com.example.kioskapp.env.Logger;
+
+import org.tensorflow.lite.Interpreter;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -34,212 +39,211 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import org.tensorflow.lite.Interpreter;
-import com.example.kioskapp.env.Logger;
 
 /**
  * Wrapper for frozen detection models trained using the Tensorflow Object Detection API:
  * - https://github.com/tensorflow/models/tree/master/research/object_detection
  * where you can find the training code.
- *
+ * <p>
  * To use pretrained models in the API or convert to TF Lite models, please see docs for details:
  * - https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md
  * - https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/running_on_mobile_tensorflowlite.md#running-our-model-on-android
  */
 public class TFLiteObjectDetectionAPIModel implements Classifier {
-  private static final Logger LOGGER = new Logger();
+    private static final Logger LOGGER = new Logger();
 
-  // Only return this many results.
-  private static final int NUM_DETECTIONS = 10;
-  // Float model
-  private static final float IMAGE_MEAN = 128.0f;
-  private static final float IMAGE_STD = 128.0f;
-  // Number of threads in the java app
-  private static final int NUM_THREADS = 4;
-  private boolean isModelQuantized;
-  // Config values.
-  private int inputSize;
-  // Pre-allocated buffers.
-  private Vector<String> labels = new Vector<String>();
-  private int[] intValues;
-  // outputLocations: array of shape [Batchsize, NUM_DETECTIONS,4]
-  // contains the location of detected boxes
-  private float[][][] outputLocations;
-  // outputClasses: array of shape [Batchsize, NUM_DETECTIONS]
-  // contains the classes of detected boxes
-  private float[][] outputClasses;
-  // outputScores: array of shape [Batchsize, NUM_DETECTIONS]
-  // contains the scores of detected boxes
-  private float[][] outputScores;
-  // numDetections: array of shape [Batchsize]
-  // contains the number of detected boxes
-  private float[] numDetections;
+    // Only return this many results.
+    private static final int NUM_DETECTIONS = 10;
+    // Float model
+    private static final float IMAGE_MEAN = 128.0f;
+    private static final float IMAGE_STD = 128.0f;
+    // Number of threads in the java app
+    private static final int NUM_THREADS = 4;
+    private boolean isModelQuantized;
+    // Config values.
+    private int inputSize;
+    // Pre-allocated buffers.
+    private Vector<String> labels = new Vector<String>();
+    private int[] intValues;
+    // outputLocations: array of shape [Batchsize, NUM_DETECTIONS,4]
+    // contains the location of detected boxes
+    private float[][][] outputLocations;
+    // outputClasses: array of shape [Batchsize, NUM_DETECTIONS]
+    // contains the classes of detected boxes
+    private float[][] outputClasses;
+    // outputScores: array of shape [Batchsize, NUM_DETECTIONS]
+    // contains the scores of detected boxes
+    private float[][] outputScores;
+    // numDetections: array of shape [Batchsize]
+    // contains the number of detected boxes
+    private float[] numDetections;
 
-  private ByteBuffer imgData;
+    private ByteBuffer imgData;
 
-  private Interpreter tfLite;
+    private Interpreter tfLite;
 
-  // Face Mask Detector Output
-  private float[][] output;
+    // Face Mask Detector Output
+    private float[][] output;
 
-  private TFLiteObjectDetectionAPIModel() {}
-
-  /** Memory-map the model file in Assets. */
-  private static MappedByteBuffer loadModelFile(AssetManager assets, String modelFilename)
-          throws IOException {
-    AssetFileDescriptor fileDescriptor = assets.openFd(modelFilename);
-    FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
-    FileChannel fileChannel = inputStream.getChannel();
-    long startOffset = fileDescriptor.getStartOffset();
-    long declaredLength = fileDescriptor.getDeclaredLength();
-    return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
-  }
-
-  /**
-   * Initializes a native TensorFlow session for classifying images.
-   *
-   * @param assetManager The asset manager to be used to load assets.
-   * @param modelFilename The filepath of the model GraphDef protocol buffer.
-   * @param labelFilename The filepath of label file for classes.
-   * @param inputSize The size of image input
-   * @param isQuantized Boolean representing model is quantized or not
-   */
-  public static Classifier create(
-          final AssetManager assetManager,
-          final String modelFilename,
-          final String labelFilename,
-          final int inputSize,
-          final boolean isQuantized)
-          throws IOException {
-    final TFLiteObjectDetectionAPIModel d = new TFLiteObjectDetectionAPIModel();
-
-    String actualFilename = labelFilename.split("file:///android_asset/")[1];
-    InputStream labelsInput = assetManager.open(actualFilename);
-    BufferedReader br = new BufferedReader(new InputStreamReader(labelsInput));
-    String line;
-    while ((line = br.readLine()) != null) {
-      LOGGER.w(line);
-      d.labels.add(line);
-    }
-    br.close();
-
-    d.inputSize = inputSize;
-
-    try {
-      d.tfLite = new Interpreter(loadModelFile(assetManager, modelFilename));
-    } catch (Exception e) {
-      throw new RuntimeException(e);
+    private TFLiteObjectDetectionAPIModel() {
     }
 
-    d.isModelQuantized = isQuantized;
-    // Pre-allocate buffers.
-    int numBytesPerChannel;
-    if (isQuantized) {
-      numBytesPerChannel = 1; // Quantized
-    } else {
-      numBytesPerChannel = 4; // Floating point
+    /**
+     * Memory-map the model file in Assets.
+     */
+    private static MappedByteBuffer loadModelFile(AssetManager assets, String modelFilename)
+            throws IOException {
+        AssetFileDescriptor fileDescriptor = assets.openFd(modelFilename);
+        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
+        FileChannel fileChannel = inputStream.getChannel();
+        long startOffset = fileDescriptor.getStartOffset();
+        long declaredLength = fileDescriptor.getDeclaredLength();
+        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
     }
-    d.imgData = ByteBuffer.allocateDirect(1 * d.inputSize * d.inputSize * 3 * numBytesPerChannel);
-    d.imgData.order(ByteOrder.nativeOrder());
-    d.intValues = new int[d.inputSize * d.inputSize];
 
-    d.tfLite.setNumThreads(NUM_THREADS);
-    d.outputLocations = new float[1][NUM_DETECTIONS][4];
-    d.outputClasses = new float[1][NUM_DETECTIONS];
-    d.outputScores = new float[1][NUM_DETECTIONS];
-    d.numDetections = new float[1];
-    return d;
-  }
+    /**
+     * Initializes a native TensorFlow session for classifying images.
+     *
+     * @param assetManager  The asset manager to be used to load assets.
+     * @param modelFilename The filepath of the model GraphDef protocol buffer.
+     * @param labelFilename The filepath of label file for classes.
+     * @param inputSize     The size of image input
+     * @param isQuantized   Boolean representing model is quantized or not
+     */
+    public static Classifier create(
+            final AssetManager assetManager,
+            final String modelFilename,
+            final String labelFilename,
+            final int inputSize,
+            final boolean isQuantized)
+            throws IOException {
+        final TFLiteObjectDetectionAPIModel d = new TFLiteObjectDetectionAPIModel();
 
-  @Override
-  public List<Recognition> recognizeImage(final Bitmap bitmap) {
-    // Log this method so that it can be analyzed with systrace.
-    Trace.beginSection("recognizeImage");
-
-    Trace.beginSection("preprocessBitmap");
-    // Preprocess the image data from 0-255 int to normalized float based
-    // on the provided parameters.
-    bitmap.getPixels(intValues, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-
-    imgData.rewind();
-    for (int i = 0; i < inputSize; ++i) {
-      for (int j = 0; j < inputSize; ++j) {
-        int pixelValue = intValues[i * inputSize + j];
-        if (isModelQuantized) {
-          // Quantized model
-          imgData.put((byte) ((pixelValue >> 16) & 0xFF));
-          imgData.put((byte) ((pixelValue >> 8) & 0xFF));
-          imgData.put((byte) (pixelValue & 0xFF));
-        } else { // Float model
-          imgData.putFloat((((pixelValue >> 16) & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
-          imgData.putFloat((((pixelValue >> 8) & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
-          imgData.putFloat(((pixelValue & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
+        String actualFilename = labelFilename.split("file:///android_asset/")[1];
+        InputStream labelsInput = assetManager.open(actualFilename);
+        BufferedReader br = new BufferedReader(new InputStreamReader(labelsInput));
+        String line;
+        while ((line = br.readLine()) != null) {
+            LOGGER.w(line);
+            d.labels.add(line);
         }
-      }
+        br.close();
+
+        d.inputSize = inputSize;
+
+        try {
+            d.tfLite = new Interpreter(loadModelFile(assetManager, modelFilename));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        d.isModelQuantized = isQuantized;
+        // Pre-allocate buffers.
+        int numBytesPerChannel;
+        if (isQuantized) {
+            numBytesPerChannel = 1; // Quantized
+        } else {
+            numBytesPerChannel = 4; // Floating point
+        }
+        d.imgData = ByteBuffer.allocateDirect(1 * d.inputSize * d.inputSize * 3 * numBytesPerChannel);
+        d.imgData.order(ByteOrder.nativeOrder());
+        d.intValues = new int[d.inputSize * d.inputSize];
+
+        d.tfLite.setNumThreads(NUM_THREADS);
+        d.outputLocations = new float[1][NUM_DETECTIONS][4];
+        d.outputClasses = new float[1][NUM_DETECTIONS];
+        d.outputScores = new float[1][NUM_DETECTIONS];
+        d.numDetections = new float[1];
+        return d;
     }
-    Trace.endSection(); // preprocessBitmap
 
-    // Copy the input data into TensorFlow.
-    Trace.beginSection("feed");
-    outputLocations = new float[1][NUM_DETECTIONS][4];
-    outputClasses = new float[1][NUM_DETECTIONS];
-    outputScores = new float[1][NUM_DETECTIONS];
-    numDetections = new float[1];
+    @Override
+    public List<Recognition> recognizeImage(final Bitmap bitmap) {
+        // Log this method so that it can be analyzed with systrace.
+        Trace.beginSection("recognizeImage");
 
-    Object[] inputArray = {imgData};
-    //Map<Integer, Object> outputMap = new HashMap<>();
-    //outputMap.put(0, outputLocations);
-    //outputMap.put(1, outputClasses);
-    //outputMap.put(2, outputScores);
-    //outputMap.put(3, numDetections);
-    Trace.endSection();
+        Trace.beginSection("preprocessBitmap");
+        // Preprocess the image data from 0-255 int to normalized float based
+        // on the provided parameters.
+        bitmap.getPixels(intValues, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+        imgData.rewind();
+        for (int i = 0; i < inputSize; ++i) {
+            for (int j = 0; j < inputSize; ++j) {
+                int pixelValue = intValues[i * inputSize + j];
+                if (isModelQuantized) {
+                    // Quantized model
+                    imgData.put((byte) ((pixelValue >> 16) & 0xFF));
+                    imgData.put((byte) ((pixelValue >> 8) & 0xFF));
+                    imgData.put((byte) (pixelValue & 0xFF));
+                } else { // Float model
+                    imgData.putFloat((((pixelValue >> 16) & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
+                    imgData.putFloat((((pixelValue >> 8) & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
+                    imgData.putFloat(((pixelValue & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
+                }
+            }
+        }
+        Trace.endSection(); // preprocessBitmap
+
+        // Copy the input data into TensorFlow.
+        Trace.beginSection("feed");
+        outputLocations = new float[1][NUM_DETECTIONS][4];
+        outputClasses = new float[1][NUM_DETECTIONS];
+        outputScores = new float[1][NUM_DETECTIONS];
+        numDetections = new float[1];
+
+        Object[] inputArray = {imgData};
+        //Map<Integer, Object> outputMap = new HashMap<>();
+        //outputMap.put(0, outputLocations);
+        //outputMap.put(1, outputClasses);
+        //outputMap.put(2, outputScores);
+        //outputMap.put(3, numDetections);
+        Trace.endSection();
 
 // Here outputMap is changed to fit the Face Mask detector
-    Map<Integer, Object> outputMap = new HashMap<>();
-    output = new float[1][2];
-    outputMap.put(0, output);
+        Map<Integer, Object> outputMap = new HashMap<>();
+        output = new float[1][2];
+        outputMap.put(0, output);
 
-    // Run the inference call.
-    Trace.beginSection("run");
-    //tfLite.runForMultipleInputsOutputs(inputArray, outputMapBack);
-    tfLite.runForMultipleInputsOutputs(inputArray, outputMap);
-    Trace.endSection();
+        // Run the inference call.
+        Trace.beginSection("run");
+        //tfLite.runForMultipleInputsOutputs(inputArray, outputMapBack);
+        tfLite.runForMultipleInputsOutputs(inputArray, outputMap);
+        Trace.endSection();
 
-    float mask = output[0][0];
-    float no_mask = output[0][1];
-    float confidence;
-    String id;
-    String label;
-    if (mask > no_mask) {
-      label = "mask";
-      confidence = mask;
-      id = "0";
-    }
-    else {
-      label = "no mask";
-      confidence = no_mask;
-      id = "1";
-    }
-
+        float mask = output[0][0];
+        float no_mask = output[0][1];
+        float confidence;
+        String id;
+        String label;
+        if (mask > no_mask) {
+            label = "mask";
+            confidence = mask;
+            id = "0";
+        } else {
+            label = "no mask";
+            confidence = no_mask;
+            id = "1";
+        }
 
 
-    LOGGER.i("prediction: " + mask + ", " + no_mask);
-    // Show the best detections.
-    // after scaling them back to the input size.
+        LOGGER.i("prediction: " + mask + ", " + no_mask);
+        // Show the best detections.
+        // after scaling them back to the input size.
 
-    // You need to use the number of detections from the output and not the NUM_DETECTONS variable declared on top
-    // because on some models, they don't always output the same total number of detections
-    // For example, your model's NUM_DETECTIONS = 20, but sometimes it only outputs 16 predictions
-    // If you don't use the output's numDetections, you'll get nonsensical data
-    int numDetectionsOutput = Math.min(NUM_DETECTIONS, (int) numDetections[0]); // cast from float to integer, use min for safety
+        // You need to use the number of detections from the output and not the NUM_DETECTONS variable declared on top
+        // because on some models, they don't always output the same total number of detections
+        // For example, your model's NUM_DETECTIONS = 20, but sometimes it only outputs 16 predictions
+        // If you don't use the output's numDetections, you'll get nonsensical data
+        int numDetectionsOutput = Math.min(NUM_DETECTIONS, (int) numDetections[0]); // cast from float to integer, use min for safety
 
-    final ArrayList<Recognition> recognitions = new ArrayList<>(numDetectionsOutput);
-    recognitions.add(
-            new Recognition(
-                    id,
-                    label,
-                    confidence,
-                    new RectF()));
+        final ArrayList<Recognition> recognitions = new ArrayList<>(numDetectionsOutput);
+        recognitions.add(
+                new Recognition(
+                        id,
+                        label,
+                        confidence,
+                        new RectF()));
 
 //    for (int i = 0; i < numDetectionsOutput; ++i) {
 //      final RectF detection =
@@ -259,27 +263,29 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
 //              outputScores[0][i],
 //              detection));
 //    }
-    Trace.endSection(); // "recognizeImage"
-    return recognitions;
-  }
+        Trace.endSection(); // "recognizeImage"
+        return recognitions;
+    }
 
-  @Override
-  public void enableStatLogging(final boolean logStats) {}
+    @Override
+    public void enableStatLogging(final boolean logStats) {
+    }
 
-  @Override
-  public String getStatString() {
-    return "";
-  }
+    @Override
+    public String getStatString() {
+        return "";
+    }
 
-  @Override
-  public void close() {}
+    @Override
+    public void close() {
+    }
 
-  public void setNumThreads(int num_threads) {
-    if (tfLite != null) tfLite.setNumThreads(num_threads);
-  }
+    public void setNumThreads(int num_threads) {
+        if (tfLite != null) tfLite.setNumThreads(num_threads);
+    }
 
-  @Override
-  public void setUseNNAPI(boolean isChecked) {
-    if (tfLite != null) tfLite.setUseNNAPI(isChecked);
-  }
+    @Override
+    public void setUseNNAPI(boolean isChecked) {
+        if (tfLite != null) tfLite.setUseNNAPI(isChecked);
+    }
 }

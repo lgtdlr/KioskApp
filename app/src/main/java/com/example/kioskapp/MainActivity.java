@@ -2,11 +2,7 @@ package com.example.kioskapp;
 
 import android.Manifest;
 import android.content.Intent;
-import android.graphics.Camera;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -31,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toast.makeText(MainActivity.this, "OpenCV Load Status: " + String.valueOf(OpenCVLoader.initDebug()), Toast.LENGTH_LONG).show();
+        Toast.makeText(MainActivity.this, "OpenCV Load Status: " + OpenCVLoader.initDebug(), Toast.LENGTH_LONG).show();
 
         Animation animFloat;
         animFloat = AnimationUtils.loadAnimation(getApplicationContext(),
@@ -51,39 +47,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivity(intent);
     }
 
-    public void onVerifyClick(View view) {
-        //start new activity
-        Intent verifyIntent = new Intent(this, VerifyActivity.class);
-        startActivity(verifyIntent);
-    }
-
-    /*public void onTrainClick(View view) {
-        //start new activity
-        Intent verifyIntent = new Intent(this, TrainActivity.class);
-        startActivity(verifyIntent);
-    }*/
-
     public void onIdentifyClick(View view) {
-        Intent identifyIntent = new Intent(this, RealIdentifyActivity.class);
+        Intent identifyIntent = new Intent(this, IdentifyActivity.class);
         startActivity(identifyIntent);
     }
 
     public void onCameraClick(View view) {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == -1){
+        //Get camera permissions before opening camera activity
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == -1) {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, 1);
             return;
         }
-        Intent cameraIntent = new Intent(this, DetectCameraActivity.class);
+        Intent cameraIntent = new Intent(this, LiveDetectActivity.class);
         startActivity(cameraIntent);
     }
 
     public void onObjectClick(View view) {
-        Intent identifyIntent = new Intent(this, DetectorActivity.class);
+        Intent identifyIntent = new Intent(this, ObjectDetectActivity.class);
         startActivity(identifyIntent);
     }
 
     public void onTrainClick(View view) {
-        Intent trainIntent = new Intent(this, IdentifyActivity.class);
+        Intent trainIntent = new Intent(this, TrainActivity.class);
         startActivity(trainIntent);
     }
 
@@ -102,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void onMenuClick(View view) {
+        //Open navigation menu
         DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerLayout.openDrawer(GravityCompat.START);
     }

@@ -4,12 +4,7 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -17,10 +12,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -33,19 +25,9 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
-import okhttp3.FormBody;
-import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -54,30 +36,23 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 
-public class VerifyActivity extends AppCompatActivity {
+public class OldVerifyActivity extends AppCompatActivity {
 
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final String DETECT_URL = "http://192.168.102.158:5000/face/v1.0/detect";
     private static final String VERIFY_URL = "http://192.168.102.158:5000/face/v1.0/verify";
-    private static int FACE_ONE_SELECTED = 0, FACE_TWO_SELECTED = 1;
-    private static final int REQUEST_CAMERA_ONE=1, SELECT_FILE_ONE=0, REQUEST_CAMERA_TWO=3, SELECT_FILE_TWO=2;
-    ArrayList<String> faceIds = new ArrayList<>();
-    Map<String, Object> Ids = new HashMap();
-    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-
-    private static TextView postVerifyText, verifyResults;
-    private static ImageView face1Selected, face2Selected;
-    private String faceId1, faceId2;
-
+    private static final int REQUEST_CAMERA_ONE = 1, SELECT_FILE_ONE = 0, REQUEST_CAMERA_TWO = 3, SELECT_FILE_TWO = 2;
     private static OkHttpClient client = new OkHttpClient();
-
+    ArrayList<String> faceIds = new ArrayList<>();
     ProgressDialog p;
+    private TextView verifyResults;
+    private ImageView face1Selected, face2Selected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_verify);
+        setContentView(R.layout.activity_old_verify);
         requestPermissions(new String[]{Manifest.permission.CAMERA}, 1);
-        postVerifyText = (TextView) findViewById(R.id.postVerifyText);
         verifyResults = (TextView) findViewById(R.id.verifyResults);
         face1Selected = (ImageView) findViewById(R.id.face1Selected);
         face2Selected = (ImageView) findViewById(R.id.face2Selected);
@@ -92,9 +67,9 @@ public class VerifyActivity extends AppCompatActivity {
     }
 
     private void selectImage(final int faceSelected) {
-        final CharSequence[] items={"Camera","Gallery", "Cancel"};
+        final CharSequence[] items = {"Camera", "Gallery", "Cancel"};
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(VerifyActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(OldVerifyActivity.this);
         builder.setTitle("Add Image");
 
         builder.setItems(items, new DialogInterface.OnClickListener() {
@@ -102,13 +77,13 @@ public class VerifyActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (items[i].equals("Camera")) {
-                    if (ContextCompat.checkSelfPermission(VerifyActivity.this, Manifest.permission.CAMERA) == -1){
+                    if (ContextCompat.checkSelfPermission(OldVerifyActivity.this, Manifest.permission.CAMERA) == -1) {
                         requestPermissions(new String[]{Manifest.permission.CAMERA}, 1);
                         return;
                     }
 
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    if(faceSelected == 1){
+                    if (faceSelected == 1) {
                         startActivityForResult(intent, REQUEST_CAMERA_ONE);
                     } else {
                         startActivityForResult(intent, REQUEST_CAMERA_TWO);
@@ -116,14 +91,14 @@ public class VerifyActivity extends AppCompatActivity {
 
 
                 } else if (items[i].equals("Gallery")) {
-                    if (ContextCompat.checkSelfPermission(VerifyActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == -1){
+                    if (ContextCompat.checkSelfPermission(OldVerifyActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == -1) {
                         requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
                         return;
                     }
                     Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     //Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                     intent.setType("image/*");
-                    if (faceSelected == 1){
+                    if (faceSelected == 1) {
                         startActivityForResult(intent, SELECT_FILE_ONE);
                     } else {
                         startActivityForResult(intent, SELECT_FILE_TWO);
@@ -139,80 +114,6 @@ public class VerifyActivity extends AppCompatActivity {
 
     public void onVerifyClickButton(View view) {
         new VerifyRequest().execute(faceIds.get(0), faceIds.get(1));
-    }
-
-    private class VerifyRequest extends AsyncTask<String, String, String> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            p = new ProgressDialog(VerifyActivity.this);
-            p.setMessage("Please wait... Uploading");
-            p.setIndeterminate(false);
-            p.setCancelable(false);
-            p.show();
-        }
-
-        @Override
-        protected String doInBackground(String... strings) {
-            try {
-
-                /*RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("faceId1", strings[0])
-                        .addFormDataPart("faceId2", strings[1])
-                        .build();*/
-                JSONObject json = new JSONObject();
-                json.put("faceId1", strings[0]);
-                json.put("faceId2", strings[1]);
-
-                RequestBody requestBody = RequestBody.create(json.toString(), JSON);
-
-                Log.i("faceId1", strings[0]);
-                Log.i("faceId2", strings[1]);
-
-
-                Request request = new Request.Builder()
-                        .url(VERIFY_URL)
-                        .post(requestBody)
-                        .addHeader("Accept", "application/json; charset=utf-8")
-                        .build();
-
-                Log.i("requestBody", requestBody.toString());
-
-                try (Response response = client.newCall(request).execute()) {
-                    return response.body().string();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                return "Failure";
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-                p.hide();
-                face1Selected.isOpaque();
-                Log.i("ASHWIN", s);
-                try {
-                    JSONObject parent = new JSONObject(s);
-                    Boolean isIdentical = parent.getBoolean("isIdentical");
-                    Double confidence = parent.getDouble("confidence");
-//                    if (isIdentical){
-//                        postVerifyText.setText("Success");
-//                    } else if {
-//                    postVerifyText.setText("Failure")
-//                }
-                    //;
-
-                    //setUiAfterUpdate(parent);
-                    setPostResponseText(s);
-                } catch (Exception e) {
-                    Log.i("TAG", "error with JSON");
-                    Log.e("Error", e.getMessage());
-                    Log.e("Error", e.getLocalizedMessage());
-                }
-        }
     }
 
     private void setPostResponseText(String s) {
@@ -259,11 +160,78 @@ public class VerifyActivity extends AppCompatActivity {
         }
     }
 
+    private void setUiAfterUpdate(JSONArray parent) throws JSONException {
+        // ArrayList<String> items = new ArrayList<String>();
+        faceIds.add(parent.getJSONObject(0).getString("faceId"));
+        for (int i = 0; i < faceIds.size(); i++) {
+            Log.d("Faces", faceIds.get(i));
+        }
+    }
+
+    private class VerifyRequest extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            p = new ProgressDialog(OldVerifyActivity.this);
+            p.setMessage("Please wait... Uploading");
+            p.setIndeterminate(false);
+            p.setCancelable(false);
+            p.show();
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            try {
+
+                JSONObject json = new JSONObject();
+                json.put("faceId1", strings[0]);
+                json.put("faceId2", strings[1]);
+
+                RequestBody requestBody = RequestBody.create(json.toString(), JSON);
+
+                Log.i("faceId1", strings[0]);
+                Log.i("faceId2", strings[1]);
+
+
+                Request request = new Request.Builder()
+                        .url(VERIFY_URL)
+                        .post(requestBody)
+                        .addHeader("Accept", "application/json; charset=utf-8")
+                        .build();
+
+                Log.i("requestBody", requestBody.toString());
+
+                try (Response response = client.newCall(request).execute()) {
+                    return response.body().string();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "Failure";
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            p.hide();
+            face1Selected.isOpaque();
+            Log.i("ASHWIN", s);
+            try {
+                JSONObject parent = new JSONObject(s);
+                setPostResponseText(s);
+            } catch (Exception e) {
+                Log.i("TAG", "error with JSON");
+                Log.e("Error", e.getMessage());
+                Log.e("Error", e.getLocalizedMessage());
+            }
+        }
+    }
+
     private class PostCameraRequest extends AsyncTask<ImageView, String, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            p = new ProgressDialog(VerifyActivity.this);
+            p = new ProgressDialog(OldVerifyActivity.this);
             p.setMessage("Please wait... uploading");
             p.setIndeterminate(false);
             p.setCancelable(false);
@@ -333,7 +301,7 @@ public class VerifyActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            p = new ProgressDialog(VerifyActivity.this);
+            p = new ProgressDialog(OldVerifyActivity.this);
             p.setMessage("Please wait... Uploading");
             p.setIndeterminate(false);
             p.setCancelable(false);
@@ -373,15 +341,6 @@ public class VerifyActivity extends AppCompatActivity {
                 Log.i("TAG", s);
                 try {
                     JSONArray parent = new JSONArray(s);
-//                    LinkedList<JSONObject> rectList = new LinkedList<>();
-
-
-
-
-
-                    //Bitmap face1ImageBitmap = ((BitmapDrawable) face1Selected.getDrawable()).getBitmap();
-                    //imageSelected.setImageBitmap(drawRectangles(imageBitmap, rectList));
-                    //face1ImageBitmap.recycle();
                     setUiAfterUpdate(parent);
                 } catch (Exception e) {
                     Log.i("TAG", "error with JSON");
@@ -390,25 +349,6 @@ public class VerifyActivity extends AppCompatActivity {
                 p.show();
             }
         }
-    }
-
-    private void setUiAfterUpdate(JSONArray parent) throws JSONException {
-       // ArrayList<String> items = new ArrayList<String>();
-        faceIds.add(parent.getJSONObject(0).getString("faceId"));
-        for (int i = 0 ; i < faceIds.size() ; i++){
-            Log.d("Faces", faceIds.get(i).toString());
-        }
-
-
-//        for(int i=0; i < parent.length() ; i++) {
-//            JSONObject faceAttributes = parent.getJSONObject(i).getJSONObject("faceAttributes");
-//            int age = faceAttributes.getInt("age");
-//            items.add("Age: " + age);
-//        }
-//        ListView listView = (ListView)findViewById(R.id.results_list);
-//        ArrayAdapter<String> mArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
-//        listView.setAdapter(mArrayAdapter);
-//        mArrayAdapter.notifyDataSetChanged();
     }
 
 }

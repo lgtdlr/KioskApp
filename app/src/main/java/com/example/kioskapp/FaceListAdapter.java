@@ -13,8 +13,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 public class FaceListAdapter extends ArrayAdapter<Face> {
@@ -68,16 +66,16 @@ public class FaceListAdapter extends ArrayAdapter<Face> {
 
         tvAge.setText(face_description);
         tvEmotion.setText("Emotion: " + emotion);
-        emotionBar.setProgress((int) (emotionScore*1000));
+        emotionBar.setProgress((int) (emotionScore * 1000));
         tv2Emotion.setText("Emotion: " + emotion2);
-        emotion2Bar.setProgress((int) (emotion2Score*1000));
-        if(emotion2Bar.getProgress() == 0) {
+        emotion2Bar.setProgress((int) (emotion2Score * 1000));
+        if (emotion2Bar.getProgress() == 0) {
             emotion2Bar.setVisibility(View.GONE);
             tv2Emotion.setVisibility(View.GONE);
         }
         tv3Emotion.setText("Emotion: " + emotion3);
-        emotion3Bar.setProgress((int) (emotion3Score*1000));
-        if(emotion3Bar.getProgress() == 0) {
+        emotion3Bar.setProgress((int) (emotion3Score * 1000));
+        if (emotion3Bar.getProgress() == 0) {
             emotion3Bar.setVisibility(View.GONE);
             tv3Emotion.setVisibility(View.GONE);
         }

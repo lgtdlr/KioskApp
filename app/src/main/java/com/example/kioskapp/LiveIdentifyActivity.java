@@ -2,26 +2,25 @@ package com.example.kioskapp;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.InputType;
+import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
-
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraActivity;
 import org.opencv.android.CameraBridgeViewBase;
+import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
@@ -58,22 +57,23 @@ import okhttp3.Response;
 import static org.opencv.android.CameraBridgeViewBase.CAMERA_ID_BACK;
 import static org.opencv.android.CameraBridgeViewBase.CAMERA_ID_FRONT;
 
-public class LiveTrainActivity extends CameraActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
+public class LiveIdentifyActivity extends CameraActivity implements CvCameraViewListener2 {
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private static final String ID_URL = "http://192.168.102.158:5000/face/v1.0/detect?recognitionModel=Recognition_02";
+    private static final String IDENTIFY_URL = "http://192.168.102.158:5000/face/v1.0/identify";
+    private static final String NAME_URL = "http://192.168.102.158:5000/face/v1.0/persongroups/5000/persons/";
     private static OkHttpClient client = new OkHttpClient();
     private static Bitmap mBitmap;
     ProgressDialog p;
     JavaCameraView javaCameraView;
+    File cascFile;
+    CascadeClassifier faceDetector;
     TextView fpsTextView;
     int fps;
     long startTime = 0;
     long currentTime = 1000;
-    File cascFile;
-    CascadeClassifier faceDetector;
     int cameraIndex = CAMERA_ID_FRONT;
-    private String URL = "";
-    private String TRAIN_URL = "http://192.168.102.158:5000/face/v1.0/persongroups/5000/train";
     private CameraBridgeViewBase mOpenCvCameraView;
     private Boolean buttonPressed = false;
     private Mat mRgba, mGray;
@@ -131,44 +131,15 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_live_train);
+        setContentView(R.layout.activity_live_identify);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.java_camera_view2);
+        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.identify_java_camera_view);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
-        javaCameraView = (JavaCameraView) findViewById(R.id.java_camera_view2);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Name");
-        final EditText input = new EditText(this);
-
-
-        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
-
-        builder.setView(input);
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-            }
-        });
-
-        builder.show();
-
-        Bundle extras = getIntent().getExtras();
-
-        if (extras != null) {
-            URL = "http://192.168.102.158:5000/face/v1.0/persongroups/5000/persons/"
-                    + extras.getString("personId")
-                    + "/persistedFaces";
-
-            Toast.makeText(this, "Add faces for " + extras.getString("myName"), Toast.LENGTH_LONG).show();
-        }
-
+        javaCameraView = (JavaCameraView) findViewById(R.id.identify_java_camera_view);
         if (!OpenCVLoader.initDebug()) {
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, baseCallback);
         } else {
@@ -179,37 +150,21 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                fpsTextView = (TextView) findViewById(R.id.fps_id2);
+                fpsTextView = (TextView) findViewById(R.id.fps_id3);
             }
         });
-
 
         javaCameraView.setCvCameraViewListener(this);
     }
 
-    @Override
-    public void onCameraViewStarted(int width, int height) {
-        mRgba = new Mat();
-        mGray = new Mat();
-    }
-
-    @Override
-    public void onCameraViewStopped() {
-        mRgba.release();
-        mGray.release();
-    }
-
-    @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
-        Mat mRgbaT = mRgba.t();
 
         int orientation = getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_PORTRAIT && cameraIndex == CAMERA_ID_FRONT) {
-            // In portrait
-            Core.flip(mRgba, mRgba, 1);
 
+        if (cameraIndex == CAMERA_ID_FRONT && orientation == Configuration.ORIENTATION_PORTRAIT) {
+            Core.flip(mRgba, mRgba, 1);
         }
 
         //detect faces
@@ -224,9 +179,6 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
                         new Scalar(255, 0, 0));
             }
         }
-
-        Imgproc.resize(mRgbaT, mRgbaT, mRgba.size());
-
 
         mBitmap = Bitmap.createBitmap(mRgba.cols(), mRgba.rows(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(mRgba, mBitmap);
@@ -247,32 +199,6 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
         });
 
         return mRgba;
-    }
-
-    //Switch between front and back camera
-    public void onCameraSwitch(View view) {
-        if (view.getId() == R.id.camera_button_id6) {
-            if (cameraIndex == CAMERA_ID_FRONT) {
-                cameraIndex = CAMERA_ID_BACK;
-            } else {
-                cameraIndex = CAMERA_ID_FRONT;
-            }
-            mOpenCvCameraView.disableView();
-            mOpenCvCameraView.setCameraIndex(cameraIndex);
-            mOpenCvCameraView.enableView();
-        }
-
-        if (view.getId() == R.id.camera_button_id5) {
-            if (cameraIndex == CAMERA_ID_FRONT) {
-                new PostImageRequest().execute(RotateBitmap(mBitmap, 90));
-            } else {
-                new PostImageRequest().execute(mBitmap);
-            }
-        }
-
-        if (view.getId() == R.id.train_id) {
-            new TrainRequest().execute("");
-        }
     }
 
     @Override
@@ -298,27 +224,72 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
             mOpenCvCameraView.disableView();
     }
 
-    public void onCameraIdentifyButtonClick(View view) {
-        Intent intent = new Intent(this, LiveIdentifyActivity.class);
-        startActivity(intent);
+    public void onCameraViewStarted(int width, int height) {
+        mRgba = new Mat();
+        mGray = new Mat();
+    }
+
+    public void onCameraViewStopped() {
+        mRgba.release();
+        mGray.release();
+    }
+
+    public void onRefreshClick(View view) {
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // In portrait
+            //Rotate bitmap to proper orientation before sending
+            new PostCameraRequest().execute(RotateBitmap(mBitmap, 90));
+
+        } else {
+            // In lanscape
+            new PostCameraRequest().execute(mBitmap);
+        }
+
+    }
+
+    //Toggle face detection
+    public void onRectToggle(View view) {
+        buttonPressed = buttonPressed == false;
+    }
+
+    //Switch between front and back camera
+    public void onCameraSwitch(View view) {
+        Log.i("CameraIndex", "is " + cameraIndex);
+        if (cameraIndex == CAMERA_ID_FRONT) {
+            cameraIndex = CAMERA_ID_BACK;
+        } else {
+            cameraIndex = CAMERA_ID_FRONT;
+        }
+        mOpenCvCameraView.disableView();
+        mOpenCvCameraView.setCameraIndex(cameraIndex);
+        mOpenCvCameraView.enableView();
     }
 
     public void onCameraDetectButtonClick(View view) {
+        //Switch to live detect activity
         Intent intent = new Intent(this, LiveDetectActivity.class);
         startActivity(intent);
     }
 
+    public void onCameraTrainButtonClick(View view) {
+        //Switch to live train activity
+        Intent intent = new Intent(this, LiveTrainActivity.class);
+        startActivity(intent);
+    }
+
     public void onBackClick(View view) {
+        //Go directly to main menu
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
-    private class PostImageRequest extends AsyncTask<Bitmap, String, String> {
+    private class PostCameraRequest extends AsyncTask<Bitmap, String, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            p = new ProgressDialog(LiveTrainActivity.this);
-            p.setMessage("Please wait... uploading");
+            p = new ProgressDialog(LiveIdentifyActivity.this);
+            p.setMessage("Getting face ids...");
             p.setIndeterminate(false);
             p.setCancelable(false);
             p.show();
@@ -327,9 +298,20 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            p.hide();
 
-            Toast.makeText(LiveTrainActivity.this, "Face added!", Toast.LENGTH_SHORT).show();
+            p.hide();
+            Log.i("ASHWIN", s);
+
+            try {
+                JSONArray parent = new JSONArray(s);
+                JSONObject person = parent.getJSONObject(0);
+                String faceId = person.getString("faceId");
+
+                new PersonRequest().execute(faceId);
+            } catch (Exception e) {
+
+
+            }
         }
 
         @Override
@@ -349,7 +331,7 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
                         .build();
 
                 Request request = new Request.Builder()
-                        .url(URL)
+                        .url(ID_URL)
                         .post(requestBody)
                         .addHeader("Accept", "application/json; charset=utf-8")
                         .build();
@@ -358,17 +340,83 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
                     return response.body().string();
                 }
             } catch (Exception e) {
+                e.printStackTrace();
+                return "Error";
+            }
+
+        }
+    }
+
+    private class PersonRequest extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            p = new ProgressDialog(LiveIdentifyActivity.this);
+            p.setMessage("Acquiring person ids...");
+            p.setIndeterminate(false);
+            p.setCancelable(false);
+            p.show();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            Log.i("ASHWIN", s);
+
+            p.hide();
+            try {
+                JSONArray parent = new JSONArray(s);
+                JSONArray candidates = parent.getJSONObject(0).getJSONArray("candidates");
+                if (candidates.length() == 0) {
+                    Toast.makeText(LiveIdentifyActivity.this, "Unknown person detected", Toast.LENGTH_SHORT).show();
+                } else {
+                    String personId = candidates.getJSONObject(0).getString("personId");
+                    new NameRequest().execute(personId);
+                }
+
+
+            } catch (Exception e) {
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("confidenceThreshold", 0.5);
+                JSONArray jsonArray = new JSONArray();
+                jsonArray.put(strings[0]);
+                json.put("faceIds", jsonArray);
+                json.put("PersonGroupId", "5000");
+                json.put("maxNumOfCandidatesReturned", 1);
+            } catch (Exception e) {
+            }
+
+
+            RequestBody requestBody = RequestBody.create(json.toString(), JSON);
+
+            Request request = new Request.Builder()
+                    .url(IDENTIFY_URL)
+                    .post(requestBody)
+                    .addHeader("Accept", "application/json; charset=utf-8")
+                    .build();
+
+            try (Response response = client.newCall(request).execute()) {
+                return response.body().string();
+            } catch (IOException e) {
+                e.printStackTrace();
                 return "Error";
             }
         }
     }
 
-    private class TrainRequest extends AsyncTask<String, String, String> {
+    private class NameRequest extends AsyncTask<String, String, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            p = new ProgressDialog(LiveTrainActivity.this);
-            p.setMessage("Please wait... uploading");
+            p = new ProgressDialog(LiveIdentifyActivity.this);
+            p.setMessage("Getting identity...");
             p.setIndeterminate(false);
             p.setCancelable(false);
             p.show();
@@ -379,16 +427,21 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
             super.onPostExecute(s);
             p.hide();
 
-            Toast.makeText(LiveTrainActivity.this, "Training is being performed on server..", Toast.LENGTH_SHORT).show();
+            try {
+                JSONObject parent = new JSONObject(s);
+                String name = parent.getString("name");
+                Toast.makeText(LiveIdentifyActivity.this, "Hello " + name, Toast.LENGTH_LONG).show();
+            } catch (Exception e) {
+            }
         }
 
         @Override
         protected String doInBackground(String... strings) {
             try {
-                HttpURLConnection connection = (HttpURLConnection) new URL(TRAIN_URL).openConnection();
-                connection.setRequestProperty("accept", "application/json; charset=utf-8");
-                connection.setRequestMethod("POST");
-                connection.setDoOutput(true);
+                String url = NAME_URL + strings[0];
+                HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+                connection.setRequestProperty("Accept", "application/json; charset=utf-8");
+                connection.setRequestMethod("GET");
 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
@@ -400,10 +453,10 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
                 }
 
                 return str;
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
                 return "Error";
             }
         }
     }
+
 }

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="#000000"
     android:clipChildren="true"
-    tools:context=".RealCameraIdentifyActivity">
+    tools:context=".LiveDetectActivity">
 
 
     <LinearLayout
@@ -16,7 +16,7 @@
         android:layout_height="247dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/identify_java_camera_view"
+        app:layout_constraintStart_toEndOf="@+id/java_camera_view"
         app:layout_constraintTop_toTopOf="@+id/guideline9"
         app:layout_constraintVertical_bias="0.492">
 
@@ -25,9 +25,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:rotation="-90"
             android:background="#00FFFFFF"
+            android:fontFamily="sans-serif"
             android:onClick="onCameraTrainButtonClick"
+            android:rotation="-90"
             android:text="Train"
             android:textColor="#80FFFFFF" />
 
@@ -36,26 +37,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:rotation="-90"
             android:background="#00FFFFFF"
-            android:textStyle="bold"
+            android:fontFamily="sans-serif"
+            android:onClick="onCameraIdentifyButtonClick"
+            android:rotation="-90"
             android:text="Identify"
-            android:textColor="#FFFFFF" />
+            android:textColor="#80FFFFFF" />
 
         <Button
             android:id="@+id/camera_detect_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:rotation="-90"
             android:background="#00FFFFFF"
-            android:onClick="onCameraDetectButtonClick"
+            android:fontFamily="sans-serif"
+            android:rotation="-90"
             android:text="Detect"
-            android:textColor="#80FFFFFF" />
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <org.opencv.android.JavaCameraView
-        android:id="@+id/identify_java_camera_view"
+        android:id="@+id/java_camera_view"
         android:layout_width="483dp"
         android:layout_height="match_parent"
         android:visibility="visible"
@@ -66,7 +69,7 @@
         opencv:show_fps="true" />
 
     <org.opencv.android.CameraGLSurfaceView
-        android:id="@+id/identify_native_surface_view"
+        android:id="@+id/native_surface_view"
         android:layout_width="600dp"
         android:layout_height="600dp"
         android:visibility="gone"
@@ -75,6 +78,17 @@
         opencv:layout_constraintStart_toStartOf="parent"
         opencv:layout_constraintTop_toTopOf="parent"
         opencv:show_fps="true" />
+
+    <ListView
+        android:id="@+id/results_list"
+        android:layout_width="254dp"
+        android:layout_height="213dp"
+        android:background="#00D3D3D3"
+        android:verticalSpacing="5dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toStartOf="@+id/linearLayout"
+        app:layout_constraintTop_toTopOf="@+id/guideline9"
+        tools:ignore="MissingConstraints" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline9"
@@ -89,9 +103,8 @@
         android:layout_height="112dp"
         android:background="#00FFFFFF"
         android:onClick="onRefreshClick"
-        android:rotation="-90"
         android:scaleType="fitCenter"
-        android:src="@drawable/btn_shutter"
+        android:src="@drawable/ic_baseline_photo_camera_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/linearLayout"
@@ -104,7 +117,6 @@
         android:clickable="true"
         android:focusable="true"
         android:onClick="onCameraSwitch"
-        android:rotation="-90"
         app:backgroundTint="#00FFFFFF"
         app:layout_constraintBottom_toTopOf="@+id/imageButton"
         app:layout_constraintEnd_toEndOf="parent"
@@ -118,19 +130,10 @@
         android:clickable="true"
         android:focusable="true"
         android:onClick="onRectToggle"
-        android:rotation="-90"
         app:backgroundTint="#00FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/linearLayout"
         app:layout_constraintTop_toBottomOf="@+id/imageButton"
         app:srcCompat="@drawable/detect_frame" />
-
-    <TextView
-        android:id="@+id/fps_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
