@@ -149,6 +149,7 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Name");
+        builder.setCancelable(false);
         final EditText input = new EditText(this);
 
 
