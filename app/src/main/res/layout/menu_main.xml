@@ -227,7 +227,7 @@
                                 android:background="@drawable/circle_bg"
                                 android:elevation="@dimen/margin_18"
                                 android:padding="@dimen/margin_18"
-                                android:src="@drawable/identity" />
+                                android:src="@drawable/ic_baseline_fingerprint_24" />
 
                         </androidx.cardview.widget.CardView>
 
@@ -342,7 +342,7 @@
                                 android:background="@drawable/circle_bg"
                                 android:elevation="@dimen/margin_18"
                                 android:padding="@dimen/margin_18"
-                                android:src="@drawable/object" />
+                                android:src="@drawable/ic_baseline_local_florist_24" />
 
                         </androidx.cardview.widget.CardView>
 
@@ -395,6 +395,24 @@
         </RelativeLayout>
 
     </androidx.appcompat.widget.Toolbar>
+
+    <ImageView
+        android:id="@+id/main.imageview.dropdown"
+        android:layout_width="match_parent"
+        android:layout_height="57dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/full_wave"
+        android:tint="#11000000"
+        tools:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/red_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/red_background"
+        android:tint="#11000000"
+        tools:visibility="gone" />
 
     <TextView
         android:id="@+id/title"

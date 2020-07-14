@@ -15,6 +15,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.ListView;
 
@@ -47,7 +49,9 @@ public class DetectActivity extends AppCompatActivity {
     private static final int REQUEST_IMAGE_CAPTURE = 2;
     private static OkHttpClient client = new OkHttpClient();
     ProgressDialog p;
+//    Animation animPushUp;
     private ImageView imageSelected;
+//    private ImageView dropDownImage;
 
     public static Bitmap drawRectangles(Bitmap original, LinkedList<JSONObject> rectList) {
         Bitmap bitmap = original.copy(Bitmap.Config.ARGB_8888, true);
@@ -80,6 +84,29 @@ public class DetectActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detect);
         requestPermissions(new String[]{Manifest.permission.CAMERA}, 1);
         imageSelected = (ImageView) findViewById(R.id.imageSelected);
+        //Tentative continue animation option
+//        dropDownImage = (ImageView) findViewById(R.id.imageviewdropdown);
+//        animPushUp = new ScaleAnimation(
+//                1f, 1f, // Start and end values for the X axis scaling
+//                15f, 0f, // Start and end values for the Y axis scaling
+//                Animation.RELATIVE_TO_SELF, 0f, // Pivot point of X scaling
+//                Animation.RELATIVE_TO_SELF, 0f); // Pivot point of Y scaling
+//        animPushUp.setDuration(3000);
+//        animPushUp.setAnimationListener(new Animation.AnimationListener(){
+//
+//            @Override
+//            public void onAnimationStart(Animation animation){}
+//
+//            @Override
+//            public void onAnimationRepeat(Animation animation){}
+//
+//            @Override
+//            public void onAnimationEnd(Animation animation){
+//                dropDownImage.setVisibility(View.GONE);
+//            }
+//        });
+//        dropDownImage.startAnimation(animPushUp);
+
     }
 
     private void selectImage() {

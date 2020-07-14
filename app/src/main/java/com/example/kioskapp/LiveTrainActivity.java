@@ -189,7 +189,7 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                fpsTextView = (TextView) findViewById(R.id.fps_id2);
+                fpsTextView = (TextView) findViewById(R.id.fps_id);
             }
         });
 
