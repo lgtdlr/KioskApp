@@ -95,18 +95,4 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="643dp" />
 
-    <ImageView
-        android:id="@+id/imageviewdropdown"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:elevation="15dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/full_wave"
-        android:tint="#11000000"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="gone" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
