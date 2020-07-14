@@ -257,7 +257,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="@dimen/padding_16"
-                            android:text="Live Detection"
+                            android:text="Live Services"
                             android:textColor="@android:color/black"
                             android:textSize="@dimen/margin_18" />
 
