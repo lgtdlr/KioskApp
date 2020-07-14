@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
+import org.json.JSONObject;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraActivity;
 import org.opencv.android.CameraBridgeViewBase;
@@ -69,11 +70,13 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
     int fps;
     long startTime = 0;
     long currentTime = 1000;
+    String personId = "";
     File cascFile;
     CascadeClassifier faceDetector;
     int cameraIndex = CAMERA_ID_FRONT;
     private String URL = "";
     private String TRAIN_URL = "http://192.168.102.158:5000/face/v1.0/persongroups/5000/train";
+    private static final String NAME_URL = "http://192.168.102.158:5000/face/v1.0/persongroups/5000/persons";
     private CameraBridgeViewBase mOpenCvCameraView;
     private Boolean buttonPressed = false;
     private Mat mRgba, mGray;
@@ -115,7 +118,11 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
                 break;
 
                 default: {
-                    super.onManagerConnected(status);
+                    try {
+                        super.onManagerConnected(status);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
             }
@@ -153,26 +160,28 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
 
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-
+                new NewPersonRequest().execute(input.getText().toString());
             }
         });
 
         builder.show();
 
-        Bundle extras = getIntent().getExtras();
 
-        if (extras != null) {
-            URL = "http://192.168.102.158:5000/face/v1.0/persongroups/5000/persons/"
-                    + extras.getString("personId")
-                    + "/persistedFaces";
 
-            Toast.makeText(this, "Add faces for " + extras.getString("myName"), Toast.LENGTH_LONG).show();
-        }
+        URL = "http://192.168.102.158:5000/face/v1.0/persongroups/5000/persons/"
+                + personId
+                + "/persistedFaces";
+
+
 
         if (!OpenCVLoader.initDebug()) {
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, baseCallback);
         } else {
-            baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            try {
+                baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         //Draw FPS for portrait activity
@@ -401,6 +410,52 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
 
                 return str;
             } catch (IOException e) {
+                e.printStackTrace();
+                return "Error";
+            }
+        }
+    }
+
+    private class NewPersonRequest extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            p = new ProgressDialog(LiveTrainActivity.this);
+            p.setMessage("Please wait...");
+            p.setInverseBackgroundForced(false);
+            p.setCancelable(false);
+            p.show();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            p.hide();
+            try {
+                JSONObject parent = new JSONObject(s);
+                personId = parent.getString("personId");
+
+            } catch (Exception e) {
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            try {
+                JSONObject json = new JSONObject();
+                json.put("name", strings[0]);
+                RequestBody requestBody = RequestBody.create(json.toString(), JSON);
+
+                Request request = new Request.Builder()
+                        .url(NAME_URL)
+                        .post(requestBody)
+                        .addHeader("Accept", "application/json; charset=utf-8")
+                        .build();
+
+                try (Response response = client.newCall(request).execute()) {
+                    return response.body().string();
+                }
+            } catch (Exception e) {
                 e.printStackTrace();
                 return "Error";
             }
