@@ -42,9 +42,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         animFloat = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.floating_animation);
 
-        wave = (ImageView) findViewById(R.id.main_imageview_placeholder);
-        fullWave = (ImageView) findViewById(R.id.main_imageview_dropdown);
-        redOverlay = (ImageView) findViewById(R.id.red_overlay);
+        wave = findViewById(R.id.main_imageview_placeholder);
+        fullWave = findViewById(R.id.main_imageview_dropdown);
+        redOverlay = findViewById(R.id.red_overlay);
 
         redOverlay.setVisibility(View.GONE);
         fullWave.setVisibility(View.GONE);
@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onDetectClick(View view) {
         //start new activity
         fullWave.setVisibility(View.VISIBLE);
+        fullWave.startAnimation(animDropDown);
         Intent intent = new Intent(this, DetectActivity.class);
         animDropDown.setAnimationListener(new Animation.AnimationListener(){
             @Override
@@ -77,11 +78,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(intent);
             }
         });
-        fullWave.startAnimation(animDropDown);
     }
 
     public void onIdentifyClick(View view) {
         Intent intent = new Intent(this, IdentifyActivity.class);
+        fullWave.setVisibility(View.VISIBLE);
+        fullWave.startAnimation(animDropDown);
         animDropDown.setAnimationListener(new Animation.AnimationListener(){
 
             @Override
@@ -96,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(intent);
             }
         });
-        fullWave.startAnimation(animDropDown);
     }
 
     public void onCameraClick(View view) {
@@ -106,6 +107,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             return;
         }
         Intent intent = new Intent(this, LiveDetectActivity.class);
+        fullWave.setVisibility(View.VISIBLE);
+        fullWave.startAnimation(animDropDown);
         animDropDown.setAnimationListener(new Animation.AnimationListener(){
 
             @Override
@@ -120,11 +123,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(intent);
             }
         });
-        fullWave.startAnimation(animDropDown);
     }
 
     public void onObjectClick(View view) {
         Intent intent = new Intent(this, ObjectDetectActivity.class);
+        fullWave.setVisibility(View.VISIBLE);
+        fullWave.startAnimation(animDropDown);
         animDropDown.setAnimationListener(new Animation.AnimationListener(){
 
             @Override
@@ -139,11 +143,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(intent);
             }
         });
-        fullWave.startAnimation(animDropDown);
     }
 
     public void onTrainClick(View view) {
         Intent intent = new Intent(this, TrainActivity.class);
+        fullWave.setVisibility(View.VISIBLE);
+        fullWave.startAnimation(animDropDown);
         animDropDown.setAnimationListener(new Animation.AnimationListener(){
 
             @Override
@@ -158,7 +163,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(intent);
             }
         });
-        fullWave.startAnimation(animDropDown);
     }
 
     @Override
@@ -177,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void onMenuClick(View view) {
         //Open navigation menu
-        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout mDrawerLayout = findViewById(R.id.drawer_layout);
         mDrawerLayout.openDrawer(GravityCompat.START);
     }
 }
