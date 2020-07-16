@@ -1,4 +1,4 @@
-package com.example.kioskapp;
+package com.example.kioskapp.menu;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -18,6 +18,9 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+
+import com.example.kioskapp.R;
+import com.example.kioskapp.utils.SelectImageUtils;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -130,7 +133,7 @@ public class OldTrainActivity extends AppCompatActivity implements View.OnClickL
 
         if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
             Uri fullPhotoUri = data.getData();
-            final String fullPhotoPath = ImageSelect.getPath(this, fullPhotoUri);
+            final String fullPhotoPath = SelectImageUtils.getPath(this, fullPhotoUri);
             imageView.setImageURI(fullPhotoUri);
 
             addFaceButton.setClickable(true);

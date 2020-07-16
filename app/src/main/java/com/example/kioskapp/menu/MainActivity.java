@@ -1,4 +1,4 @@
-package com.example.kioskapp;
+package com.example.kioskapp.menu;
 
 import android.Manifest;
 import android.content.Intent;
@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.kioskapp.R;
 import com.google.android.material.navigation.NavigationView;
 
 import org.opencv.android.OpenCVLoader;
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 1f, 15f, // Start and end values for the Y axis scaling
                 Animation.RELATIVE_TO_SELF, 0f, // Pivot point of X scaling
                 Animation.RELATIVE_TO_SELF, 0f); // Pivot point of Y scaling
-        animDropDown.setDuration(3000);
+        animDropDown.setDuration(1000);
 
         animFloat = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.floating_animation);
 
@@ -147,6 +148,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void onTrainClick(View view) {
         Intent intent = new Intent(this, TrainActivity.class);
+        fullWave.setVisibility(View.VISIBLE);
+        fullWave.startAnimation(animDropDown);
+        animDropDown.setAnimationListener(new Animation.AnimationListener(){
+
+            @Override
+            public void onAnimationStart(Animation animation){}
+
+            @Override
+            public void onAnimationRepeat(Animation animation){}
+
+            @Override
+            public void onAnimationEnd(Animation animation){
+                redOverlay.setVisibility(View.VISIBLE);
+                startActivity(intent);
+            }
+        });
+    }
+
+    public void onDrivingClick(View view) {
+        Intent intent = new Intent(this, DrivingActivity.class);
         fullWave.setVisibility(View.VISIBLE);
         fullWave.startAnimation(animDropDown);
         animDropDown.setAnimationListener(new Animation.AnimationListener(){

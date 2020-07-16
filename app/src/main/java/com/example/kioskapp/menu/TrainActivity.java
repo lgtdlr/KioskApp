@@ -1,4 +1,4 @@
-package com.example.kioskapp;
+package com.example.kioskapp.menu;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.kioskapp.R;
 
 import org.json.JSONObject;
 

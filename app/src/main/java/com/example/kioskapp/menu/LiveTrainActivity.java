@@ -1,4 +1,4 @@
-package com.example.kioskapp;
+package com.example.kioskapp.menu;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -18,6 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+
+import com.example.kioskapp.R;
 
 import org.json.JSONObject;
 import org.opencv.android.BaseLoaderCallback;
@@ -118,11 +120,7 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
                 break;
 
                 default: {
-                    try {
-                        super.onManagerConnected(status);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    super.onManagerConnected(status);
                 }
                 break;
             }
@@ -142,10 +140,10 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.java_camera_view2);
+        mOpenCvCameraView = findViewById(R.id.java_camera_view2);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
-        javaCameraView = (JavaCameraView) findViewById(R.id.java_camera_view2);
+        javaCameraView = findViewById(R.id.java_camera_view2);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Name");
@@ -178,18 +176,14 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
         if (!OpenCVLoader.initDebug()) {
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, baseCallback);
         } else {
-            try {
-                baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
 
         //Draw FPS for portrait activity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                fpsTextView = (TextView) findViewById(R.id.fps_id);
+                fpsTextView = findViewById(R.id.fps_id);
             }
         });
 

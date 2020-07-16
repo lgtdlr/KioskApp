@@ -1,4 +1,4 @@
-package com.example.kioskapp;
+package com.example.kioskapp.menu;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -18,6 +18,9 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+
+import com.example.kioskapp.R;
+import com.example.kioskapp.utils.SelectImageUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,9 +56,9 @@ public class OldVerifyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_old_verify);
         requestPermissions(new String[]{Manifest.permission.CAMERA}, 1);
-        verifyResults = (TextView) findViewById(R.id.verifyResults);
-        face1Selected = (ImageView) findViewById(R.id.face1Selected);
-        face2Selected = (ImageView) findViewById(R.id.face2Selected);
+        verifyResults = findViewById(R.id.verifyResults);
+        face1Selected = findViewById(R.id.face1Selected);
+        face2Selected = findViewById(R.id.face2Selected);
     }
 
     public void onFace1UploadClick(View view) {
@@ -126,7 +129,7 @@ public class OldVerifyActivity extends AppCompatActivity {
 
         if (requestCode == SELECT_FILE_ONE && resultCode == RESULT_OK) {
             Uri fullPhotoUri = data.getData();
-            final String fullPhotoPath = ImageSelect.getPath(this, fullPhotoUri);
+            final String fullPhotoPath = SelectImageUtils.getPath(this, fullPhotoUri);
             face1Selected.setImageURI(fullPhotoUri);
 
             File file = new File(fullPhotoPath);
@@ -135,7 +138,7 @@ public class OldVerifyActivity extends AppCompatActivity {
 
         } else if (requestCode == SELECT_FILE_TWO && resultCode == RESULT_OK) {
             Uri fullPhotoUri = data.getData();
-            final String fullPhotoPath = ImageSelect.getPath(this, fullPhotoUri);
+            final String fullPhotoPath = SelectImageUtils.getPath(this, fullPhotoUri);
             face2Selected.setImageURI(fullPhotoUri);
 
             File file = new File(fullPhotoPath);

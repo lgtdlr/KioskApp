@@ -1,4 +1,4 @@
-package com.example.kioskapp;
+package com.example.kioskapp.menu;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -12,11 +12,12 @@ import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.kioskapp.R;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraActivity;
@@ -35,15 +36,17 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import okhttp3.MediaType;
@@ -56,21 +59,23 @@ import okhttp3.Response;
 import static org.opencv.android.CameraBridgeViewBase.CAMERA_ID_BACK;
 import static org.opencv.android.CameraBridgeViewBase.CAMERA_ID_FRONT;
 
-public class LiveDetectActivity extends CameraActivity implements CvCameraViewListener2 {
+public class LiveIdentifyActivity extends CameraActivity implements CvCameraViewListener2 {
 
-    private static final String BASE_URL = "http://192.168.102.158:5000/face/v1.0/detect?returnFaceAttributes=*";
-
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private static final String ID_URL = "http://192.168.102.158:5000/face/v1.0/detect?recognitionModel=Recognition_02";
+    private static final String IDENTIFY_URL = "http://192.168.102.158:5000/face/v1.0/identify";
+    private static final String NAME_URL = "http://192.168.102.158:5000/face/v1.0/persongroups/5000/persons/";
     private static OkHttpClient client = new OkHttpClient();
     private static Bitmap mBitmap;
     ProgressDialog p;
     JavaCameraView javaCameraView;
     File cascFile;
     CascadeClassifier faceDetector;
-    int cameraIndex = CAMERA_ID_FRONT;
     TextView fpsTextView;
     int fps;
     long startTime = 0;
     long currentTime = 1000;
+    int cameraIndex = CAMERA_ID_FRONT;
     private CameraBridgeViewBase mOpenCvCameraView;
     private Boolean buttonPressed = false;
     private Mat mRgba, mGray;
@@ -112,11 +117,7 @@ public class LiveDetectActivity extends CameraActivity implements CvCameraViewLi
                 break;
 
                 default: {
-                    try {
-                        super.onManagerConnected(status);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    super.onManagerConnected(status);
                 }
                 break;
             }
@@ -132,35 +133,28 @@ public class LiveDetectActivity extends CameraActivity implements CvCameraViewLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_live_detect);
+        setContentView(R.layout.activity_live_identify);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.java_camera_view);
+        mOpenCvCameraView = findViewById(R.id.identify_java_camera_view);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
 
-        javaCameraView = (JavaCameraView) findViewById(R.id.java_camera_view);
-
-        //Load OpenCV
+        javaCameraView = findViewById(R.id.identify_java_camera_view);
         if (!OpenCVLoader.initDebug()) {
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, baseCallback);
         } else {
-            try {
-                baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
 
         //Draw FPS for portrait activity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                fpsTextView = (TextView) findViewById(R.id.fps_id);
+                fpsTextView = findViewById(R.id.fps_id);
             }
         });
-
 
         javaCameraView.setCvCameraViewListener(this);
     }
@@ -170,9 +164,8 @@ public class LiveDetectActivity extends CameraActivity implements CvCameraViewLi
         mGray = inputFrame.gray();
 
         int orientation = getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_PORTRAIT && cameraIndex == CAMERA_ID_FRONT) {
-            // In portrait
-            //Without this feed is upside down when using front portrait camera
+
+        if (cameraIndex == CAMERA_ID_FRONT && orientation == Configuration.ORIENTATION_PORTRAIT) {
             Core.flip(mRgba, mRgba, 1);
         }
 
@@ -180,6 +173,7 @@ public class LiveDetectActivity extends CameraActivity implements CvCameraViewLi
         MatOfRect faceDetections = new MatOfRect();
         if (buttonPressed) {
             faceDetector.detectMultiScale(mRgba, faceDetections);
+
 
             for (Rect rect : faceDetections.toArray()) {
                 Imgproc.rectangle(mRgba, new Point(rect.x, rect.y),
@@ -189,7 +183,6 @@ public class LiveDetectActivity extends CameraActivity implements CvCameraViewLi
         }
 
         mBitmap = Bitmap.createBitmap(mRgba.cols(), mRgba.rows(), Bitmap.Config.ARGB_8888);
-
         Utils.matToBitmap(mRgba, mBitmap);
 
         //Draw FPS counter
@@ -247,23 +240,24 @@ public class LiveDetectActivity extends CameraActivity implements CvCameraViewLi
         int orientation = getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             // In portrait
-            //Bitmap is rotated before being so it has the right orientation
+            //Rotate bitmap to proper orientation before sending
             new PostCameraRequest().execute(RotateBitmap(mBitmap, 90));
 
         } else {
-            // In landscape
-            //No need for rotation
+            // In lanscape
             new PostCameraRequest().execute(mBitmap);
         }
+
     }
 
-    //Toggle face rectangles
+    //Toggle face detection
     public void onRectToggle(View view) {
         buttonPressed = buttonPressed == false;
     }
 
     //Switch between front and back camera
     public void onCameraSwitch(View view) {
+        Log.i("CameraIndex", "is " + cameraIndex);
         if (cameraIndex == CAMERA_ID_FRONT) {
             cameraIndex = CAMERA_ID_BACK;
         } else {
@@ -274,109 +268,59 @@ public class LiveDetectActivity extends CameraActivity implements CvCameraViewLi
         mOpenCvCameraView.enableView();
     }
 
+    public void onCameraDetectButtonClick(View view) {
+        //Switch to live detect activity
+        Intent intent = new Intent(this, LiveDetectActivity.class);
+        startActivity(intent);
+    }
+
     public void onCameraTrainButtonClick(View view) {
         //Switch to live train activity
         Intent intent = new Intent(this, LiveTrainActivity.class);
         startActivity(intent);
     }
 
-    public void onCameraIdentifyButtonClick(View view) {
-        //Switch to live identify activity
-        Intent intent = new Intent(this, LiveIdentifyActivity.class);
-        startActivity(intent);
-    }
-
     public void onBackClick(View view) {
-        //Go back to main menu directly
+        //Go directly to main menu
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
-    }
-
-    private void setUiAfterUpdate(JSONArray parent) throws JSONException {
-        ArrayList<Face> faces = new ArrayList<>();
-        LinkedList<JSONObject> rectList = new LinkedList<>();
-
-        int orientation = getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            mBitmap = (RotateBitmap(mBitmap, 90));
-        }
-        for (int i = 0; i < parent.length(); i++) {
-            JSONObject json_data = parent.getJSONObject(i);
-            JSONObject faceAttributes = json_data.getJSONObject("faceAttributes");
-            JSONObject emotions = faceAttributes.getJSONObject("emotion");
-            JSONObject rectangle = json_data.getJSONObject("faceRectangle");
-            rectList.add(rectangle);
-
-            Bitmap faceBitmap;
-            faceBitmap = Bitmap.createBitmap(mBitmap, rectangle.getInt("left"),
-                    rectangle.getInt("top"),
-                    rectangle.getInt("width"),
-                    rectangle.getInt("height"));
-
-            int age = faceAttributes.getInt("age");
-            String gender = faceAttributes.getString("gender");
-            Log.i("Adding faces", "Wait...");
-            ArrayList<Emotion> emotionsList = getEmotions(emotions);
-            Log.i("EMOTIONS", emotionsList.get(0).getType() + " " + emotionsList.get(0).getValue());
-            Log.i("EMOTIONS", emotionsList.get(1).getType() + " " + emotionsList.get(1).getValue());
-            Log.i("EMOTIONS", emotionsList.get(2).getType() + " " + emotionsList.get(2).getValue());
-
-
-            faces.add(new Face(faceBitmap, "Age: " + age, gender, emotionsList.get(0).getType(),
-                    emotionsList.get(0).getValue(), emotionsList.get(1).getType(), emotionsList.get(1).getValue(),
-                    emotionsList.get(2).getType(), emotionsList.get(2).getValue()));
-
-            Log.i("Adding faces", "Success");
-        }
-        ListView listView = (ListView) findViewById(R.id.results_list);
-        FaceListAdapter adapter = new FaceListAdapter(LiveDetectActivity.this, R.layout.detect_adapter_view_layout, faces);
-        listView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-
-
-    }
-
-    private ArrayList<Emotion> getEmotions(JSONObject attributes) throws JSONException {
-        ArrayList<Emotion> emotionsList = new ArrayList<>();
-
-        emotionsList.add(new Emotion("anger", attributes.getDouble("anger")));
-        emotionsList.add(new Emotion("contempt", attributes.getDouble("contempt")));
-        emotionsList.add(new Emotion("disgust", attributes.getDouble("anger")));
-        emotionsList.add(new Emotion("fear", attributes.getDouble("fear")));
-        emotionsList.add(new Emotion("happiness", attributes.getDouble("happiness")));
-        emotionsList.add(new Emotion("neutral", attributes.getDouble("neutral")));
-        emotionsList.add(new Emotion("sadness", attributes.getDouble("sadness")));
-        emotionsList.add(new Emotion("surprise", attributes.getDouble("surprise")));
-
-        Collections.sort(emotionsList);
-
-        return emotionsList;
     }
 
     private class PostCameraRequest extends AsyncTask<Bitmap, String, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            p = new ProgressDialog(LiveIdentifyActivity.this);
+            p.setMessage("Getting face ids...");
+            p.setIndeterminate(false);
+            p.setCancelable(false);
+            p.show();
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            Log.i("TAG", s);
+
+            p.hide();
+            Log.i("ASHWIN", s);
+
             try {
                 JSONArray parent = new JSONArray(s);
+                JSONObject person = parent.getJSONObject(0);
+                String faceId = person.getString("faceId");
 
-                //Populate ListView with received JSON info
-                setUiAfterUpdate(parent);
+                new PersonRequest().execute(faceId);
             } catch (Exception e) {
-                Log.i("Failed to update UI", e.getLocalizedMessage());
+
+
             }
         }
 
         @Override
         protected String doInBackground(Bitmap... bitmaps) {
+            Bitmap bitmap = bitmaps[0];
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmaps[0].compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
             byte[] byteArray = stream.toByteArray();
 
             try {
@@ -389,7 +333,7 @@ public class LiveDetectActivity extends CameraActivity implements CvCameraViewLi
                         .build();
 
                 Request request = new Request.Builder()
-                        .url(BASE_URL)
+                        .url(ID_URL)
                         .post(requestBody)
                         .addHeader("Accept", "application/json; charset=utf-8")
                         .build();
@@ -401,6 +345,120 @@ public class LiveDetectActivity extends CameraActivity implements CvCameraViewLi
                 e.printStackTrace();
                 return "Error";
             }
+
         }
     }
+
+    private class PersonRequest extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            p = new ProgressDialog(LiveIdentifyActivity.this);
+            p.setMessage("Acquiring person ids...");
+            p.setIndeterminate(false);
+            p.setCancelable(false);
+            p.show();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            Log.i("ASHWIN", s);
+
+            p.hide();
+            try {
+                JSONArray parent = new JSONArray(s);
+                JSONArray candidates = parent.getJSONObject(0).getJSONArray("candidates");
+                if (candidates.length() == 0) {
+                    Toast.makeText(LiveIdentifyActivity.this, "Unknown person detected", Toast.LENGTH_SHORT).show();
+                } else {
+                    String personId = candidates.getJSONObject(0).getString("personId");
+                    new NameRequest().execute(personId);
+                }
+
+
+            } catch (Exception e) {
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("confidenceThreshold", 0.5);
+                JSONArray jsonArray = new JSONArray();
+                jsonArray.put(strings[0]);
+                json.put("faceIds", jsonArray);
+                json.put("PersonGroupId", "5000");
+                json.put("maxNumOfCandidatesReturned", 1);
+            } catch (Exception e) {
+            }
+
+
+            RequestBody requestBody = RequestBody.create(json.toString(), JSON);
+
+            Request request = new Request.Builder()
+                    .url(IDENTIFY_URL)
+                    .post(requestBody)
+                    .addHeader("Accept", "application/json; charset=utf-8")
+                    .build();
+
+            try (Response response = client.newCall(request).execute()) {
+                return response.body().string();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return "Error";
+            }
+        }
+    }
+
+    private class NameRequest extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            p = new ProgressDialog(LiveIdentifyActivity.this);
+            p.setMessage("Getting identity...");
+            p.setIndeterminate(false);
+            p.setCancelable(false);
+            p.show();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            p.hide();
+
+            try {
+                JSONObject parent = new JSONObject(s);
+                String name = parent.getString("name");
+                Toast.makeText(LiveIdentifyActivity.this, "Hello " + name, Toast.LENGTH_LONG).show();
+            } catch (Exception e) {
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            try {
+                String url = NAME_URL + strings[0];
+                HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+                connection.setRequestProperty("Accept", "application/json; charset=utf-8");
+                connection.setRequestMethod("GET");
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+                String line = "";
+                String str = "";
+
+                while ((line = reader.readLine()) != null) {
+                    str += line;
+                }
+
+                return str;
+            } catch (Exception e) {
+                return "Error";
+            }
+        }
+    }
+
 }

@@ -39,27 +39,27 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-
-        <activity android:name=".LiveDetectActivity" />
-        <activity android:name=".LiveTrainActivity" />
-        <activity android:name=".LiveIdentifyActivity" />
-        <activity android:name=".ObjectDetectActivity" />
+        <activity android:name=".menu.DrivingActivity"></activity>
+        <activity android:name=".menu.LiveDetectActivity" />
+        <activity android:name=".menu.LiveTrainActivity" />
+        <activity android:name=".menu.LiveIdentifyActivity" />
+        <activity android:name=".menu.ObjectDetectActivity" />
         <activity
-            android:name=".DetectActivity"
+            android:name=".menu.DetectActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".TrainActivity"
+            android:name=".menu.TrainActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".IdentifyActivity"
+            android:name=".menu.IdentifyActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".OldTrainActivity"
+            android:name=".menu.OldTrainActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".OldVerifyActivity"
+            android:name=".menu.OldVerifyActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".menu.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

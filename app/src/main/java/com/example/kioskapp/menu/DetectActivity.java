@@ -1,4 +1,4 @@
-package com.example.kioskapp;
+package com.example.kioskapp.menu;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -15,14 +15,18 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+
+import com.example.kioskapp.Emotion;
+import com.example.kioskapp.Face;
+import com.example.kioskapp.FaceListAdapter;
+import com.example.kioskapp.R;
+import com.example.kioskapp.utils.SelectImageUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -83,7 +87,7 @@ public class DetectActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detect);
         requestPermissions(new String[]{Manifest.permission.CAMERA}, 1);
-        imageSelected = (ImageView) findViewById(R.id.imageSelected);
+        imageSelected = findViewById(R.id.imageSelected);
         //Tentative continue animation option
 //        dropDownImage = (ImageView) findViewById(R.id.imageviewdropdown);
 //        animPushUp = new ScaleAnimation(
@@ -160,7 +164,7 @@ public class DetectActivity extends AppCompatActivity {
 
         if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
             Uri fullPhotoUri = data.getData();
-            final String fullPhotoPath = ImageSelect.getPath(this, fullPhotoUri);
+            final String fullPhotoPath = SelectImageUtils.getPath(this, fullPhotoUri);
             imageSelected.setImageURI(fullPhotoUri);
 
             File file = new File(fullPhotoPath);
@@ -205,7 +209,7 @@ public class DetectActivity extends AppCompatActivity {
 
             Log.i("Adding faces", "Success");
         }
-        ListView listView = (ListView) findViewById(R.id.results_list);
+        ListView listView = findViewById(R.id.results_list);
         FaceListAdapter adapter = new FaceListAdapter(DetectActivity.this, R.layout.detect_adapter_view_layout, faces);
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();

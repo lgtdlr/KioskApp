@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.kioskapp;
+package com.example.kioskapp.tf;
 
 import android.Manifest;
 import android.app.Fragment;
@@ -51,6 +51,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.kioskapp.CameraConnectionFragment;
+import com.example.kioskapp.LegacyCameraConnectionFragment;
+import com.example.kioskapp.R;
 import com.example.kioskapp.env.ImageUtils;
 import com.example.kioskapp.env.Logger;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.kioskapp;
+package com.example.kioskapp.menu;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -35,6 +35,8 @@ import android.util.Size;
 import android.util.TypedValue;
 import android.widget.Toast;
 
+import com.example.kioskapp.tf.CameraActivity;
+import com.example.kioskapp.R;
 import com.example.kioskapp.customview.OverlayView;
 import com.example.kioskapp.customview.OverlayView.DrawCallback;
 import com.example.kioskapp.env.BorderedText;
@@ -205,7 +207,7 @@ public class ObjectDetectActivity extends CameraActivity implements OnImageAvail
                         sensorOrientation, MAINTAIN_ASPECT);
 
 //    frameToCropTransform =
-//            ImageUtils.getTransformationMatrix(
+//            SelectImageUtils.getTransformationMatrix(
 //                    previewWidth, previewHeight,
 //                    previewWidth, previewHeight,
 //                    sensorOrientation, MAINTAIN_ASPECT);
@@ -214,7 +216,7 @@ public class ObjectDetectActivity extends CameraActivity implements OnImageAvail
         frameToCropTransform.invert(cropToFrameTransform);
 
 
-        trackingOverlay = (OverlayView) findViewById(R.id.tracking_overlay);
+        trackingOverlay = findViewById(R.id.tracking_overlay);
         trackingOverlay.addCallback(
                 new DrawCallback() {
                     @Override

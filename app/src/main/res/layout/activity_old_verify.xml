@@ -5,7 +5,7 @@
     style="@style/parent.contentLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".OldVerifyActivity">
+    tools:context=".menu.OldVerifyActivity">
 
     <TextView
         android:id="@+id/postVerifyText"

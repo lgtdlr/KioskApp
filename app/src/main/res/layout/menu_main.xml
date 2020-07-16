@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.kioskapp.MainActivity">
+    tools:context="com.example.kioskapp.menu.MainActivity">
 
 
     <com.google.android.material.appbar.AppBarLayout
@@ -352,7 +352,90 @@
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/cardDriving"
+                    android:layout_width="0dp"
+                    android:layout_height="160dp"
+                    android:layout_margin="@dimen/margin_18"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="@color/card_color"
+                    app:cardCornerRadius="@dimen/margin_8"
+                    app:cardElevation="@dimen/elevation_2">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:onClick="onDrivingClick"
+                        android:orientation="vertical"
+                        android:paddingBottom="@dimen/padding_16">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="@dimen/padding_16"
+                            android:text="Driving Alerts"
+                            android:textColor="@android:color/black"
+                            android:textSize="@dimen/size_18" />
+
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="@dimen/padding_16"
+                            android:paddingBottom="@dimen/padding_16"
+                            app:cardCornerRadius="40dp"
+                            app:cardElevation="@dimen/elevation_30">
+
+                            <ImageView
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:background="@drawable/circle_bg"
+                                android:elevation="@dimen/margin_18"
+                                android:padding="@dimen/margin_18"
+                                android:src="@drawable/ic_baseline_directions_car_24" />
+
+                        </androidx.cardview.widget.CardView>
+
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fourthLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/padding_16">
+
+                <androidx.cardview.widget.CardView
                     android:id="@+id/cardGrayBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="160dp"
+                    android:layout_margin="@dimen/margin_18"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="@color/card_color"
+                    app:cardCornerRadius="@dimen/margin_8"
+                    app:cardElevation="@dimen/elevation_2">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="?attr/colorControlHighlight"
+                        android:onClick="onPlaceholderClick"
+                        android:orientation="vertical" />
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardGrayBtn2"
                     android:layout_width="0dp"
                     android:layout_height="160dp"
                     android:layout_margin="@dimen/margin_18"
@@ -373,6 +456,7 @@
 
 
             </LinearLayout>
+
 
 
         </LinearLayout>

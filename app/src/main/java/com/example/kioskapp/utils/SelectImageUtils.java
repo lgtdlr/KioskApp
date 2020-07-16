@@ -1,4 +1,4 @@
-package com.example.kioskapp;
+package com.example.kioskapp.utils;
 
 import android.content.ContentUris;
 import android.content.Context;
@@ -11,7 +11,7 @@ import android.provider.MediaStore;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class ImageSelect extends AppCompatActivity {
+public class SelectImageUtils extends AppCompatActivity {
 
     public static String getPath(final Context context, final Uri uri) {
 
