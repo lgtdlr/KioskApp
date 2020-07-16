@@ -33,6 +33,11 @@ import com.example.kioskapp.camera.CameraSourcePreview;
 import com.example.kioskapp.camera.GraphicOverlay;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 
+/**
+ * First, added MLKit dependency, then imported needed classes for face contour detection
+ * Used detected faces to get probability of open eyes and put alarm if prob. is less than value
+ */
+
 public class DrivingActivity extends AppCompatActivity {
     private final String TAG = "DrivingActivity";
 
