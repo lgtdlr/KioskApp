@@ -120,7 +120,11 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
                 break;
 
                 default: {
-                    super.onManagerConnected(status);
+                    try {
+                        super.onManagerConnected(status);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
             }
@@ -160,6 +164,7 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 new NewPersonRequest().execute(input.getText().toString());
+                Toast.makeText(LiveTrainActivity.this, "Add faces for " + input.getText().toString(), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -176,7 +181,11 @@ public class LiveTrainActivity extends CameraActivity implements CameraBridgeVie
         if (!OpenCVLoader.initDebug()) {
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, baseCallback);
         } else {
-            baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            try {
+                baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         //Draw FPS for portrait activity
