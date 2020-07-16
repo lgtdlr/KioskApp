@@ -126,13 +126,6 @@ public class DrivingActivity extends AppCompatActivity {
      * Actually starts the cameraPreview, passing in the non-null cameraSource and graphicOverlay
      */
     private void startCameraSource() {
-        // Checks if Google play services are available
-        int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getApplicationContext());
-        if (code != ConnectionResult.SUCCESS) {
-            Dialog dlg = GoogleApiAvailability.getInstance().getErrorDialog(this,
-                    code, PLAY_SERVICES_UNAVAILABLE_CODE);
-            dlg.show();
-        }
 
         if (cameraSource != null) {
             try {
