@@ -53,9 +53,6 @@ public class DrivingActivity extends AppCompatActivity {
 
     private String alarmStartTime;
     private long startTimeLong;
-    private boolean inCalibrationPeriod;
-
-    private boolean isPaused;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +90,6 @@ public class DrivingActivity extends AppCompatActivity {
 
         createCameraSource();
 
-        inCalibrationPeriod = true;
         startTimeLong = System.currentTimeMillis();
 
         // Request camera permission if it has not already been granted
@@ -102,16 +98,6 @@ public class DrivingActivity extends AppCompatActivity {
         }
 
     }
-
-    public boolean isInCalibrationPeriod() {
-        return inCalibrationPeriod;
-    }
-    public void exitCalibrationPeriod() {
-        Log.d(TAG, "EXITING calibration period");
-        inCalibrationPeriod = false;
-    }
-
-
 
     /**
      * Initializes the cameraSource instance variable with 30fps, 320x240 px resolution, facing front, and autofocus
@@ -161,9 +147,8 @@ public class DrivingActivity extends AppCompatActivity {
      */
     protected void onResume() {
         super.onResume();
-        if (!isPaused) {
-            startCameraSource();
-        }
+        startCameraSource();
+
     }
     @Override
     /**
@@ -210,6 +195,7 @@ public class DrivingActivity extends AppCompatActivity {
 
                             // setOffAlarm exists to ensure another alarm doesn't go off after the first one ends
                             setOffAlarm = true;
+                            mediaPlayer = MediaPlayer.create(this, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE));
                             startAlarm();
                         }
                     } else {
@@ -235,7 +221,6 @@ public class DrivingActivity extends AppCompatActivity {
         Log.d(TAG, "Call to Trip activity start alarm");
 
         // Initializes the media player to play sounds and starts it
-        mediaPlayer = MediaPlayer.create(this, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE));
         mediaPlayer.start();
 
         // In main thread, starts the timer to turn the alarm off after ALARM_DURATION_MILLISECONDS seconds
