@@ -458,8 +458,7 @@
                                 android:background="@drawable/circle_bg"
                                 android:elevation="@dimen/margin_18"
                                 android:padding="@dimen/margin_18"
-                                android:src="@drawable/ic_baseline_directions_car_24"
-                                app:srcCompat="@drawable/ic_baseline_fireplace_24" />
+                                android:src="@drawable/ic_baseline_fireplace_24" />
 
                         </androidx.cardview.widget.CardView>
 
