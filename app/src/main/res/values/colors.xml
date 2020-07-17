@@ -10,14 +10,18 @@
 <!--    <color name="contentTextColor">#020000</color>-->
 <!--    <color name="bottomNavigationBackground">#F7F7F7</color>-->
 
-    <!--colors for dark mode-->
-    <color name="contentBodyColor">#2A2E43</color>
-
     <color name="tfe_semi_transparent">#66000000</color>
-
-<!--    <color name="colorPrimary">#00574B</color>-->
-<!--    <color name="colorPrimaryDark">#00574B</color>-->
-<!--    <color name="colorAccent">#D81B60</color>-->
+    
     <color name="card_color">#FFF3F3</color>
     <color name="color_circle">#D0473B</color>
+
+<!--    Verizon primary brand color palette-->
+    <color name="verizon_red">#D52B1E</color>
+    <color name="verizon_white">#FFFFFF</color>
+    <color name="verizon_black">#000000</color>
+
+<!--    Verizon secondary brand color palette-->
+    <color name="verizon_cool_gray_3">#D8D9D9</color>
+    <color name="verizon_cool_gray_6">#747776</color>
+    <color name="verizon_cool_gray_10">#343333</color>
 </resources>
