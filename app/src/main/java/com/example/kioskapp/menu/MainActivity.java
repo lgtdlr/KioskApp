@@ -205,4 +205,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout mDrawerLayout = findViewById(R.id.drawer_layout);
         mDrawerLayout.openDrawer(GravityCompat.START);
     }
+
+    public void onThermalClick(View view) {
+        Intent intent = new Intent(this, ThermalActivity.class);
+        fullWave.setVisibility(View.VISIBLE);
+        fullWave.startAnimation(animDropDown);
+        animDropDown.setAnimationListener(new Animation.AnimationListener(){
+
+            @Override
+            public void onAnimationStart(Animation animation){}
+
+            @Override
+            public void onAnimationRepeat(Animation animation){}
+
+            @Override
+            public void onAnimationEnd(Animation animation){
+                redOverlay.setVisibility(View.VISIBLE);
+                startActivity(intent);
+            }
+        });
+    }
 }
