@@ -38,7 +38,7 @@ import com.google.mlkit.vision.face.FaceDetectorOptions;
 
 /**
  * First, added MLKit dependency, then imported needed classes for face contour detection
- * Used detected faces to get probability of open eyes and put alarm if prob. is less than value
+ * Used detected faces to get probability of open eyes and put alarm if prob. is less than value (0.3)
  */
 
 public class DrivingActivity extends AppCompatActivity {

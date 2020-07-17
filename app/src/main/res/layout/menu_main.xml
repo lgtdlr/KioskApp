@@ -365,6 +365,8 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:background="#FFFFFF"
+                        android:backgroundTint="#FBEBEB"
                         android:onClick="onDrivingClick"
                         android:orientation="vertical"
                         android:paddingBottom="@dimen/padding_16">
@@ -430,6 +432,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="?attr/colorControlHighlight"
+                        android:backgroundTint="#F6D3D3"
                         android:onClick="onPlaceholderClick"
                         android:orientation="vertical">
 
