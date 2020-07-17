@@ -17,6 +17,9 @@ import androidx.core.app.ActivityCompat;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.kioskapp.R;
 import com.example.kioskapp.camera.CameraSource;
@@ -55,6 +58,8 @@ public class DrivingActivity extends AppCompatActivity {
     private CameraSource cameraSource = null;
     private CameraSourcePreview cameraPreview;
     private GraphicOverlay graphicOverlay;
+    private ImageView sleepAlert;
+    private TextView alertOverlay;
 
     private String alarmStartTime;
     private long startTimeLong;
@@ -68,18 +73,26 @@ public class DrivingActivity extends AppCompatActivity {
         // Initializes camera interface and surface texture view that shows camera feed
         cameraPreview = findViewById(R.id.preview);
         graphicOverlay = findViewById(R.id.faceOverlay);
+        sleepAlert = (ImageView) findViewById(R.id.sleep_alert);
+        alertOverlay = (TextView) findViewById(R.id.alert_overlay);
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 while(true){
                     try {
-                        Thread.sleep(500);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                checkEyes();
+                            }
+                        });
+                        Thread.sleep(300);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                     Log.i(TAG, "Checking eyes");
-                        checkEyes();
+
                 }
             }
         }).start();
@@ -181,7 +194,7 @@ public class DrivingActivity extends AppCompatActivity {
                     Log.d(TAG, "Media player null");
                 }
                 if (face != null){
-                    if (face.getRightEyeOpenProbability() < 0.3f && face.getLeftEyeOpenProbability() < 0.3f) {
+                    if (face.getRightEyeOpenProbability() < 0.3f && face.getLeftEyeOpenProbability() < 0.3f && face.getRightEyeOpenProbability() != null && face.getLeftEyeOpenProbability() != null) {
                         // Starts the eyes closed "timer" because eyes need to be closed for 1 second for an alarm to go off
                         if (eyesClosedStartTime == 0 && (mediaPlayer == null || !mediaPlayer.isPlaying())) {
                             Log.d(TAG, "Starting eyes closed timer");
@@ -219,7 +232,10 @@ public class DrivingActivity extends AppCompatActivity {
         Log.d(TAG, "Call to Trip activity start alarm");
 
         // Initializes the media player to play sounds and starts it
+
         mediaPlayer.start();
+        alertOverlay.setVisibility(View.VISIBLE);
+        sleepAlert.setVisibility(View.VISIBLE);
 
         // In main thread, starts the timer to turn the alarm off after ALARM_DURATION_MILLISECONDS seconds
         new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -260,6 +276,8 @@ public class DrivingActivity extends AppCompatActivity {
         alarmTimer = null;
 
         alarmStartTime = null;
+        alertOverlay.setVisibility(View.INVISIBLE);
+        sleepAlert.setVisibility(View.INVISIBLE);
     }
 
     public MediaPlayer getMediaPlayer() {
