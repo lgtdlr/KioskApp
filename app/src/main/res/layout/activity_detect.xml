@@ -104,6 +104,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/results_list"
         app:layout_constraintVertical_bias="0.957"
-        app:srcCompat="@drawable/verizon" />
+        app:srcCompat="@drawable/verizon2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
