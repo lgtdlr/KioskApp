@@ -249,7 +249,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/nhaasgroteskdisp"
-                        android:text="Identify which person does a face belong to."
+                        android:text="Identify which person does a face belongs to."
                         android:textColor="#000000"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -348,7 +348,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/nhaasgroteskdisp"
-                        android:text="Detect objects real-time using the camera feed."
+                        android:text="Detect objects in real-time using the camera feed."
                         android:textColor="#000000"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -397,7 +397,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/nhaasgroteskdisp"
-                        android:text="Alert the driver in real-time of certain events."
+                        android:text="Alert drivers in real-time of certain events."
                         android:textColor="#000000"
                         android:textSize="14sp" />
                 </LinearLayout>
