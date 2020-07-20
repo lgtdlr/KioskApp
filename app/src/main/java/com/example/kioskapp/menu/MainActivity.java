@@ -43,13 +43,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         animFloat = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.floating_animation);
 
-        wave = findViewById(R.id.main_imageview_placeholder);
-        fullWave = findViewById(R.id.main_imageview_dropdown);
-        redOverlay = findViewById(R.id.red_overlay);
+        //wave = findViewById(R.id.main_imageview_placeholder);
+        //fullWave = findViewById(R.id.main_imageview_dropdown);
+        //redOverlay = findViewById(R.id.red_overlay);
 
-        redOverlay.setVisibility(View.GONE);
-        fullWave.setVisibility(View.GONE);
-        wave.startAnimation(animFloat);
+        //redOverlay.setVisibility(View.GONE);
+        //fullWave.setVisibility(View.GONE);
+        //wave.startAnimation(animFloat);
 
         requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
     }
@@ -57,48 +57,50 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume() {
         super.onResume();
-        redOverlay.setVisibility(View.GONE);
-        fullWave.setVisibility(View.GONE);
+        //redOverlay.setVisibility(View.GONE);
+        //fullWave.setVisibility(View.GONE);
     }
 
     public void onDetectClick(View view) {
         //start new activity
-        fullWave.setVisibility(View.VISIBLE);
-        fullWave.startAnimation(animDropDown);
+//        fullWave.setVisibility(View.VISIBLE);
+//        fullWave.startAnimation(animDropDown);
         Intent intent = new Intent(this, DetectActivity.class);
-        animDropDown.setAnimationListener(new Animation.AnimationListener(){
-            @Override
-            public void onAnimationStart(Animation animation){}
-
-            @Override
-            public void onAnimationRepeat(Animation animation){}
-
-            @Override
-            public void onAnimationEnd(Animation animation){
-                redOverlay.setVisibility(View.VISIBLE);
-                startActivity(intent);
-            }
-        });
+        startActivity(intent);
+//        animDropDown.setAnimationListener(new Animation.AnimationListener(){
+//            @Override
+//            public void onAnimationStart(Animation animation){}
+//
+//            @Override
+//            public void onAnimationRepeat(Animation animation){}
+//
+//            @Override
+//            public void onAnimationEnd(Animation animation){
+//                redOverlay.setVisibility(View.VISIBLE);
+//                startActivity(intent);
+//            }
+//        });
     }
 
     public void onIdentifyClick(View view) {
         Intent intent = new Intent(this, IdentifyActivity.class);
-        fullWave.setVisibility(View.VISIBLE);
-        fullWave.startAnimation(animDropDown);
-        animDropDown.setAnimationListener(new Animation.AnimationListener(){
-
-            @Override
-            public void onAnimationStart(Animation animation){}
-
-            @Override
-            public void onAnimationRepeat(Animation animation){}
-
-            @Override
-            public void onAnimationEnd(Animation animation){
-                redOverlay.setVisibility(View.VISIBLE);
-                startActivity(intent);
-            }
-        });
+        startActivity(intent);
+//        fullWave.setVisibility(View.VISIBLE);
+//        fullWave.startAnimation(animDropDown);
+//        animDropDown.setAnimationListener(new Animation.AnimationListener(){
+//
+//            @Override
+//            public void onAnimationStart(Animation animation){}
+//
+//            @Override
+//            public void onAnimationRepeat(Animation animation){}
+//
+//            @Override
+//            public void onAnimationEnd(Animation animation){
+//                redOverlay.setVisibility(View.VISIBLE);
+//                startActivity(intent);
+//            }
+//        });
     }
 
     public void onCameraClick(View view) {
@@ -108,82 +110,86 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             return;
         }
         Intent intent = new Intent(this, LiveDetectActivity.class);
-        fullWave.setVisibility(View.VISIBLE);
-        fullWave.startAnimation(animDropDown);
-        animDropDown.setAnimationListener(new Animation.AnimationListener(){
-
-            @Override
-            public void onAnimationStart(Animation animation){}
-
-            @Override
-            public void onAnimationRepeat(Animation animation){}
-
-            @Override
-            public void onAnimationEnd(Animation animation){
-                redOverlay.setVisibility(View.VISIBLE);
-                startActivity(intent);
-            }
-        });
+        startActivity(intent);
+//        fullWave.setVisibility(View.VISIBLE);
+//        fullWave.startAnimation(animDropDown);
+//        animDropDown.setAnimationListener(new Animation.AnimationListener(){
+//
+//            @Override
+//            public void onAnimationStart(Animation animation){}
+//
+//            @Override
+//            public void onAnimationRepeat(Animation animation){}
+//
+//            @Override
+//            public void onAnimationEnd(Animation animation){
+//                redOverlay.setVisibility(View.VISIBLE);
+//                startActivity(intent);
+//            }
+//        });
     }
 
     public void onObjectClick(View view) {
         Intent intent = new Intent(this, ObjectDetectActivity.class);
-        fullWave.setVisibility(View.VISIBLE);
-        fullWave.startAnimation(animDropDown);
-        animDropDown.setAnimationListener(new Animation.AnimationListener(){
-
-            @Override
-            public void onAnimationStart(Animation animation){}
-
-            @Override
-            public void onAnimationRepeat(Animation animation){}
-
-            @Override
-            public void onAnimationEnd(Animation animation){
-                redOverlay.setVisibility(View.VISIBLE);
-                startActivity(intent);
-            }
-        });
+        startActivity(intent);
+//        fullWave.setVisibility(View.VISIBLE);
+//        fullWave.startAnimation(animDropDown);
+//        animDropDown.setAnimationListener(new Animation.AnimationListener(){
+//
+//            @Override
+//            public void onAnimationStart(Animation animation){}
+//
+//            @Override
+//            public void onAnimationRepeat(Animation animation){}
+//
+//            @Override
+//            public void onAnimationEnd(Animation animation){
+//                redOverlay.setVisibility(View.VISIBLE);
+//                startActivity(intent);
+//            }
+//        });
     }
 
     public void onTrainClick(View view) {
         Intent intent = new Intent(this, TrainActivity.class);
-        fullWave.setVisibility(View.VISIBLE);
-        fullWave.startAnimation(animDropDown);
-        animDropDown.setAnimationListener(new Animation.AnimationListener(){
-
-            @Override
-            public void onAnimationStart(Animation animation){}
-
-            @Override
-            public void onAnimationRepeat(Animation animation){}
-
-            @Override
-            public void onAnimationEnd(Animation animation){
-                redOverlay.setVisibility(View.VISIBLE);
-                startActivity(intent);
-            }
-        });
+        startActivity(intent);
+//        fullWave.setVisibility(View.VISIBLE);
+//        fullWave.startAnimation(animDropDown);
+//        animDropDown.setAnimationListener(new Animation.AnimationListener(){
+//
+//            @Override
+//            public void onAnimationStart(Animation animation){}
+//
+//            @Override
+//            public void onAnimationRepeat(Animation animation){}
+//
+//            @Override
+//            public void onAnimationEnd(Animation animation){
+//                redOverlay.setVisibility(View.VISIBLE);
+//                startActivity(intent);
+//            }
+//        });
     }
 
     public void onDrivingClick(View view) {
         Intent intent = new Intent(this, DrivingActivity.class);
-        fullWave.setVisibility(View.VISIBLE);
-        fullWave.startAnimation(animDropDown);
-        animDropDown.setAnimationListener(new Animation.AnimationListener(){
-
-            @Override
-            public void onAnimationStart(Animation animation){}
-
-            @Override
-            public void onAnimationRepeat(Animation animation){}
-
-            @Override
-            public void onAnimationEnd(Animation animation){
-                redOverlay.setVisibility(View.VISIBLE);
-                startActivity(intent);
-            }
-        });
+        startActivity(intent);
+//        fullWave.setVisibility(View.VISIBLE);
+//        fullWave.startAnimation(animDropDown);
+//        animDropDown.setAnimationListener(new Animation.AnimationListener(){
+//
+//            @Override
+//            public void onAnimationStart(Animation animation){}
+//
+//            @Override
+//            public void onAnimationRepeat(Animation animation){}
+//
+//            @Override
+//            public void onAnimationEnd(Animation animation){
+//                redOverlay.setVisibility(View.VISIBLE);
+//                startActivity(intent);
+//            }
+//        });
     }
 
     @Override
@@ -208,21 +214,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void onThermalClick(View view) {
         Intent intent = new Intent(this, ThermalActivity.class);
-        fullWave.setVisibility(View.VISIBLE);
-        fullWave.startAnimation(animDropDown);
-        animDropDown.setAnimationListener(new Animation.AnimationListener(){
-
-            @Override
-            public void onAnimationStart(Animation animation){}
-
-            @Override
-            public void onAnimationRepeat(Animation animation){}
-
-            @Override
-            public void onAnimationEnd(Animation animation){
-                redOverlay.setVisibility(View.VISIBLE);
-                startActivity(intent);
-            }
-        });
+        startActivity(intent);
+//        fullWave.setVisibility(View.VISIBLE);
+//        fullWave.startAnimation(animDropDown);
+//        animDropDown.setAnimationListener(new Animation.AnimationListener(){
+//
+//            @Override
+//            public void onAnimationStart(Animation animation){}
+//
+//            @Override
+//            public void onAnimationRepeat(Animation animation){}
+//
+//            @Override
+//            public void onAnimationEnd(Animation animation){
+//                redOverlay.setVisibility(View.VISIBLE);
+//                startActivity(intent);
+//            }
+//        });
     }
 }

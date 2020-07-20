@@ -93,7 +93,6 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="16dp"
-                            android:fontFamily="@font/Helvetica"
                             android:text="Detect"
                             android:textColor="@android:color/black"
                             android:textSize="@dimen/size_18" />
@@ -144,7 +143,6 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="16dp"
-                            android:fontFamily="@font/Helvetica"
                             android:text="Train"
                             android:textColor="@android:color/black"
                             android:textSize="18sp" />
@@ -209,7 +207,6 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="@dimen/padding_16"
-                            android:fontFamily="@font/Helvetica"
                             android:text="Identify"
                             android:textColor="@android:color/black"
                             android:textSize="@dimen/size_18" />
@@ -260,7 +257,6 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="@dimen/padding_16"
-                            android:fontFamily="@font/Helvetica"
                             android:text="Live Services"
                             android:textColor="@android:color/black"
                             android:textSize="@dimen/margin_18" />
@@ -326,7 +322,6 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="@dimen/padding_16"
-                            android:fontFamily="@font/Helvetica"
                             android:text="Object Detection"
                             android:textColor="@android:color/black"
                             android:textSize="@dimen/size_18" />
@@ -381,7 +376,6 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="@dimen/padding_16"
-                            android:fontFamily="@font/Helvetica"
                             android:text="Driving Alerts"
                             android:textColor="@android:color/black"
                             android:textSize="@dimen/size_18" />
@@ -448,7 +442,6 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="@dimen/padding_16"
-                            android:fontFamily="@font/Helvetica"
                             android:text="Thermal"
                             android:textColor="@android:color/black"
                             android:textSize="@dimen/size_18" />
@@ -511,7 +504,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/color_circle"
         android:onClick="onMenuClick"
-        app:navigationIcon="@drawable/ic_menu_black_24dp"
+        app:navigationIcon="@drawable/ic_menu_white_24dp"
         app:theme="@style/ThemeOverlay.AppCompat.Dark">
 
         <RelativeLayout
@@ -545,7 +538,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/margin_18"
-        android:fontFamily="@font/Helvetica"
+        android:fontFamily="@font/poppins"
         android:text="Face Kiosk"
         android:textColor="@android:color/white"
         android:textSize="22sp"

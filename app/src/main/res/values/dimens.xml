@@ -6,12 +6,16 @@
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="tfe_bottom_sheet_corner_radius">15dp</dimen>
     <dimen name="tfe_bottom_sheet_top_padding">8dp</dimen>
-    <dimen name="margin_10">10dp</dimen>
+    <dimen name="margin_10">15dp</dimen>
     <dimen name="margin_18">18dp</dimen>
     <dimen name="margin_8">8dp</dimen>
     <dimen name="elevation_2">4dp</dimen>
     <dimen name="size_18">18sp</dimen>
     <dimen name="padding_16">16dp</dimen>
     <dimen name="elevation_30">7dp</dimen>
+    <dimen name="margin_menu_cards_horizontal">20dp</dimen>
+    <dimen name="margin_menu_cards_vertical">30dp</dimen>
+    <dimen name="card_icon_height">45dp</dimen>
+    <dimen name="card_icon_width">45dp</dimen>
 
 </resources>
