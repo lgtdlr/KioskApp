@@ -21,7 +21,7 @@
     <color name="verizon_black">#000000</color>
 
 <!--    Verizon secondary brand color palette-->
-    <color name="verizon_cool_gray_3">#D8D9D9</color>
+    <color name="verizon_cool_gray_3">#D8DADA</color>
     <color name="verizon_cool_gray_6">#747776</color>
     <color name="verizon_cool_gray_10">#343333</color>
 </resources>
