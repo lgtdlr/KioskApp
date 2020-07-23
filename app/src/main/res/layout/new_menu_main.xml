@@ -20,7 +20,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/white"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
 <!--            <FrameLayout-->
@@ -103,7 +102,6 @@
 
         >
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -111,9 +109,10 @@
 
             <!-- Horizontal line divider-->
             <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray" />
+                android:layout_width="@dimen/list_horizontal_line_width"
+                android:layout_height="@dimen/list_horizontal_line_height"
+                android:layout_gravity="center"
+                android:background="@color/verizon_cool_gray_3" />
 
             <!-- Detect activity start-->
             <LinearLayout
@@ -160,9 +159,10 @@
 
             <!-- Horizontal line divider-->
             <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray" />
+                android:layout_width="@dimen/list_horizontal_line_width"
+                android:layout_height="@dimen/list_horizontal_line_height"
+                android:layout_gravity="center"
+                android:background="@color/verizon_cool_gray_3" />
 
             <!-- Train activity start -->
             <LinearLayout
@@ -209,9 +209,10 @@
 
             <!-- Horizontal line divider-->
             <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray" />
+                android:layout_width="@dimen/list_horizontal_line_width"
+                android:layout_height="@dimen/list_horizontal_line_height"
+                android:layout_gravity="center"
+                android:background="@color/verizon_cool_gray_3" />
 
             <!-- Identify activity start -->
             <LinearLayout
@@ -258,9 +259,10 @@
 
             <!-- Horizontal line divider-->
             <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray" />
+                android:layout_width="@dimen/list_horizontal_line_width"
+                android:layout_height="@dimen/list_horizontal_line_height"
+                android:layout_gravity="center"
+                android:background="@color/verizon_cool_gray_3" />
 
             <!-- Live services activity start -->
             <LinearLayout
@@ -308,9 +310,10 @@
 
             <!-- Horizontal line divider-->
             <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray" />
+                android:layout_width="@dimen/list_horizontal_line_width"
+                android:layout_height="@dimen/list_horizontal_line_height"
+                android:layout_gravity="center"
+                android:background="@color/verizon_cool_gray_3" />
 
             <!-- Object detection card start -->
             <LinearLayout
@@ -357,9 +360,10 @@
 
             <!-- Horizontal line divider-->
             <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray" />
+                android:layout_width="@dimen/list_horizontal_line_width"
+                android:layout_height="@dimen/list_horizontal_line_height"
+                android:layout_gravity="center"
+                android:background="@color/verizon_cool_gray_3" />
 
             <!-- Driving alerts card start -->
             <LinearLayout
@@ -406,9 +410,10 @@
 
             <!-- Horizontal line divider-->
             <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray" />
+                android:layout_width="@dimen/list_horizontal_line_width"
+                android:layout_height="@dimen/list_horizontal_line_height"
+                android:layout_gravity="center"
+                android:background="@color/verizon_cool_gray_3" />
 
             <!-- Thermal activity start-->
             <LinearLayout
