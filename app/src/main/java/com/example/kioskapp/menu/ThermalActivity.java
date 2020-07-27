@@ -6,8 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -15,19 +13,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseIntArray;
-import android.view.Surface;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kioskapp.BuildConfig;
@@ -62,16 +52,6 @@ import com.flir.thermalsdk.live.connectivity.ConnectionStatusListener;
 import com.flir.thermalsdk.live.discovery.DiscoveryEventListener;
 import com.flir.thermalsdk.live.discovery.DiscoveryFactory;
 import com.flir.thermalsdk.live.streaming.ThermalImageStreamListener;
-import com.flir.thermalsdk.androidsdk.image.BitmapAndroid;
-import com.flir.thermalsdk.image.ThermalImage;
-import com.flir.thermalsdk.image.fusion.FusionMode;
-import com.flir.thermalsdk.live.Camera;
-import com.flir.thermalsdk.live.CommunicationInterface;
-import com.flir.thermalsdk.live.Identity;
-import com.flir.thermalsdk.live.connectivity.ConnectionStatusListener;
-import com.flir.thermalsdk.live.discovery.DiscoveryEventListener;
-import com.flir.thermalsdk.live.discovery.DiscoveryFactory;
-import com.flir.thermalsdk.live.streaming.ThermalImageStreamListener;
 import com.google.mlkit.vision.face.FaceLandmark;
 
 import org.jetbrains.annotations.Nullable;
@@ -85,13 +65,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class ThermalActivity extends AppCompatActivity {
     private static final String TAG = "ThermalActivity";
 
-    private FaceDetectorOptions defaultOptions;
-    private CameraSource cameraSource = null;
-//    private CameraSourcePreview cameraPreview;
-    private GraphicOverlay graphicOverlay;
 
-    //ML Kit Face Detection
+
+    //ML Kit Face Detector and options
     private FaceDetector detector;
+    private FaceDetectorOptions defaultOptions;
 
     //FLIR Variables
     private Identity connectedIdentity = null;
@@ -140,32 +118,27 @@ public class ThermalActivity extends AppCompatActivity {
         photoImage = findViewById(R.id.photo_image);
 
 
-        // Initializes camera interface and surface texture view that shows camera feed
-//        cameraPreview = findViewById(R.id.preview);
-        graphicOverlay = findViewById(R.id.faceOverlay);
-
         //ThermalSdkAndroid has to be initiated from a Activity with the Application Context to prevent leaking Context,
         // and before ANY using any ThermalSdkAndroid functions
         //ThermalLog will show log from the Thermal SDK in standards android log framework
         ThermalSdkAndroid.init(getApplicationContext(), enableLoggingInDebug);
 
-//        cameraPreview.activity = this;
+        //Configure face detector options
         defaultOptions =
                 new FaceDetectorOptions.Builder()
                         .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
                         .enableTracking()
                         .build();
 
+        //Instantiate face detector
         detector = FaceDetection.getClient(defaultOptions);
-
-        createCameraSource();
 
         // Request camera permission if it has not already been granted
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, 1);
         }
 
-        //Keep trying to connect automatically while activity is running
+        //Keep trying to connect automatically to FLIR One while activity is running
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -191,52 +164,19 @@ public class ThermalActivity extends AppCompatActivity {
 
     }
 
-    /**
-     * Initializes the cameraSource instance variable with 30fps, 320x240 px resolution, facing front, and autofocus
-     * enabled. Also creates the FaceDetector object and passes that into the CameraSource
-     */
-    private void createCameraSource() {
-
-        int facing = CameraSource.CAMERA_FACING_FRONT;
-
-        // If there's no existing cameraSource, create one.
-        if (cameraSource == null) {
-            cameraSource = new CameraSource(this, graphicOverlay);
-        }
-
-        cameraSource.setFacing(facing);
-//        cameraSource.setMachineLearningFrameProcessor(
-//                new FaceDetectorProcessor(this, defaultOptions));
-    }
-
-    /**
-     * Actually starts the cameraPreview, passing in the non-null cameraSource and graphicOverlay
-     */
-    private void startCameraSource() {
-
-        if (cameraSource != null) {
-            //cameraPreview.start(cameraSource, graphicOverlay);
-        }
-    }
-
     @Override
     /**
-     * Starts the camera preview again when the app is in the foreground
+     * Do something when the app is in the foreground
      */
     protected void onResume() {
         super.onResume();
-        startCameraSource();
-
     }
     @Override
     /**
-     * Stops the cameraPreview when the app is in the background
+     * Stops trying to discover when the app is in the background
      */
     protected void onPause() {
         super.onPause();
-//        if (cameraPreview != null) {
-//            //cameraPreview.stop();
-//        }
         stopDiscovery();
     }
     @Override
@@ -245,10 +185,6 @@ public class ThermalActivity extends AppCompatActivity {
      */
     protected void onDestroy() {
         super.onDestroy();
-
-        if (cameraSource != null) {
-            cameraSource.release();
-        }
         stopDiscovery();
         disconnect();
     }
@@ -265,11 +201,6 @@ public class ThermalActivity extends AppCompatActivity {
      */
     public void stopDiscovery() {
         DiscoveryFactory.getInstance().stop(CommunicationInterface.EMULATOR, CommunicationInterface.USB);
-    }
-
-    public void connect(Identity identity, ConnectionStatusListener connectionStatusListener) throws IOException {
-        camera = new Camera();
-        camera.connect(identity, connectionStatusListener);
     }
 
     @Nullable
@@ -312,7 +243,20 @@ public class ThermalActivity extends AppCompatActivity {
         } else {
             doConnect(identity);
         }
+    }
 
+    private void doConnect(Identity identity) {
+        new Thread(() -> {
+            camera = new Camera();
+            try {
+                camera.connect(identity, connectionStatusListener);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            runOnUiThread(() -> {
+                startStream(streamDataListener);
+            });
+        }).start();
     }
 
     private UsbPermissionHandler.UsbPermissionListener permissionListener = new UsbPermissionHandler.UsbPermissionListener() {
@@ -331,20 +275,6 @@ public class ThermalActivity extends AppCompatActivity {
             ThermalActivity.this.showMessage.show("Error when asking for permission for FLIR ONE, error:"+errorType+ " identity:" +identity);
         }
     };
-
-    private void doConnect(Identity identity) {
-        new Thread(() -> {
-            camera = new Camera();
-            try {
-                camera.connect(identity, connectionStatusListener);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            runOnUiThread(() -> {
-                startStream(streamDataListener);
-            });
-        }).start();
-    }
 
     /**
      * Disconnect to a camera
@@ -388,6 +318,8 @@ public class ThermalActivity extends AppCompatActivity {
             try {
                 framesBuffer.put(new FrameDataHolder(msxBitmap,dcBitmap));
                 InputImage image = InputImage.fromBitmap(dcBitmap, CameraSource.getRotationDegrees());
+
+                //Face detection processing of image
                 Task<List<Face>> result =
                         detector.process(image)
                                 .addOnSuccessListener(
@@ -413,6 +345,7 @@ public class ThermalActivity extends AppCompatActivity {
                                                     int y1 = bounds.top;
                                                     int x2 = bounds.right;
                                                     int y2 = bounds.bottom;
+
                                                     //Draw the image bitmap into the cavas
                                                     tempCanvas.drawBitmap(dcBitmap, 0, 0, null);
 
