@@ -40,6 +40,7 @@ import com.example.kioskapp.facedetector.FaceGraphic;
 import com.flir.thermalsdk.ErrorCode;
 import com.flir.thermalsdk.androidsdk.ThermalSdkAndroid;
 import com.flir.thermalsdk.androidsdk.live.connectivity.UsbPermissionHandler;
+import com.flir.thermalsdk.image.Point;
 import com.flir.thermalsdk.log.ThermalLog;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -434,7 +435,10 @@ public class ThermalActivity extends AppCompatActivity {
                                                     if (face.getTrackingId() != null) {
                                                         int id = face.getTrackingId();
                                                     }
+
+
                                                 }
+
                                             }
                                         })
                                 .addOnFailureListener(
@@ -503,6 +507,9 @@ public class ThermalActivity extends AppCompatActivity {
             {
                 thermalImage.getFusion().setFusionMode(FusionMode.THERMAL_ONLY);
                 msxBitmap = BitmapAndroid.createBitmap(thermalImage.getImage()).getBitMap();
+                Point pt = new Point(10, 10);
+                double temp = thermalImage.getValueAt(pt);
+                Toast.makeText(ThermalActivity.this, "temperature: " + temp, Toast.LENGTH_SHORT).show();
             }
 
             //Get a bitmap with the visual image, it might have different dimensions then the bitmap from THERMAL_ONLY
