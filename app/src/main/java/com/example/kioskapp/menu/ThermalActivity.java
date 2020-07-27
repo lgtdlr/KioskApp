@@ -453,7 +453,7 @@ public class ThermalActivity extends AppCompatActivity {
                     public void run() {
                         try {
                             Point pt = new Point(thermalImage.getWidth()/2, thermalImage.getHeight()/2);
-                            double temp = thermalImage.getValueAt(pt);
+                            double temp = (thermalImage.getValueAt(pt) - 273.15) * 9/5 + 32;
                             tempView.setText(temp+"");
                         } catch (Exception e) { }
 
