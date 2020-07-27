@@ -72,6 +72,8 @@ public class ThermalActivity extends AppCompatActivity {
     private FaceDetector detector;
     private FaceDetectorOptions defaultOptions;
 
+    private List<Face> faceList;
+
     //FLIR Variables
     private Identity connectedIdentity = null;
     private ImageView msxImage;
@@ -331,6 +333,7 @@ public class ThermalActivity extends AppCompatActivity {
                                         new OnSuccessListener<List<Face>>() {
                                             @Override
                                             public void onSuccess(List<Face> faces) {
+                                                faceList = faces;
                                                 Paint myPaint = new Paint();
                                                 myPaint.setStyle(Paint.Style.STROKE);
                                                 myPaint.setColor(Color.WHITE);
@@ -448,9 +451,8 @@ public class ThermalActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Point pt = new Point(thermalImage.getWidth()/2, thermalImage.getHeight()/2);
-
                         try {
+                            Point pt = new Point(thermalImage.getWidth()/2, thermalImage.getHeight()/2);
                             double temp = thermalImage.getValueAt(pt);
                             tempView.setText(temp+"");
                         } catch (Exception e) { }

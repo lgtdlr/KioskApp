@@ -54,7 +54,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/margin_18"
                     android:fontFamily="@font/nhaasgroteskdisp"
-                    android:text="Face Kiosk"
+                    android:text="Verizon Face Intelligence"
                     android:textColor="@android:color/black"
                     android:textSize="22sp"
                     android:textStyle="bold"
