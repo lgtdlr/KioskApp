@@ -25,7 +25,7 @@
         android:layout_height="247dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/java_camera_view"
+        app:layout_constraintStart_toEndOf="@+id/preview"
         app:layout_constraintTop_toTopOf="@+id/guideline9"
         app:layout_constraintVertical_bias="0.492">
 
@@ -66,27 +66,42 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <org.opencv.android.JavaCameraView
-        android:id="@+id/java_camera_view"
+<!--    <org.opencv.android.JavaCameraView-->
+<!--        android:id="@+id/java_camera_view"-->
+<!--        android:layout_width="483dp"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:visibility="visible"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        opencv:camera_id="front"-->
+<!--        opencv:layout_constraintStart_toStartOf="parent"-->
+<!--        opencv:show_fps="true" />-->
+
+<!--    <org.opencv.android.CameraGLSurfaceView-->
+<!--        android:id="@+id/native_surface_view"-->
+<!--        android:layout_width="600dp"-->
+<!--        android:layout_height="600dp"-->
+<!--        android:visibility="gone"-->
+<!--        opencv:camera_id="any"-->
+<!--        opencv:layout_constraintEnd_toEndOf="parent"-->
+<!--        opencv:layout_constraintStart_toStartOf="parent"-->
+<!--        opencv:layout_constraintTop_toTopOf="parent"-->
+<!--        opencv:show_fps="true" />-->
+
+
+    <com.example.kioskapp.camera.CameraSourcePreview
+        android:id="@+id/preview"
         android:layout_width="483dp"
         android:layout_height="match_parent"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        opencv:camera_id="front"
-        opencv:layout_constraintStart_toStartOf="parent"
-        opencv:show_fps="true" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <org.opencv.android.CameraGLSurfaceView
-        android:id="@+id/native_surface_view"
-        android:layout_width="600dp"
-        android:layout_height="600dp"
-        android:visibility="gone"
-        opencv:camera_id="any"
-        opencv:layout_constraintEnd_toEndOf="parent"
-        opencv:layout_constraintStart_toStartOf="parent"
-        opencv:layout_constraintTop_toTopOf="parent"
-        opencv:show_fps="true" />
+        <com.example.kioskapp.camera.GraphicOverlay
+            android:id="@+id/faceOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </com.example.kioskapp.camera.CameraSourcePreview>
 
     <ListView
         android:id="@+id/results_list"
@@ -138,7 +153,6 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:focusable="true"
-        android:onClick="onRectToggle"
         app:backgroundTint="#00FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/linearLayout"

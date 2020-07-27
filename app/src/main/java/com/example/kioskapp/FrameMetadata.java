@@ -16,6 +16,8 @@
 
 package com.example.kioskapp;
 
+import android.graphics.Bitmap;
+
 /**
  * Describing a frame info.
  */

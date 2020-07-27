@@ -1,8 +1,10 @@
 package com.example.kioskapp.menu;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -15,30 +17,25 @@ import android.view.WindowManager;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import com.example.kioskapp.Emotion;
 import com.example.kioskapp.Face;
 import com.example.kioskapp.FaceListAdapter;
+import com.example.kioskapp.FrameMetadata;
 import com.example.kioskapp.R;
+import com.example.kioskapp.VisionProcessorBase;
+import com.example.kioskapp.camera.CameraSource;
+import com.example.kioskapp.camera.CameraSourcePreview;
+import com.example.kioskapp.camera.GraphicOverlay;
+import com.example.kioskapp.facedetector.FaceDetectorProcessor;
+import com.example.kioskapp.utils.BitmapUtils;
+import com.google.mlkit.vision.face.FaceDetectorOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.CameraActivity;
-import org.opencv.android.CameraBridgeViewBase;
-import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
-import org.opencv.android.JavaCameraView;
-import org.opencv.android.LoaderCallbackInterface;
-import org.opencv.android.OpenCVLoader;
-import org.opencv.android.Utils;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfRect;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
-import org.opencv.objdetect.CascadeClassifier;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -58,81 +55,82 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static org.opencv.android.CameraBridgeViewBase.CAMERA_ID_BACK;
-import static org.opencv.android.CameraBridgeViewBase.CAMERA_ID_FRONT;
 
-public class LiveDetectActivity extends CameraActivity implements CvCameraViewListener2 {
+public class LiveDetectActivity extends AppCompatActivity {
 
+    private final String TAG = "LiveDetectActivity";
     private static final String BASE_URL = "http://192.168.102.158:5000/face/v1.0/detect?returnFaceAttributes=*";
+    private FaceDetectorOptions defaultOptions;
+    private CameraSource cameraSource = null;
+    private CameraSourcePreview cameraPreview;
+    private GraphicOverlay graphicOverlay;
+    private Bitmap mBitmap;
+    private FrameMetadata frameMetadata;
 
     private static OkHttpClient client = new OkHttpClient();
-    private static Bitmap mBitmap;
     ProgressDialog p;
-    JavaCameraView javaCameraView;
-    File cascFile;
-    CascadeClassifier faceDetector;
-    int cameraIndex = CAMERA_ID_FRONT;
+
     TextView fpsTextView;
     int fps;
     long startTime = 0;
     long currentTime = 1000;
-    private CameraBridgeViewBase mOpenCvCameraView;
+//    private CameraBridgeViewBase mOpenCvCameraView;
     private Boolean buttonPressed = false;
-    private Mat mRgba, mGray;
-    private BaseLoaderCallback baseCallback = new BaseLoaderCallback(this) {
 
-        @Override
-        public void onManagerConnected(int status) {
-            switch (status) {
-                case LoaderCallbackInterface.SUCCESS: {
-                    InputStream is = getResources().openRawResource(R.raw.haarcascade_frontalface_alt2);
-                    File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
-                    cascFile = new File(cascadeDir, "haarcascade_frontalface_alt2.xml");
-
-                    try {
-                        FileOutputStream fos = new FileOutputStream(cascFile);
-                        byte[] buffer = new byte[4096];
-                        int bytesRead;
-
-                        while ((bytesRead = is.read(buffer)) != -1) {
-                            fos.write(buffer, 0, bytesRead);
-                        }
-                        is.close();
-                        fos.close();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    faceDetector = new CascadeClassifier(cascFile.getAbsolutePath());
-
-                    if (faceDetector.empty()) {
-                        faceDetector = null;
-                    } else
-                        cascadeDir.delete();
-
-                    javaCameraView.enableView();
-                }
-                break;
-
-                default: {
-                    try {
-                        super.onManagerConnected(status);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                break;
-            }
-        }
-    };
+//    private BaseLoaderCallback baseCallback = new BaseLoaderCallback(this) {
+//
+//        @Override
+//        public void onManagerConnected(int status) {
+//            switch (status) {
+//                case LoaderCallbackInterface.SUCCESS: {
+//                    InputStream is = getResources().openRawResource(R.raw.haarcascade_frontalface_alt2);
+//                    File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
+//                    cascFile = new File(cascadeDir, "haarcascade_frontalface_alt2.xml");
+//
+//                    try {
+//                        FileOutputStream fos = new FileOutputStream(cascFile);
+//                        byte[] buffer = new byte[4096];
+//                        int bytesRead;
+//
+//                        while ((bytesRead = is.read(buffer)) != -1) {
+//                            fos.write(buffer, 0, bytesRead);
+//                        }
+//                        is.close();
+//                        fos.close();
+//                    } catch (FileNotFoundException e) {
+//                        e.printStackTrace();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    faceDetector = new CascadeClassifier(cascFile.getAbsolutePath());
+//
+//                    if (faceDetector.empty()) {
+//                        faceDetector = null;
+//                    } else
+//                        cascadeDir.delete();
+//
+//                    //javaCameraView.enableView();
+//                }
+//                break;
+//
+//                default: {
+//                    super.onManagerConnected(status);
+//                }
+//                break;
+//            }
+//        }
+//    };
 
     public static Bitmap RotateBitmap(Bitmap source, float angle) {
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
+
+    //----------------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------------
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,21 +139,35 @@ public class LiveDetectActivity extends CameraActivity implements CvCameraViewLi
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        mOpenCvCameraView = findViewById(R.id.java_camera_view);
-        mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
-        mOpenCvCameraView.setCvCameraViewListener(this);
+        // Initializes camera interface and surface texture view that shows camera feed
+        cameraPreview = findViewById(R.id.preview);
+        graphicOverlay = findViewById(R.id.faceOverlay);
 
-        javaCameraView = findViewById(R.id.java_camera_view);
+//        mOpenCvCameraView = findViewById(R.id.java_camera_view);
+//        mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
+//        mOpenCvCameraView.setCvCameraViewListener(this);
+
+//        javaCameraView = findViewById(R.id.java_camera_view);
 
         //Load OpenCV
-        if (!OpenCVLoader.initDebug()) {
-            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, baseCallback);
-        } else {
-            try {
-                baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//        if (!OpenCVLoader.initDebug()) {
+//            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, baseCallback);
+//        } else {
+//            baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+//        }
+
+        cameraPreview.activity = this;
+        defaultOptions =
+                new FaceDetectorOptions.Builder()
+                        .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
+                        .enableTracking()
+                        .build();
+
+        createCameraSource();
+
+        // Request camera permission if it has not already been granted
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, 1);
         }
 
         //Draw FPS for portrait activity
@@ -167,117 +179,189 @@ public class LiveDetectActivity extends CameraActivity implements CvCameraViewLi
         });
 
 
-        javaCameraView.setCvCameraViewListener(this);
+        //javaCameraView.setCvCameraViewListener(this);
     }
 
-    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-        mRgba = inputFrame.rgba();
-        mGray = inputFrame.gray();
+    /**
+     * Initializes the cameraSource instance variable with 30fps, 320x240 px resolution, facing front, and autofocus
+     * enabled. Also creates the FaceDetector object and passes that into the CameraSource
+     */
+    private void createCameraSource() {
 
-        int orientation = getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_PORTRAIT && cameraIndex == CAMERA_ID_FRONT) {
-            // In portrait
-            //Without this feed is upside down when using front portrait camera
-            Core.flip(mRgba, mRgba, 1);
+        int facing = CameraSource.CAMERA_FACING_FRONT;
+
+        // If there's no existing cameraSource, create one.
+        if (cameraSource == null) {
+            cameraSource = new CameraSource(this, graphicOverlay);
         }
 
-        //detect faces
-        MatOfRect faceDetections = new MatOfRect();
-        if (buttonPressed) {
-            faceDetector.detectMultiScale(mRgba, faceDetections);
+        cameraSource.setFacing(facing);
+        cameraSource.setMachineLearningFrameProcessor(
+                new FaceDetectorProcessor(this, defaultOptions));
+    }
 
-            for (Rect rect : faceDetections.toArray()) {
-                Imgproc.rectangle(mRgba, new Point(rect.x, rect.y),
-                        new Point(rect.x + rect.width, rect.y + rect.height),
-                        new Scalar(255, 0, 0));
+    /**
+     * Actually starts the cameraPreview, passing in the non-null cameraSource and graphicOverlay
+     */
+    private void startCameraSource() {
+
+        if (cameraSource != null) {
+            try {
+                cameraPreview.start(cameraSource, graphicOverlay);
+            } catch (IOException e) {
+                Log.e(TAG, "Unable to start camera source.", e);
+                cameraSource.release();
+                cameraSource = null;
             }
         }
 
-        mBitmap = Bitmap.createBitmap(mRgba.cols(), mRgba.rows(), Bitmap.Config.ARGB_8888);
-
-        Utils.matToBitmap(mRgba, mBitmap);
-
-        //Draw FPS counter
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (currentTime - startTime >= 1000) {
-                    fpsTextView.setText("FPS: " + fps);
-                    fps = 0;
-                    startTime = System.currentTimeMillis();
-                }
-                currentTime = System.currentTimeMillis();
-                fps += 1;
-
-            }
-        });
-
-        return mRgba;
     }
 
     @Override
-    public void onResume() {
+    /**
+     * Starts the camera preview again when the app is in the foreground
+     */
+    protected void onResume() {
         super.onResume();
-    }
+        startCameraSource();
 
-    @Override
-    public List<? extends CameraBridgeViewBase> getCameraViewList() {
-        return Collections.singletonList(mOpenCvCameraView);
     }
-
     @Override
-    public void onPause() {
+    /**
+     * Stops the cameraPreview when the app is in the background
+     */
+    protected void onPause() {
         super.onPause();
-        if (mOpenCvCameraView != null)
-            mOpenCvCameraView.disableView();
+        if (cameraPreview != null) {
+            cameraPreview.stop();
+        }
     }
-
-    public void onDestroy() {
+    @Override
+    /**
+     * Releases the cameraSource right before the activity is destroyed
+     */
+    protected void onDestroy() {
         super.onDestroy();
-        if (mOpenCvCameraView != null)
-            mOpenCvCameraView.disableView();
+
+        if (cameraSource != null) {
+            cameraSource.release();
+        }
     }
 
-    public void onCameraViewStarted(int width, int height) {
-        mRgba = new Mat();
-        mGray = new Mat();
-    }
+//    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+//        mRgba = inputFrame.rgba();
+//        mGray = inputFrame.gray();
+//
+//        int orientation = getResources().getConfiguration().orientation;
+////        if (orientation == Configuration.ORIENTATION_PORTRAIT && cameraIndex == CAMERA_ID_FRONT) {
+////            // In portrait
+////            //Without this feed is upside down when using front portrait camera
+////            Core.flip(mRgba, mRgba, 1);
+////        }
+//
+//        //detect faces
+//        MatOfRect faceDetections = new MatOfRect();
+//        if (buttonPressed) {
+//            faceDetector.detectMultiScale(mRgba, faceDetections);
+//
+//            for (Rect rect : faceDetections.toArray()) {
+//                Imgproc.rectangle(mRgba, new Point(rect.x, rect.y),
+//                        new Point(rect.x + rect.width, rect.y + rect.height),
+//                        new Scalar(255, 0, 0));
+//            }
+//        }
+//
+//        mBitmap = Bitmap.createBitmap(mRgba.cols(), mRgba.rows(), Bitmap.Config.ARGB_8888);
+//
+//        Utils.matToBitmap(mRgba, mBitmap);
+//
+//        //Draw FPS counter
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (currentTime - startTime >= 1000) {
+//                    fpsTextView.setText("FPS: " + fps);
+//                    fps = 0;
+//                    startTime = System.currentTimeMillis();
+//                }
+//                currentTime = System.currentTimeMillis();
+//                fps += 1;
+//
+//            }
+//        });
+//
+//        return mRgba;
+//    }
 
-    public void onCameraViewStopped() {
-        mRgba.release();
-        mGray.release();
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//    }
+//
+//    @Override
+//    public List<? extends CameraBridgeViewBase> getCameraViewList() {
+//        return Collections.singletonList(mOpenCvCameraView);
+//    }
+//
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        if (mOpenCvCameraView != null)
+//            mOpenCvCameraView.disableView();
+//    }
+//
+//    public void onDestroy() {
+//        super.onDestroy();
+//        if (mOpenCvCameraView != null)
+//            mOpenCvCameraView.disableView();
+//    }
+
+//    public void onCameraViewStarted(int width, int height) {
+//        mRgba = new Mat();
+//        mGray = new Mat();
+//    }
+//
+//    public void onCameraViewStopped() {
+//        mRgba.release();
+//        mGray.release();
+//    }
 
     public void onRefreshClick(View view) {
-        int orientation = getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            // In portrait
-            //Bitmap is rotated before being so it has the right orientation
-            new PostCameraRequest().execute(RotateBitmap(mBitmap, 90));
-
-        } else {
-            // In landscape
-            //No need for rotation
-            new PostCameraRequest().execute(mBitmap);
-        }
+        mBitmap = BitmapUtils.getBitmap(CameraSource.getData(), new FrameMetadata.Builder()
+                .setWidth(CameraSource.getPreviewSize().getWidth())
+                .setHeight(CameraSource.getPreviewSize().getHeight())
+                .setRotation(CameraSource.getRotationDegrees())
+                .build());
+        new PostCameraRequest().execute(mBitmap);
+//        int orientation = getResources().getConfiguration().orientation;
+//        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+//            // In portrait
+//            //Bitmap is rotated before being so it has the right orientation
+//            new PostCameraRequest().execute(RotateBitmap(mBitmap, 90));
+//
+//        } else {
+//            // In landscape
+//            //No need for rotation
+//            new PostCameraRequest().execute(mBitmap);
+//        }
     }
 
-    //Toggle face rectangles
-    public void onRectToggle(View view) {
-        buttonPressed = buttonPressed == false;
-    }
-
-    //Switch between front and back camera
-    public void onCameraSwitch(View view) {
-        if (cameraIndex == CAMERA_ID_FRONT) {
-            cameraIndex = CAMERA_ID_BACK;
-        } else {
-            cameraIndex = CAMERA_ID_FRONT;
-        }
-        mOpenCvCameraView.disableView();
-        mOpenCvCameraView.setCameraIndex(cameraIndex);
-        mOpenCvCameraView.enableView();
-    }
+//    //Toggle face rectangles
+//    public void onRectToggle(View view) {
+//        buttonPressed = buttonPressed == false;
+//    }
+//
+//    //Switch between front and back camera
+//    public void onCameraSwitch(View view) {
+//        if (cameraIndex == CAMERA_ID_FRONT) {
+//            cameraIndex = CAMERA_ID_BACK;
+//        } else {
+//            cameraIndex = CAMERA_ID_FRONT;
+//        }
+//        mOpenCvCameraView.disableView();
+//        mOpenCvCameraView.setCameraIndex(cameraIndex);
+//        mOpenCvCameraView.enableView();
+//    }
 
     public void onCameraTrainButtonClick(View view) {
         //Switch to live train activity
@@ -301,10 +385,10 @@ public class LiveDetectActivity extends CameraActivity implements CvCameraViewLi
         ArrayList<Face> faces = new ArrayList<>();
         LinkedList<JSONObject> rectList = new LinkedList<>();
 
-        int orientation = getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            mBitmap = (RotateBitmap(mBitmap, 90));
-        }
+//        int orientation = getResources().getConfiguration().orientation;
+//        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+//            mBitmap = (RotateBitmap(mBitmap, 90));
+//        }
         for (int i = 0; i < parent.length(); i++) {
             JSONObject json_data = parent.getJSONObject(i);
             JSONObject faceAttributes = json_data.getJSONObject("faceAttributes");

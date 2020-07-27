@@ -24,7 +24,7 @@
         android:background="#000000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/identify_native_surface_view"
+        app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/ic_baseline_arrow_back_ios_24"
         android:onClick="onBackClick"
         app:theme="@style/ThemeOverlay.AppCompat.Dark">
@@ -38,7 +38,7 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/identify_java_camera_view">
+        app:layout_constraintTop_toBottomOf="@+id/preview">
 
         <Button
             android:id="@+id/camera_train_button"
@@ -71,28 +71,19 @@
             android:textColor="#80FFFFFF" />
     </LinearLayout>
 
-    <org.opencv.android.JavaCameraView
-        android:id="@+id/identify_java_camera_view"
+    <com.example.kioskapp.camera.CameraSourcePreview
+        android:id="@+id/preview"
         android:layout_width="match_parent"
         android:layout_height="500dp"
-        android:visibility="visible"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        opencv:camera_id="front"
-        opencv:layout_constraintEnd_toEndOf="parent"
-        opencv:layout_constraintStart_toStartOf="parent"
-        opencv:show_fps="true" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
 
-    <org.opencv.android.CameraGLSurfaceView
-        android:id="@+id/identify_native_surface_view"
-        android:layout_width="600dp"
-        android:layout_height="600dp"
-        android:visibility="gone"
-        opencv:camera_id="any"
-        opencv:layout_constraintEnd_toEndOf="parent"
-        opencv:layout_constraintStart_toStartOf="parent"
-        opencv:layout_constraintTop_toTopOf="parent"
-        opencv:show_fps="true" />
+        <com.example.kioskapp.camera.GraphicOverlay
+            android:id="@+id/faceOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </com.example.kioskapp.camera.CameraSourcePreview>
 
     <ImageButton
         android:id="@+id/imageButton"

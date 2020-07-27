@@ -46,7 +46,7 @@ public class CameraSourcePreview extends ViewGroup {
 
     private GraphicOverlay mOverlay;
 
-    public Activity drivingActivity;
+    public Activity activity;
 
     public CameraSourcePreview(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -114,14 +114,14 @@ public class CameraSourcePreview extends ViewGroup {
      */
     private void startIfReady() throws IOException {
         if (mStartRequested && mSurfaceAvailable) {
-            if (ActivityCompat.checkSelfPermission(drivingActivity, Manifest.permission.CAMERA)
+            if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA)
                                                     != PackageManager.PERMISSION_GRANTED) {
                 System.out.println("COULDN'T INITIALIZE CAMERA BECAUSE PERMISSION NOT GRANTED");
                 return;
             }
             mCameraSource.start(mSurfaceView.getHolder());
             if (mOverlay != null) {
-                Size size = mCameraSource.getPreviewSize();
+                Size size = CameraSource.getPreviewSize();
                 int min = Math.min(size.getWidth(), size.getHeight());
                 int max = Math.max(size.getWidth(), size.getHeight());
                 boolean isImageFlipped = mCameraSource.getCameraFacing() == CameraSource.CAMERA_FACING_FRONT;
@@ -168,7 +168,7 @@ public class CameraSourcePreview extends ViewGroup {
         int previewWidth = 320;
         int previewHeight = 240;
         if (mCameraSource != null) {
-            Size size = mCameraSource.getPreviewSize();
+            Size size = CameraSource.getPreviewSize();
             if (size != null) {
                 previewWidth = size.getWidth();
                 previewHeight = size.getHeight();

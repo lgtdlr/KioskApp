@@ -20,8 +20,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.kioskapp.R;
 import com.google.android.material.navigation.NavigationView;
 
-import org.opencv.android.OpenCVLoader;
-
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     Animation animFloat, animDropDown;
@@ -31,8 +29,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Toast.makeText(MainActivity.this, "OpenCV Load Status: " + OpenCVLoader.initDebug(), Toast.LENGTH_LONG).show();
 
         animDropDown = new ScaleAnimation(
                 1f, 1f, // Start and end values for the X axis scaling

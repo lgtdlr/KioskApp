@@ -1,9 +1,6 @@
 package com.example.kioskapp.menu;
 
 import android.Manifest;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
@@ -11,25 +8,22 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.kioskapp.R;
 import com.example.kioskapp.camera.CameraSource;
 import com.example.kioskapp.facedetector.FaceDetectorProcessor;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.mlkit.vision.face.Face;
 
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.List;
 
 import com.example.kioskapp.camera.CameraSourcePreview;
@@ -66,15 +60,17 @@ public class DrivingActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // To remove the title bar
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driving);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         // Initializes camera interface and surface texture view that shows camera feed
         cameraPreview = findViewById(R.id.preview);
         graphicOverlay = findViewById(R.id.faceOverlay);
-        sleepAlert = (ImageView) findViewById(R.id.sleep_alert);
-        alertOverlay = (TextView) findViewById(R.id.alert_overlay);
+        sleepAlert = findViewById(R.id.sleep_alert);
+        alertOverlay = findViewById(R.id.alert_overlay);
 
         new Thread(new Runnable() {
             @Override
@@ -97,7 +93,7 @@ public class DrivingActivity extends AppCompatActivity {
             }
         }).start();
 
-        cameraPreview.drivingActivity = this;
+        cameraPreview.activity = this;
         defaultOptions =
                 new FaceDetectorOptions.Builder()
                         .setMinFaceSize(0.3f)

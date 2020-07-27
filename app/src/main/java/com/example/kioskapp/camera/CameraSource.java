@@ -62,6 +62,8 @@ public class CameraSource {
 
     private static final String TAG = "MIDemoApp:CameraSource";
 
+    static ByteBuffer data;
+
     /**
      * The dummy surface texture must be assigned a chosen name. Since we never use an OpenGL context,
      * we can choose any ID we want here. The dummy surface texture is not a crazy hack - it is
@@ -84,9 +86,9 @@ public class CameraSource {
     /**
      * Rotation of the device, and thus the associated preview images captured from the device.
      */
-    private int rotationDegrees;
+    private static int rotationDegrees;
 
-    private Size previewSize;
+    private static Size previewSize;
 
     private final float requestedFps = 30.0f;
     private final boolean requestedAutoFocus = true;
@@ -259,7 +261,7 @@ public class CameraSource {
     /**
      * Returns the preview size that is currently in use by the underlying camera.
      */
-    public Size getPreviewSize() {
+    public static Size getPreviewSize() {
         return previewSize;
     }
 
@@ -537,20 +539,20 @@ public class CameraSource {
 
         int displayAngle;
         if (cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT) {
-            this.rotationDegrees = (cameraInfo.orientation + degrees) % 360;
-            displayAngle = (360 - this.rotationDegrees) % 360; // compensate for it being mirrored
+            rotationDegrees = (cameraInfo.orientation + degrees) % 360;
+            displayAngle = (360 - rotationDegrees) % 360; // compensate for it being mirrored
         } else { // back-facing
-            this.rotationDegrees = (cameraInfo.orientation - degrees + 360) % 360;
-            displayAngle = this.rotationDegrees;
+            rotationDegrees = (cameraInfo.orientation - degrees + 360) % 360;
+            displayAngle = rotationDegrees;
         }
         Log.d(TAG, "Display rotation is: " + rotation);
         Log.d(TAG, "Camera face is: " + cameraInfo.facing);
         Log.d(TAG, "Camera rotation is: " + cameraInfo.orientation);
         // This value should be one of the degrees that ImageMetadata accepts: 0, 90, 180 or 270.
-        Log.d(TAG, "RotationDegrees is: " + this.rotationDegrees);
+        Log.d(TAG, "RotationDegrees is: " + rotationDegrees);
 
         camera.setDisplayOrientation(displayAngle);
-        parameters.setRotation(this.rotationDegrees);
+        parameters.setRotation(rotationDegrees);
     }
 
     /**
@@ -688,7 +690,6 @@ public class CameraSource {
         @SuppressWarnings({"GuardedBy", "ByteBufferBackingArray"})
         @Override
         public void run() {
-            ByteBuffer data;
 
             while (true) {
                 synchronized (lock) {
@@ -741,6 +742,17 @@ public class CameraSource {
             }
         }
     }
+
+    public static ByteBuffer getData() {
+        return data;
+    }
+
+    public static int getRotationDegrees() {
+        return rotationDegrees;
+    }
+
+
+
 
     /**
      * Cleans up graphicOverlay and child classes can do their cleanups as well .

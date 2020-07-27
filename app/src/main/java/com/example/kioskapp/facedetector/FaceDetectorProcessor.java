@@ -44,7 +44,6 @@ import java.util.Locale;
 public class FaceDetectorProcessor extends VisionProcessorBase<List<Face>> {
 
     private static final String TAG = "FaceDetectorProcessor";
-    private static DrivingActivity drivingActivity;
 
     private final FaceDetector detector;
     private static List<Face> mFaces;

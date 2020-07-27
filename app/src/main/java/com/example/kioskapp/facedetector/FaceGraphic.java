@@ -68,7 +68,7 @@ public class FaceGraphic extends Graphic {
 
     private volatile Face face;
 
-    FaceGraphic(GraphicOverlay overlay, Face face) {
+    public FaceGraphic(GraphicOverlay overlay, Face face) {
         super(overlay);
 
         this.face = face;

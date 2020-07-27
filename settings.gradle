@@ -1,5 +1,4 @@
+include ':androidsdk-release'
+include ':thermalsdk-release'
 include ':app' ,':tensorflow-lite'
 rootProject.name = "KioskApp"
-def opencvsdk='../OpenCV-android-sdk'
-include ':opencv'
-project(':opencv').projectDir = new File(opencvsdk + '/sdk')
