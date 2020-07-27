@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -155,7 +156,6 @@ public class ThermalActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                showMessage.show("Connect a FLIR One Camera and turn it on.");
                                 connect(getFlirOne());
                             }
                         });
@@ -359,6 +359,7 @@ public class ThermalActivity extends AppCompatActivity {
 
                                                     //Draw everything else you want into the canvas, in this example a rectangle with rounded edges
                                                     tempCanvas.drawRect(x1,y1,x2,y2, myPaint);
+                                                    tempCanvas.drawPoint((x2 + x1) / 2, (y2 + y1) / 2, myPaint);
 
                                                     //Attach the canvas to the ImageView
                                                     photoImage.setImageDrawable(new BitmapDrawable(getResources(), tempBitmap));
@@ -452,9 +453,18 @@ public class ThermalActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         try {
-                            Point pt = new Point(thermalImage.getWidth()/2, thermalImage.getHeight()/2);
-                            double temp = (thermalImage.getValueAt(pt) - 273.15) * 9/5 + 32;
-                            tempView.setText(temp+"");
+                            for (Face face : faceList) {
+
+                                Rect bounds = face.getBoundingBox();
+                                int x1 = bounds.left;
+                                int y1 = bounds.top;
+                                int x2 = bounds.right;
+                                int y2 = bounds.bottom;
+                                Point pt = new Point((x2 + x1) / 2, (y2 + y1) / 2);
+                                double temp = (thermalImage.getValueAt(pt) - 273.15) * 9/5 + 32;
+                                tempView.setPaddingRelative(x2, y2, 0, 0 );
+                                tempView.setText(temp+"");
+                            }
                         } catch (Exception e) { }
 
                     }
@@ -463,7 +473,9 @@ public class ThermalActivity extends AppCompatActivity {
             }
 
             //Get a bitmap with the visual image, it might have different dimensions then the bitmap from THERMAL_ONLY
-            Bitmap dcBitmap = BitmapAndroid.createBitmap(thermalImage.getFusion().getPhoto()).getBitMap();
+//            Bitmap dcBitmap = BitmapAndroid.createBitmap(thermalImage.getFusion().getPhoto()).getBitMap();
+            thermalImage.getFusion().setFusionMode(FusionMode.VISUAL_ONLY);
+            Bitmap dcBitmap = BitmapAndroid.createBitmap(thermalImage.getImage()).getBitMap();
 
             Log.d(TAG,"adding images to cache");
             streamDataListener.images(msxBitmap,dcBitmap);
