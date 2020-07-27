@@ -6,19 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".menu.ThermalActivity">
 
-    <!--    <com.example.kioskapp.camera.CameraSourcePreview-->
-    <!--        android:id="@+id/preview"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="match_parent"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toTopOf="parent">-->
-
-    <!--        <com.example.kioskapp.camera.GraphicOverlay-->
-    <!--            android:id="@+id/faceOverlay"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="match_parent" />-->
-
-    <!--    </com.example.kioskapp.camera.CameraSourcePreview>-->
+    <ImageView
+        class = "com.example.kioskapp.menu.ThermalActivity"
+        android:id="@+id/photo_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="image with only visual image"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout3"
@@ -39,15 +36,6 @@
 
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/photo_image"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription="image with only visual image"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/overlay_image"

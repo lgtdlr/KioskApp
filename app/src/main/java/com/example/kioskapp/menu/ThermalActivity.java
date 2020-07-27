@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.example.kioskapp.BuildConfig;
 import com.example.kioskapp.R;
 import com.example.kioskapp.camera.CameraSource;
+import com.example.kioskapp.camera.GraphicOverlay;
 import com.example.kioskapp.customview.OverlayView;
 import com.example.kioskapp.tracking.MultiBoxTracker;
 import com.flir.thermalsdk.ErrorCode;
@@ -60,9 +61,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class ThermalActivity extends AppCompatActivity {
     private static final String TAG = "ThermalActivity";
-
-    private MultiBoxTracker tracker;
-    OverlayView trackingOverlay;
 
     //ML Kit Face Detector and options
     private FaceDetector detector;
@@ -122,15 +120,15 @@ public class ThermalActivity extends AppCompatActivity {
         msxImage = findViewById(R.id.msx_image);
         photoImage = findViewById(R.id.photo_image);
 
-        tracker = new MultiBoxTracker(this);
-        trackingOverlay = findViewById(R.id.tracking_overlay);
-        trackingOverlay.addCallback(
-                new OverlayView.DrawCallback() {
-                    @Override
-                    public void drawCallback(final Canvas canvas) {
-                        tracker.drawThermal(canvas);
-                    }
-                });
+//        tracker = new MultiBoxTracker(this);
+//        trackingOverlay = findViewById(R.id.tracking_overlay);
+//        trackingOverlay.addCallback(
+//                new OverlayView.DrawCallback() {
+//                    @Override
+//                    public void drawCallback(final Canvas canvas) {
+//                        tracker.drawThermal(oocanvas);
+//                    }
+//                });
 //        photoImage = findViewById(R.id.photo_image);
 
 
