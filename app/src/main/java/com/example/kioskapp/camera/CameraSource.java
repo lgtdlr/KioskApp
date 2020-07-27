@@ -81,7 +81,7 @@ public class CameraSource {
 
     private Camera camera;
 
-    private int facing = CAMERA_FACING_BACK;
+    private static int facing = CAMERA_FACING_BACK;
 
     /**
      * Rotation of the device, and thus the associated preview images captured from the device.
@@ -251,11 +251,11 @@ public class CameraSource {
     /**
      * Changes the facing of the camera.
      */
-    public synchronized void setFacing(int facing) {
+    public static synchronized void setFacing(int facing) {
         if ((facing != CAMERA_FACING_BACK) && (facing != CAMERA_FACING_FRONT)) {
             throw new IllegalArgumentException("Invalid camera: " + facing);
         }
-        this.facing = facing;
+        CameraSource.facing = facing;
     }
 
     /**

@@ -65,6 +65,8 @@ public class LiveDetectActivity extends AppCompatActivity {
     private CameraSourcePreview cameraPreview;
     private GraphicOverlay graphicOverlay;
     private Bitmap mBitmap;
+    int facing;
+    int facingBack;
     private FrameMetadata frameMetadata;
 
     private static OkHttpClient client = new OkHttpClient();
@@ -142,6 +144,8 @@ public class LiveDetectActivity extends AppCompatActivity {
         // Initializes camera interface and surface texture view that shows camera feed
         cameraPreview = findViewById(R.id.preview);
         graphicOverlay = findViewById(R.id.faceOverlay);
+        int facing = CameraSource.CAMERA_FACING_FRONT;
+        int facingBack = CameraSource.CAMERA_FACING_BACK;
 
 //        mOpenCvCameraView = findViewById(R.id.java_camera_view);
 //        mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
@@ -188,14 +192,14 @@ public class LiveDetectActivity extends AppCompatActivity {
      */
     private void createCameraSource() {
 
-        int facing = CameraSource.CAMERA_FACING_FRONT;
+        facing = CameraSource.CAMERA_FACING_FRONT;
 
         // If there's no existing cameraSource, create one.
         if (cameraSource == null) {
             cameraSource = new CameraSource(this, graphicOverlay);
         }
 
-        cameraSource.setFacing(facing);
+        CameraSource.setFacing(facing);
         cameraSource.setMachineLearningFrameProcessor(
                 new FaceDetectorProcessor(this, defaultOptions));
     }
@@ -248,83 +252,6 @@ public class LiveDetectActivity extends AppCompatActivity {
         }
     }
 
-//    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-//        mRgba = inputFrame.rgba();
-//        mGray = inputFrame.gray();
-//
-//        int orientation = getResources().getConfiguration().orientation;
-////        if (orientation == Configuration.ORIENTATION_PORTRAIT && cameraIndex == CAMERA_ID_FRONT) {
-////            // In portrait
-////            //Without this feed is upside down when using front portrait camera
-////            Core.flip(mRgba, mRgba, 1);
-////        }
-//
-//        //detect faces
-//        MatOfRect faceDetections = new MatOfRect();
-//        if (buttonPressed) {
-//            faceDetector.detectMultiScale(mRgba, faceDetections);
-//
-//            for (Rect rect : faceDetections.toArray()) {
-//                Imgproc.rectangle(mRgba, new Point(rect.x, rect.y),
-//                        new Point(rect.x + rect.width, rect.y + rect.height),
-//                        new Scalar(255, 0, 0));
-//            }
-//        }
-//
-//        mBitmap = Bitmap.createBitmap(mRgba.cols(), mRgba.rows(), Bitmap.Config.ARGB_8888);
-//
-//        Utils.matToBitmap(mRgba, mBitmap);
-//
-//        //Draw FPS counter
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (currentTime - startTime >= 1000) {
-//                    fpsTextView.setText("FPS: " + fps);
-//                    fps = 0;
-//                    startTime = System.currentTimeMillis();
-//                }
-//                currentTime = System.currentTimeMillis();
-//                fps += 1;
-//
-//            }
-//        });
-//
-//        return mRgba;
-//    }
-
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//    }
-//
-//    @Override
-//    public List<? extends CameraBridgeViewBase> getCameraViewList() {
-//        return Collections.singletonList(mOpenCvCameraView);
-//    }
-//
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        if (mOpenCvCameraView != null)
-//            mOpenCvCameraView.disableView();
-//    }
-//
-//    public void onDestroy() {
-//        super.onDestroy();
-//        if (mOpenCvCameraView != null)
-//            mOpenCvCameraView.disableView();
-//    }
-
-//    public void onCameraViewStarted(int width, int height) {
-//        mRgba = new Mat();
-//        mGray = new Mat();
-//    }
-//
-//    public void onCameraViewStopped() {
-//        mRgba.release();
-//        mGray.release();
-//    }
 
     public void onRefreshClick(View view) {
         mBitmap = BitmapUtils.getBitmap(CameraSource.getData(), new FrameMetadata.Builder()
@@ -333,35 +260,24 @@ public class LiveDetectActivity extends AppCompatActivity {
                 .setRotation(CameraSource.getRotationDegrees())
                 .build());
         new PostCameraRequest().execute(mBitmap);
-//        int orientation = getResources().getConfiguration().orientation;
-//        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-//            // In portrait
-//            //Bitmap is rotated before being so it has the right orientation
-//            new PostCameraRequest().execute(RotateBitmap(mBitmap, 90));
-//
-//        } else {
-//            // In landscape
-//            //No need for rotation
-//            new PostCameraRequest().execute(mBitmap);
-//        }
     }
-
-//    //Toggle face rectangles
-//    public void onRectToggle(View view) {
-//        buttonPressed = buttonPressed == false;
-//    }
 //
-//    //Switch between front and back camera
-//    public void onCameraSwitch(View view) {
-//        if (cameraIndex == CAMERA_ID_FRONT) {
-//            cameraIndex = CAMERA_ID_BACK;
-//        } else {
-//            cameraIndex = CAMERA_ID_FRONT;
-//        }
-//        mOpenCvCameraView.disableView();
-//        mOpenCvCameraView.setCameraIndex(cameraIndex);
-//        mOpenCvCameraView.enableView();
-//    }
+    //Switch between front and back camera
+    public void onCameraSwitch(View view) {
+
+        cameraPreview.stop();
+
+        if (facing == CameraSource.CAMERA_FACING_FRONT) {
+            facing = CameraSource.CAMERA_FACING_BACK;
+            CameraSource.setFacing(facing);
+        } else {
+            facing = CameraSource.CAMERA_FACING_FRONT;
+            CameraSource.setFacing(facing);
+        }
+
+        startCameraSource();
+
+    }
 
     public void onCameraTrainButtonClick(View view) {
         //Switch to live train activity
