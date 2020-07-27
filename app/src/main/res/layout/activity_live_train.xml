@@ -121,7 +121,7 @@
         android:clickable="true"
         android:focusable="true"
         android:onClick="onCameraSwitch"
-        app:backgroundTint="#00FFFFFF"
+        app:backgroundTint="@color/verizon_black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/camera_button_id5"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"

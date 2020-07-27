@@ -65,6 +65,7 @@ public class LiveTrainActivity extends AppCompatActivity {
     private CameraSourcePreview cameraPreview;
     private GraphicOverlay graphicOverlay;
     ProgressDialog p;
+    private int facing;
     TextView fpsTextView;
     int fps;
     long startTime = 0;
@@ -94,6 +95,8 @@ public class LiveTrainActivity extends AppCompatActivity {
         builder.setTitle("Name");
         builder.setCancelable(false);
         final EditText input = new EditText(this);
+
+        facing = CameraSource.CAMERA_FACING_FRONT;
 
 
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
@@ -147,7 +150,7 @@ public class LiveTrainActivity extends AppCompatActivity {
             cameraSource = new CameraSource(this, graphicOverlay);
         }
 
-        cameraSource.setFacing(facing);
+        CameraSource.setFacing(facing);
         cameraSource.setMachineLearningFrameProcessor(
                 new FaceDetectorProcessor(this, defaultOptions));
     }
@@ -226,6 +229,20 @@ public class LiveTrainActivity extends AppCompatActivity {
 
     public void onTrainClick(View view) {
         new TrainRequest().execute("");
+    }
+
+    public void onCameraSwitch(View view) {
+        cameraPreview.stop();
+
+        if (facing == CameraSource.CAMERA_FACING_FRONT) {
+            facing = CameraSource.CAMERA_FACING_BACK;
+            CameraSource.setFacing(facing);
+        } else {
+            facing = CameraSource.CAMERA_FACING_FRONT;
+            CameraSource.setFacing(facing);
+        }
+
+        startCameraSource();
     }
 
     private class PostImageRequest extends AsyncTask<Bitmap, String, String> {

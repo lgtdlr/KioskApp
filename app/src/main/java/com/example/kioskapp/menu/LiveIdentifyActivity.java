@@ -67,6 +67,7 @@ public class LiveIdentifyActivity extends AppCompatActivity {
     private CameraSourcePreview cameraPreview;
     private GraphicOverlay graphicOverlay;
     private ProgressDialog p;
+    private int facing;
 
     public static Bitmap RotateBitmap(Bitmap source, float angle) {
         Matrix matrix = new Matrix();
@@ -85,6 +86,7 @@ public class LiveIdentifyActivity extends AppCompatActivity {
         // Initializes camera interface and surface texture view that shows camera feed
         cameraPreview = findViewById(R.id.preview);
         graphicOverlay = findViewById(R.id.faceOverlay);
+        facing = CameraSource.CAMERA_FACING_FRONT;
 
         cameraPreview.activity = this;
         defaultOptions =
@@ -107,14 +109,14 @@ public class LiveIdentifyActivity extends AppCompatActivity {
      */
     private void createCameraSource() {
 
-        int facing = CameraSource.CAMERA_FACING_FRONT;
+        facing = CameraSource.CAMERA_FACING_FRONT;
 
         // If there's no existing cameraSource, create one.
         if (cameraSource == null) {
             cameraSource = new CameraSource(this, graphicOverlay);
         }
 
-        cameraSource.setFacing(facing);
+        CameraSource.setFacing(facing);
         cameraSource.setMachineLearningFrameProcessor(
                 new FaceDetectorProcessor(this, defaultOptions));
     }
@@ -192,6 +194,20 @@ public class LiveIdentifyActivity extends AppCompatActivity {
                 .setRotation(CameraSource.getRotationDegrees())
                 .build());
         new PostCameraRequest().execute(mBitmap);
+    }
+
+    public void onCameraSwitch(View view) {
+        cameraPreview.stop();
+
+        if (facing == CameraSource.CAMERA_FACING_FRONT) {
+            facing = CameraSource.CAMERA_FACING_BACK;
+            CameraSource.setFacing(facing);
+        } else {
+            facing = CameraSource.CAMERA_FACING_FRONT;
+            CameraSource.setFacing(facing);
+        }
+
+        startCameraSource();
     }
 
     private class PostCameraRequest extends AsyncTask<Bitmap, String, String> {

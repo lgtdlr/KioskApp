@@ -1,7 +1,6 @@
 package com.example.kioskapp.menu;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -18,17 +17,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kioskapp.BuildConfig;
 import com.example.kioskapp.R;
 import com.example.kioskapp.camera.CameraSource;
-import com.example.kioskapp.camera.CameraSourcePreview;
-import com.example.kioskapp.camera.GraphicOverlay;
-import com.example.kioskapp.facedetector.FaceDetectorProcessor;
-import com.example.kioskapp.facedetector.FaceGraphic;
+import com.example.kioskapp.customview.OverlayView;
+import com.example.kioskapp.tracking.MultiBoxTracker;
 import com.flir.thermalsdk.ErrorCode;
 import com.flir.thermalsdk.androidsdk.ThermalSdkAndroid;
 import com.flir.thermalsdk.androidsdk.live.connectivity.UsbPermissionHandler;
@@ -39,7 +35,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.face.Face;
-import com.google.mlkit.vision.face.FaceContour;
 import com.google.mlkit.vision.face.FaceDetection;
 import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
@@ -61,19 +56,19 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class ThermalActivity extends AppCompatActivity {
     private static final String TAG = "ThermalActivity";
 
-
+    private MultiBoxTracker tracker;
+    OverlayView trackingOverlay;
 
     //ML Kit Face Detector and options
     private FaceDetector detector;
     private FaceDetectorOptions defaultOptions;
 
-    private List<Face> faceList;
+    private static List<Face> faceList;
 
     //FLIR Variables
     private Identity connectedIdentity = null;
@@ -115,6 +110,8 @@ public class ThermalActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_thermal);
+
+
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -124,6 +121,17 @@ public class ThermalActivity extends AppCompatActivity {
         ThermalLog.LogLevel enableLoggingInDebug = BuildConfig.DEBUG ? ThermalLog.LogLevel.DEBUG : ThermalLog.LogLevel.NONE;
         msxImage = findViewById(R.id.msx_image);
         photoImage = findViewById(R.id.photo_image);
+
+        tracker = new MultiBoxTracker(this);
+        trackingOverlay = findViewById(R.id.tracking_overlay);
+        trackingOverlay.addCallback(
+                new OverlayView.DrawCallback() {
+                    @Override
+                    public void drawCallback(final Canvas canvas) {
+                        tracker.drawThermal(canvas);
+                    }
+                });
+//        photoImage = findViewById(R.id.photo_image);
 
 
         //ThermalSdkAndroid has to be initiated from a Activity with the Application Context to prevent leaking Context,
@@ -362,7 +370,9 @@ public class ThermalActivity extends AppCompatActivity {
                                                     tempCanvas.drawPoint((x2 + x1) / 2, (y2 + y1) / 2, myPaint);
 
                                                     //Attach the canvas to the ImageView
+//                                                    photoImage.draw(tempCanvas);
                                                     photoImage.setImageDrawable(new BitmapDrawable(getResources(), tempBitmap));
+
                                                     float rotY = face.getHeadEulerAngleY();  // Head is rotated to the right rotY degrees
                                                     float rotZ = face.getHeadEulerAngleZ();  // Head is tilted sideways rotZ degrees
 
@@ -536,6 +546,13 @@ public class ThermalActivity extends AppCompatActivity {
      */
     public void add(Identity identity) { foundCameraIdentities.add(identity); }
 
+    public static List<Face> getFaceList() {
+        return faceList;
+    }
+
+    public void setFaceList(List<Face> faceList) {
+        ThermalActivity.faceList = faceList;
+    }
 }
 
 class FrameDataHolder {
