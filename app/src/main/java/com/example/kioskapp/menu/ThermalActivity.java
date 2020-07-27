@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kioskapp.BuildConfig;
@@ -76,6 +77,8 @@ public class ThermalActivity extends AppCompatActivity {
     private ImageView msxImage;
     private ImageView photoImage;
 
+    TextView tempView;
+
     //Discovered FLIR cameras
     LinkedList<Identity> foundCameraIdentities = new LinkedList<>();
 
@@ -112,6 +115,8 @@ public class ThermalActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        tempView = findViewById(R.id.tempView_id);
 
         ThermalLog.LogLevel enableLoggingInDebug = BuildConfig.DEBUG ? ThermalLog.LogLevel.DEBUG : ThermalLog.LogLevel.NONE;
         msxImage = findViewById(R.id.msx_image);
@@ -440,9 +445,19 @@ public class ThermalActivity extends AppCompatActivity {
             {
                 thermalImage.getFusion().setFusionMode(FusionMode.THERMAL_ONLY);
                 msxBitmap = BitmapAndroid.createBitmap(thermalImage.getImage()).getBitMap();
-                Point pt = new Point(10, 10);
-                double temp = thermalImage.getValueAt(pt);
-                Toast.makeText(ThermalActivity.this, "temperature: " + temp, Toast.LENGTH_SHORT).show();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Point pt = new Point(thermalImage.getWidth()/2, thermalImage.getHeight()/2);
+
+                        try {
+                            double temp = thermalImage.getValueAt(pt);
+                            tempView.setText(temp+"");
+                        } catch (Exception e) { }
+
+                    }
+                });
+
             }
 
             //Get a bitmap with the visual image, it might have different dimensions then the bitmap from THERMAL_ONLY

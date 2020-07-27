@@ -64,4 +64,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <TextView
+        android:id="@+id/tempView_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello"
+        app:layout_constraintBottom_toBottomOf="@+id/photo_image"
+        app:layout_constraintEnd_toEndOf="@+id/photo_image"
+        app:layout_constraintStart_toStartOf="@+id/photo_image"
+        app:layout_constraintTop_toTopOf="@+id/photo_image" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
