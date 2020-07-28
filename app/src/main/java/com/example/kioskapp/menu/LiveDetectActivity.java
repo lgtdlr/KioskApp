@@ -76,53 +76,8 @@ public class LiveDetectActivity extends AppCompatActivity {
     int fps;
     long startTime = 0;
     long currentTime = 1000;
-//    private CameraBridgeViewBase mOpenCvCameraView;
     private Boolean buttonPressed = false;
 
-//    private BaseLoaderCallback baseCallback = new BaseLoaderCallback(this) {
-//
-//        @Override
-//        public void onManagerConnected(int status) {
-//            switch (status) {
-//                case LoaderCallbackInterface.SUCCESS: {
-//                    InputStream is = getResources().openRawResource(R.raw.haarcascade_frontalface_alt2);
-//                    File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
-//                    cascFile = new File(cascadeDir, "haarcascade_frontalface_alt2.xml");
-//
-//                    try {
-//                        FileOutputStream fos = new FileOutputStream(cascFile);
-//                        byte[] buffer = new byte[4096];
-//                        int bytesRead;
-//
-//                        while ((bytesRead = is.read(buffer)) != -1) {
-//                            fos.write(buffer, 0, bytesRead);
-//                        }
-//                        is.close();
-//                        fos.close();
-//                    } catch (FileNotFoundException e) {
-//                        e.printStackTrace();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                    faceDetector = new CascadeClassifier(cascFile.getAbsolutePath());
-//
-//                    if (faceDetector.empty()) {
-//                        faceDetector = null;
-//                    } else
-//                        cascadeDir.delete();
-//
-//                    //javaCameraView.enableView();
-//                }
-//                break;
-//
-//                default: {
-//                    super.onManagerConnected(status);
-//                }
-//                break;
-//            }
-//        }
-//    };
 
     public static Bitmap RotateBitmap(Bitmap source, float angle) {
         Matrix matrix = new Matrix();
@@ -144,8 +99,7 @@ public class LiveDetectActivity extends AppCompatActivity {
         // Initializes camera interface and surface texture view that shows camera feed
         cameraPreview = findViewById(R.id.preview);
         graphicOverlay = findViewById(R.id.faceOverlay);
-        int facing = CameraSource.CAMERA_FACING_FRONT;
-        int facingBack = CameraSource.CAMERA_FACING_BACK;
+        facing = CameraSource.CAMERA_FACING_FRONT;
 
 //        mOpenCvCameraView = findViewById(R.id.java_camera_view);
 //        mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);

@@ -2,6 +2,7 @@ package com.example.kioskapp.menu;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
@@ -15,16 +16,22 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kioskapp.BuildConfig;
 import com.example.kioskapp.R;
 import com.example.kioskapp.camera.CameraSource;
+import com.example.kioskapp.camera.CameraSourcePreview;
 import com.example.kioskapp.camera.GraphicOverlay;
 import com.example.kioskapp.customview.OverlayView;
+import com.example.kioskapp.facedetector.FaceDetectorProcessor;
+import com.example.kioskapp.facedetector.FaceGraphic;
 import com.example.kioskapp.tracking.MultiBoxTracker;
 import com.flir.thermalsdk.ErrorCode;
 import com.flir.thermalsdk.androidsdk.ThermalSdkAndroid;
@@ -34,6 +41,7 @@ import com.flir.thermalsdk.log.ThermalLog;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.vision.face.Landmark;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.face.Face;
 import com.google.mlkit.vision.face.FaceDetection;
@@ -55,8 +63,10 @@ import com.google.mlkit.vision.face.FaceLandmark;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class ThermalActivity extends AppCompatActivity {
@@ -72,8 +82,14 @@ public class ThermalActivity extends AppCompatActivity {
     private Identity connectedIdentity = null;
     private ImageView msxImage;
     private ImageView photoImage;
+    int facing;
 
+    //Temperature modules
     TextView tempView;
+    TextView secondTempView;
+    TextView thirdTempView;
+
+    double temp;
 
     //Discovered FLIR cameras
     LinkedList<Identity> foundCameraIdentities = new LinkedList<>();
@@ -83,6 +99,23 @@ public class ThermalActivity extends AppCompatActivity {
 
     private LinkedBlockingQueue<FrameDataHolder> framesBuffer = new LinkedBlockingQueue(21);
     private UsbPermissionHandler usbPermissionHandler = new UsbPermissionHandler();
+
+    public void onCameraSwitch(View view) {
+
+    }
+
+    public void onCalibrate(View view) {
+        camera.getRemoteControl().getCalibration().nuc();
+    }
+
+    public void onDebug(View view) {
+        connect(getCppEmulator());
+
+    }
+
+    public void onConnect(View view) {
+        connect(getFlirOne());
+    }
 
     /**
      * Show message on the screen
@@ -114,64 +147,52 @@ public class ThermalActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        tempView = findViewById(R.id.tempView_id);
-
         ThermalLog.LogLevel enableLoggingInDebug = BuildConfig.DEBUG ? ThermalLog.LogLevel.DEBUG : ThermalLog.LogLevel.NONE;
         msxImage = findViewById(R.id.msx_image);
         photoImage = findViewById(R.id.photo_image);
 
-//        tracker = new MultiBoxTracker(this);
-//        trackingOverlay = findViewById(R.id.tracking_overlay);
-//        trackingOverlay.addCallback(
-//                new OverlayView.DrawCallback() {
-//                    @Override
-//                    public void drawCallback(final Canvas canvas) {
-//                        tracker.drawThermal(oocanvas);
-//                    }
-//                });
-//        photoImage = findViewById(R.id.photo_image);
-
+        tempView = findViewById(R.id.tempView_id);
+        secondTempView = findViewById(R.id.tempView2_id);
+        thirdTempView = findViewById(R.id.tempView3_id);
 
         //ThermalSdkAndroid has to be initiated from a Activity with the Application Context to prevent leaking Context,
         // and before ANY using any ThermalSdkAndroid functions
         //ThermalLog will show log from the Thermal SDK in standards android log framework
         ThermalSdkAndroid.init(getApplicationContext(), enableLoggingInDebug);
 
+
+
         //Configure face detector options
         defaultOptions =
                 new FaceDetectorOptions.Builder()
                         .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
+                        .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
                         .enableTracking()
                         .build();
 
         //Instantiate face detector
         detector = FaceDetection.getClient(defaultOptions);
 
-        // Request camera permission if it has not already been granted
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, 1);
-        }
-
         //Keep trying to connect automatically to FLIR One while activity is running
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(connectedIdentity == null){
-                    try {
-                        Thread.sleep(3000);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                connect(getFlirOne());
-                            }
-                        });
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                while(connectedIdentity == null){
+//                    try {
+//                        Thread.sleep(3000);
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                connect(getFlirOne());
+//                            }
+//                        });
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                }
+//            }
+//        }).start();
 
         startDiscovery(cameraDiscoveryListener);
 
@@ -183,6 +204,7 @@ public class ThermalActivity extends AppCompatActivity {
      */
     protected void onResume() {
         super.onResume();
+//        startCameraSource();
     }
     @Override
     /**
@@ -190,6 +212,7 @@ public class ThermalActivity extends AppCompatActivity {
      */
     protected void onPause() {
         super.onPause();
+        disconnect();
         stopDiscovery();
     }
     @Override
@@ -226,6 +249,16 @@ public class ThermalActivity extends AppCompatActivity {
             }
         }
 
+        return null;
+    }
+
+    @Nullable
+    public Identity getCppEmulator() {
+        for (Identity foundCameraIdentity : foundCameraIdentities) {
+            if (foundCameraIdentity.deviceId.contains("C++ Emulator")) {
+                return foundCameraIdentity;
+            }
+        }
         return null;
     }
 
@@ -340,36 +373,10 @@ public class ThermalActivity extends AppCompatActivity {
                                             @Override
                                             public void onSuccess(List<Face> faces) {
                                                 faceList = faces;
-                                                Paint myPaint = new Paint();
-                                                myPaint.setStyle(Paint.Style.STROKE);
-                                                myPaint.setColor(Color.WHITE);
-
-
-                                                //Create a new image bitmap and attach a brand new canvas to it
-                                                Bitmap tempBitmap = Bitmap.createBitmap(dcBitmap.getWidth(), dcBitmap.getHeight(), Bitmap.Config.RGB_565);
-                                                Canvas tempCanvas = new Canvas(tempBitmap);
-
 
                                                 // Task completed successfully
                                                 // ...
                                                 for (Face face : faces) {
-
-                                                    Rect bounds = face.getBoundingBox();
-                                                    int x1 = bounds.left;
-                                                    int y1 = bounds.top;
-                                                    int x2 = bounds.right;
-                                                    int y2 = bounds.bottom;
-
-                                                    //Draw the image bitmap into the cavas
-                                                    tempCanvas.drawBitmap(dcBitmap, 0, 0, null);
-
-                                                    //Draw everything else you want into the canvas, in this example a rectangle with rounded edges
-                                                    tempCanvas.drawRect(x1,y1,x2,y2, myPaint);
-                                                    tempCanvas.drawPoint((x2 + x1) / 2, (y2 + y1) / 2, myPaint);
-
-                                                    //Attach the canvas to the ImageView
-//                                                    photoImage.draw(tempCanvas);
-                                                    photoImage.setImageDrawable(new BitmapDrawable(getResources(), tempBitmap));
 
                                                     float rotY = face.getHeadEulerAngleY();  // Head is rotated to the right rotY degrees
                                                     float rotZ = face.getHeadEulerAngleZ();  // Head is tilted sideways rotZ degrees
@@ -384,6 +391,8 @@ public class ThermalActivity extends AppCompatActivity {
                                                     // If face tracking was enabled:
                                                     if (face.getTrackingId() != null) {
                                                         int id = face.getTrackingId();
+                                                        Set<Integer> setString = new LinkedHashSet<Integer>();
+                                                        setString.add(face.getTrackingId());
                                                     }
 
 
@@ -457,23 +466,78 @@ public class ThermalActivity extends AppCompatActivity {
             {
                 thermalImage.getFusion().setFusionMode(FusionMode.THERMAL_ONLY);
                 msxBitmap = BitmapAndroid.createBitmap(thermalImage.getImage()).getBitMap();
+                Set<Integer> setString = new LinkedHashSet<Integer>();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            for (Face face : faceList) {
+                            int x1 = 0;
+                            int y1 = 0;
+                            int x2 = 0;
+                            int y2 = 0;
 
-                                Rect bounds = face.getBoundingBox();
-                                int x1 = bounds.left;
-                                int y1 = bounds.top;
-                                int x2 = bounds.right;
-                                int y2 = bounds.bottom;
-                                Point pt = new Point((x2 + x1) / 2, (y2 + y1) / 2);
-                                double temp = (thermalImage.getValueAt(pt) - 273.15) * 9/5 + 32;
-                                tempView.setPaddingRelative(x2, y2, 0, 0 );
-                                tempView.setText(temp+"");
+                            if (faceList != null) {
+                                for (Face face : faceList) {
+
+                                    Rect bounds = face.getBoundingBox();
+                                    x1 = bounds.left;
+                                    y1 = bounds.top;
+                                    x2 = bounds.right;
+                                    y2 = bounds.bottom;
+
+                                    //If face tracking was enabled:
+                                    if (face.getTrackingId() != null) {
+                                        int id = face.getTrackingId();
+                                        setString.add(id);
+                                    }
+                                }
+
+                                if (faceList != null) {
+
+                                    //Face 1 reading
+                                    if (faceList.size() > 0){
+
+                                        //Point where to take thermal reading
+                                        Point facePt = new Point((int) faceList.get(0).getLandmark(Landmark.NOSE_BASE).getPosition().x,
+                                                (int) faceList.get(0).getLandmark(Landmark.NOSE_BASE).getPosition().y);
+
+                                        double temp = (int)(thermalImage.getValueAt(facePt) - 273.15) * 9 / 5 + 32;
+                                        tempView.setVisibility(View.VISIBLE);
+                                        tempView.setText(temp + "");
+                                    } else {
+                                        tempView.setVisibility(View.INVISIBLE);
+                                    }
+
+
+                                    //Face 2 reading if available
+                                    if (faceList.size() > 1) {
+                                        Point secondFacePt = new Point((int) faceList.get(1).getLandmark(Landmark.NOSE_BASE).getPosition().x, (int) faceList.get(0).getLandmark(Landmark.NOSE_BASE).getPosition().y);
+                                        double tempTwo = (int)(thermalImage.getValueAt(secondFacePt) - 273.15) * 9 / 5 + 32;
+                                        secondTempView.setVisibility(View.VISIBLE);
+                                        secondTempView.setText(tempTwo + "");
+                                    } else {
+                                        secondTempView.setVisibility(View.INVISIBLE);
+                                    }
+
+                                    //Face 3 reading if available
+                                    if (faceList.size() == 3) {
+                                        Point thirdFacePt = new Point((int) faceList.get(1).getLandmark(Landmark.NOSE_BASE).getPosition().x, (int) faceList.get(0).getLandmark(Landmark.NOSE_BASE).getPosition().y);
+                                        double tempThree = (int)(thermalImage.getValueAt(thirdFacePt) - 273.15) * 9 / 5 + 32;
+                                        thirdTempView.setVisibility(View.VISIBLE);
+                                        thirdTempView.setText(tempThree + "");
+                                    } else {
+                                        thirdTempView.setVisibility(View.INVISIBLE);
+                                    }
+
+                                }
+                            } else {
+                                tempView.setVisibility(View.INVISIBLE);
+                                secondTempView.setVisibility(View.INVISIBLE);
+                                thirdTempView.setVisibility(View.INVISIBLE);
                             }
-                        } catch (Exception e) { }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
 
                     }
                 });
@@ -485,8 +549,8 @@ public class ThermalActivity extends AppCompatActivity {
             thermalImage.getFusion().setFusionMode(FusionMode.VISUAL_ONLY);
             Bitmap dcBitmap = BitmapAndroid.createBitmap(thermalImage.getImage()).getBitMap();
 
-            Log.d(TAG,"adding images to cache");
-            streamDataListener.images(msxBitmap,dcBitmap);
+            Log.d(TAG, "adding images to cache");
+            streamDataListener.images(msxBitmap, dcBitmap);
         }
     };
 
