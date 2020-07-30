@@ -18,9 +18,12 @@ import com.google.mlkit.vision.face.Face;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 public class ThermalView extends androidx.appcompat.widget.AppCompatImageView {
+
+    private static double temp;
 
     public ThermalView(Context context) {
         super(context);
@@ -34,11 +37,13 @@ public class ThermalView extends androidx.appcompat.widget.AppCompatImageView {
         super(context, attrs, defStyleAttr);
     }
 
+    public static void updateThermal(double temperature) {
+         temp = temperature;
+    }
+
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
-
 
         Paint uPaint = new Paint();
         uPaint.setColor(Color.WHITE);
@@ -51,6 +56,7 @@ public class ThermalView extends androidx.appcompat.widget.AppCompatImageView {
         paint.setStrokeWidth(4);
 
         List<Face> faces = ThermalActivity.getFaceList();
+        Random rnd = new Random();
 
         if (faces != null) {
             for (Face face : faces) {
@@ -87,6 +93,8 @@ public class ThermalView extends androidx.appcompat.widget.AppCompatImageView {
                 }
 
                 canvas.drawRoundRect(x1, y1, x2, y2, 6, 6, paint);
+                paint.setTextSize(200);
+                canvas.drawText(String.format("%.2f °", temp),x1, y1, paint);
                 paint.setColor(Color.WHITE);
                 canvas.drawPoint((x2 + x1) / 2, (y2 + y1) / 2, uPaint);
                 canvas.drawPoint(canvas.getWidth()/2, canvas.getHeight()/2, uPaint);

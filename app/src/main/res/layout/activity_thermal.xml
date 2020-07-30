@@ -154,8 +154,8 @@
 
     <ImageView
         android:id="@+id/msx_image"
-        android:layout_width="125dp"
-        android:layout_height="125dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:contentDescription="image with IR and visual data mixed"
         android:maxWidth="50dp"
         android:minWidth="50dp"
