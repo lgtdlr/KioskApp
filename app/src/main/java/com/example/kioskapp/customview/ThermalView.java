@@ -1,29 +1,21 @@
 package com.example.kioskapp.customview;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 
 import com.example.kioskapp.menu.ThermalActivity;
-import com.google.android.gms.vision.face.Landmark;
 import com.google.mlkit.vision.face.Face;
 
-import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 public class ThermalView extends androidx.appcompat.widget.AppCompatImageView {
-
-    private static double temp;
 
     public ThermalView(Context context) {
         super(context);
@@ -35,10 +27,6 @@ public class ThermalView extends androidx.appcompat.widget.AppCompatImageView {
 
     public ThermalView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-    }
-
-    public static void updateThermal(double temperature) {
-         temp = temperature;
     }
 
     @Override
@@ -94,7 +82,7 @@ public class ThermalView extends androidx.appcompat.widget.AppCompatImageView {
 
                 canvas.drawRoundRect(x1, y1, x2, y2, 6, 6, paint);
                 paint.setTextSize(200);
-                canvas.drawText(String.format("%.2f °", temp),x1, y1, paint);
+                canvas.drawText(String.format("%.2f °", ThermalActivity.getTemp()),x1, y1, paint);
                 paint.setColor(Color.WHITE);
                 canvas.drawPoint((x2 + x1) / 2, (y2 + y1) / 2, uPaint);
                 canvas.drawPoint(canvas.getWidth()/2, canvas.getHeight()/2, uPaint);

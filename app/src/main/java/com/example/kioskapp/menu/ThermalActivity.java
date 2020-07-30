@@ -1,57 +1,27 @@
 package com.example.kioskapp.menu;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
-
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PointF;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.kioskapp.BuildConfig;
 import com.example.kioskapp.R;
 import com.example.kioskapp.camera.CameraSource;
-import com.example.kioskapp.camera.CameraSourcePreview;
-import com.example.kioskapp.camera.GraphicOverlay;
-import com.example.kioskapp.customview.OverlayView;
 import com.example.kioskapp.customview.ThermalView;
-import com.example.kioskapp.facedetector.FaceDetectorProcessor;
-import com.example.kioskapp.facedetector.FaceGraphic;
-import com.example.kioskapp.tracking.MultiBoxTracker;
 import com.flir.thermalsdk.ErrorCode;
 import com.flir.thermalsdk.androidsdk.ThermalSdkAndroid;
+import com.flir.thermalsdk.androidsdk.image.BitmapAndroid;
 import com.flir.thermalsdk.androidsdk.live.connectivity.UsbPermissionHandler;
 import com.flir.thermalsdk.image.Point;
-import com.flir.thermalsdk.log.ThermalLog;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.vision.face.Landmark;
-import com.google.mlkit.vision.common.InputImage;
-import com.google.mlkit.vision.face.Face;
-import com.google.mlkit.vision.face.FaceDetection;
-import com.google.mlkit.vision.face.FaceDetector;
-import com.google.mlkit.vision.face.FaceDetectorOptions;
-
-import com.flir.thermalsdk.androidsdk.image.BitmapAndroid;
 import com.flir.thermalsdk.image.ThermalImage;
 import com.flir.thermalsdk.image.fusion.FusionMode;
 import com.flir.thermalsdk.live.Camera;
@@ -61,15 +31,21 @@ import com.flir.thermalsdk.live.connectivity.ConnectionStatusListener;
 import com.flir.thermalsdk.live.discovery.DiscoveryEventListener;
 import com.flir.thermalsdk.live.discovery.DiscoveryFactory;
 import com.flir.thermalsdk.live.streaming.ThermalImageStreamListener;
-import com.google.mlkit.vision.face.FaceLandmark;
+import com.flir.thermalsdk.log.ThermalLog;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.face.Face;
+import com.google.mlkit.vision.face.FaceDetection;
+import com.google.mlkit.vision.face.FaceDetector;
+import com.google.mlkit.vision.face.FaceDetectorOptions;
 
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class ThermalActivity extends AppCompatActivity {
@@ -91,7 +67,11 @@ public class ThermalActivity extends AppCompatActivity {
     TextView secondTempView;
     TextView thirdTempView;
 
-    double temp;
+    public static double getTemp() {
+        return temp;
+    }
+
+    static double temp;
 
     //Discovered FLIR cameras
     LinkedList<Identity> foundCameraIdentities = new LinkedList<>();
@@ -498,7 +478,7 @@ public class ThermalActivity extends AppCompatActivity {
                                     if (face.getTrackingId() != null) {
 
                                         Point facePt = new Point(face.getBoundingBox().centerX()/2, face.getBoundingBox().centerY()/2);
-                                        double temp = (thermalImage.getValueAt(facePt) - 273.15) * 9 / 5 + 32;
+                                        temp = (thermalImage.getValueAt(facePt) - 273.15) * 9 / 5 + 32;
                                         ThermalView.updateThermal(temp);
 //                                        Paint paint = new Paint();
 //                                        paint.setTextSize(200);
