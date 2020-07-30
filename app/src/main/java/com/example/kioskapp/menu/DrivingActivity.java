@@ -4,31 +4,29 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import com.example.kioskapp.R;
 import com.example.kioskapp.camera.CameraSource;
+import com.example.kioskapp.camera.CameraSourcePreview;
+import com.example.kioskapp.camera.GraphicOverlay;
 import com.example.kioskapp.facedetector.FaceDetectorProcessor;
 import com.google.mlkit.vision.face.Face;
+import com.google.mlkit.vision.face.FaceDetectorOptions;
 
 import java.io.IOException;
 import java.util.List;
-
-import com.example.kioskapp.camera.CameraSourcePreview;
-import com.example.kioskapp.camera.GraphicOverlay;
-import com.google.mlkit.vision.face.FaceDetectorOptions;
 
 /**
  * First, added MLKit dependency, then imported needed classes for face contour detection
@@ -75,7 +73,7 @@ public class DrivingActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while(true){
+                while (true) {
                     try {
                         runOnUiThread(new Runnable() {
                             @Override
@@ -126,7 +124,7 @@ public class DrivingActivity extends AppCompatActivity {
             cameraSource = new CameraSource(this, graphicOverlay);
         }
 
-        cameraSource.setFacing(facing);
+        CameraSource.setFacing(facing);
         cameraSource.setMachineLearningFrameProcessor(
                 new FaceDetectorProcessor(this, defaultOptions));
     }
@@ -157,6 +155,7 @@ public class DrivingActivity extends AppCompatActivity {
         startCameraSource();
 
     }
+
     @Override
     /**
      * Stops the cameraPreview when the app is in the background
@@ -167,6 +166,7 @@ public class DrivingActivity extends AppCompatActivity {
             cameraPreview.stop();
         }
     }
+
     @Override
     /**
      * Releases the cameraSource right before the activity is destroyed
@@ -181,7 +181,7 @@ public class DrivingActivity extends AppCompatActivity {
 
     public void checkEyes() {
         List<Face> faces = FaceDetectorProcessor.getmFaces();
-        if (faces != null){
+        if (faces != null) {
             for (Face face : faces) {
                 mediaPlayer = getMediaPlayer();
                 if (mediaPlayer != null) {
@@ -189,7 +189,7 @@ public class DrivingActivity extends AppCompatActivity {
                 } else {
                     Log.d(TAG, "Media player null");
                 }
-                if (face != null){
+                if (face != null) {
                     if (face.getRightEyeOpenProbability() < 0.3f && face.getLeftEyeOpenProbability() < 0.3f && face.getRightEyeOpenProbability() != null && face.getLeftEyeOpenProbability() != null) {
                         // Starts the eyes closed "timer" because eyes need to be closed for 1 second for an alarm to go off
                         if (eyesClosedStartTime == 0 && (mediaPlayer == null || !mediaPlayer.isPlaying())) {
@@ -279,11 +279,12 @@ public class DrivingActivity extends AppCompatActivity {
     public MediaPlayer getMediaPlayer() {
         return mediaPlayer;
     }
+
     public long getStartTimeLong() {
         return startTimeLong;
     }
 
-    public void createMediaPlayer(){
+    public void createMediaPlayer() {
         mediaPlayer = MediaPlayer.create(this, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE));
     }
 

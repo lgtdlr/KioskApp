@@ -20,8 +20,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
-import android.media.MediaPlayer;
-import android.util.Log;
 
 import com.example.kioskapp.camera.GraphicOverlay;
 import com.example.kioskapp.camera.GraphicOverlay.Graphic;
@@ -163,22 +161,22 @@ public class FaceGraphic extends Graphic {
 //        }
 
         //Draw eye contours.
-       if (face.getContour(FaceContour.LEFT_EYE) != null){
-           List<PointF> leftEyeContour =
-                   face.getContour(FaceContour.LEFT_EYE).getPoints();
-           for (PointF point : leftEyeContour) {
-               canvas.drawCircle(
-                       translateX(point.x), translateY(point.y), FACE_POSITION_RADIUS, facePositionPaint);
-           }
-       }
-       if (face.getContour(FaceContour.RIGHT_EYE) != null) {
-           List<PointF> rightEyeContour =
-                   face.getContour(FaceContour.RIGHT_EYE).getPoints();
-           for (PointF point : rightEyeContour) {
-               canvas.drawCircle(
-                       translateX(point.x), translateY(point.y), FACE_POSITION_RADIUS, facePositionPaint);
-           }
-       }
+        if (face.getContour(FaceContour.LEFT_EYE) != null) {
+            List<PointF> leftEyeContour =
+                    face.getContour(FaceContour.LEFT_EYE).getPoints();
+            for (PointF point : leftEyeContour) {
+                canvas.drawCircle(
+                        translateX(point.x), translateY(point.y), FACE_POSITION_RADIUS, facePositionPaint);
+            }
+        }
+        if (face.getContour(FaceContour.RIGHT_EYE) != null) {
+            List<PointF> rightEyeContour =
+                    face.getContour(FaceContour.RIGHT_EYE).getPoints();
+            for (PointF point : rightEyeContour) {
+                canvas.drawCircle(
+                        translateX(point.x), translateY(point.y), FACE_POSITION_RADIUS, facePositionPaint);
+            }
+        }
 
         // Draws smiling and left/right eye open probabilities.
         if (face.getSmilingProbability() != null) {
@@ -234,7 +232,6 @@ public class FaceGraphic extends Graphic {
                     top + yLabelOffset,
                     idPaints[colorID]);
         }
-
 
 
         // Draw facial landmarks

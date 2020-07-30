@@ -287,10 +287,10 @@ public class CameraSource {
         Camera camera = Camera.open(requestedCameraId);
 
         SizePair sizePair =
-                    selectSizePair(
-                            camera,
-                            DEFAULT_REQUESTED_CAMERA_PREVIEW_WIDTH,
-                            DEFAULT_REQUESTED_CAMERA_PREVIEW_HEIGHT);
+                selectSizePair(
+                        camera,
+                        DEFAULT_REQUESTED_CAMERA_PREVIEW_WIDTH,
+                        DEFAULT_REQUESTED_CAMERA_PREVIEW_HEIGHT);
 
         if (sizePair == null) {
             throw new IOException("Could not find suitable preview size.");
@@ -750,8 +750,6 @@ public class CameraSource {
     public static int getRotationDegrees() {
         return rotationDegrees;
     }
-
-
 
 
     /**

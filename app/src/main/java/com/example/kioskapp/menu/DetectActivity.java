@@ -54,7 +54,7 @@ public class DetectActivity extends AppCompatActivity {
     private static final int REQUEST_IMAGE_CAPTURE = 2;
     private static OkHttpClient client = new OkHttpClient();
     ProgressDialog p;
-//    Animation animPushUp;
+    //    Animation animPushUp;
     private ImageView imageSelected;
 //    private ImageView dropDownImage;
 

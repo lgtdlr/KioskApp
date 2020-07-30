@@ -48,7 +48,6 @@ public class TrainActivity extends AppCompatActivity {
         });
 
 
-
     }
 
     private class NewPersonRequest extends AsyncTask<String, String, String> {

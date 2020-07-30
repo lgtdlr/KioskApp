@@ -18,15 +18,12 @@ package com.example.kioskapp.facedetector;
 
 import android.content.Context;
 import android.graphics.PointF;
-import android.media.MediaPlayer;
-import android.util.DisplayMetrics;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.example.kioskapp.VisionProcessorBase;
 import com.example.kioskapp.camera.GraphicOverlay;
-import com.example.kioskapp.menu.DrivingActivity;
 import com.google.android.gms.tasks.Task;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.face.Face;
@@ -139,7 +136,9 @@ public class FaceDetectorProcessor extends VisionProcessorBase<List<Face>> {
     }
 
     @Override
-    protected void onFailure(@NonNull Exception e) { Log.e(TAG, "Face detection failed " + e); }
+    protected void onFailure(@NonNull Exception e) {
+        Log.e(TAG, "Face detection failed " + e);
+    }
 
     public static List<Face> getmFaces() {
         return mFaces;

@@ -121,7 +121,7 @@ public class BitmapUtils {
     public static Bitmap getBitmapFromContentUri(ContentResolver contentResolver, Uri imageUri)
             throws IOException {
         Bitmap decodedBitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri);
-        if (decodedBitmap==null) {
+        if (decodedBitmap == null) {
             return null;
         }
         int orientation = getExifOrientationTag(contentResolver, imageUri);

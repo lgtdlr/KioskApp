@@ -2,18 +2,15 @@ package com.example.kioskapp.menu;
 
 import android.Manifest;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -38,15 +35,10 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Collections;
-import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -181,6 +173,7 @@ public class LiveTrainActivity extends AppCompatActivity {
         startCameraSource();
 
     }
+
     @Override
     /**
      * Stops the cameraPreview when the app is in the background
@@ -191,6 +184,7 @@ public class LiveTrainActivity extends AppCompatActivity {
             cameraPreview.stop();
         }
     }
+
     @Override
     /**
      * Releases the cameraSource right before the activity is destroyed

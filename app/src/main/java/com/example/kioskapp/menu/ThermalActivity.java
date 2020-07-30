@@ -110,6 +110,7 @@ public class ThermalActivity extends AppCompatActivity {
 
     public interface StreamDataListener {
         void images(FrameDataHolder dataHolder);
+
         void images(Bitmap msxBitmap, Bitmap dcBitmap);
     }
 
@@ -143,7 +144,6 @@ public class ThermalActivity extends AppCompatActivity {
         // and before ANY using any ThermalSdkAndroid functions
         //ThermalLog will show log from the Thermal SDK in standards android log framework
         ThermalSdkAndroid.init(getApplicationContext(), enableLoggingInDebug);
-
 
 
         //Configure face detector options
@@ -190,6 +190,7 @@ public class ThermalActivity extends AppCompatActivity {
         super.onResume();
 //        startCameraSource();
     }
+
     @Override
     /**
      * Stops trying to discover when the app is in the background
@@ -199,6 +200,7 @@ public class ThermalActivity extends AppCompatActivity {
         disconnect();
         stopDiscovery();
     }
+
     @Override
     /**
      * Releases the cameraSource right before the activity is destroyed
@@ -302,7 +304,7 @@ public class ThermalActivity extends AppCompatActivity {
 
         @Override
         public void error(UsbPermissionHandler.UsbPermissionListener.ErrorType errorType, final Identity identity) {
-            ThermalActivity.this.showMessage.show("Error when asking for permission for FLIR ONE, error:"+errorType+ " identity:" +identity);
+            ThermalActivity.this.showMessage.show("Error when asking for permission for FLIR ONE, error:" + errorType + " identity:" + identity);
         }
     };
 
@@ -341,12 +343,11 @@ public class ThermalActivity extends AppCompatActivity {
         }
 
 
-
         @Override
         public void images(Bitmap msxBitmap, Bitmap dcBitmap) {
 
             try {
-                framesBuffer.put(new FrameDataHolder(msxBitmap,dcBitmap));
+                framesBuffer.put(new FrameDataHolder(msxBitmap, dcBitmap));
 
                 InputImage image = InputImage.fromBitmap(dcBitmap, CameraSource.getRotationDegrees());
                 //Face detection processing of image
@@ -375,13 +376,13 @@ public class ThermalActivity extends AppCompatActivity {
 
             } catch (InterruptedException e) {
                 //if interrupted while waiting for adding a new item in the queue
-                Log.e(TAG,"images(), unable to add incoming images to frames buffer, exception:"+e);
+                Log.e(TAG, "images(), unable to add incoming images to frames buffer, exception:" + e);
             }
 
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.d(TAG,"framebuffer size:"+framesBuffer.size());
+                    Log.d(TAG, "framebuffer size:" + framesBuffer.size());
                     FrameDataHolder poll = framesBuffer.poll();
                     msxImage.setImageBitmap(poll.msxBitmap);
                     photoImage.setImageBitmap(poll.dcBitmap);
@@ -437,7 +438,7 @@ public class ThermalActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Point pt = new Point(thermalImage.getWidth()/2, thermalImage.getHeight()/2);
+                        Point pt = new Point(thermalImage.getWidth() / 2, thermalImage.getHeight() / 2);
 
                         try {
                             int x1 = 0;
@@ -477,7 +478,7 @@ public class ThermalActivity extends AppCompatActivity {
 
                                     if (face.getTrackingId() != null) {
 
-                                        Point facePt = new Point(face.getBoundingBox().centerX()/2, face.getBoundingBox().centerY()/2);
+                                        Point facePt = new Point(face.getBoundingBox().centerX() / 2, face.getBoundingBox().centerY() / 2);
                                         temp = (thermalImage.getValueAt(facePt) - 273.15) * 9 / 5 + 32;
                                         ThermalView.updateThermal(temp);
 //                                        Paint paint = new Paint();
@@ -622,7 +623,9 @@ public class ThermalActivity extends AppCompatActivity {
     /**
      * Add a found camera to the list of known cameras
      */
-    public void add(Identity identity) { foundCameraIdentities.add(identity); }
+    public void add(Identity identity) {
+        foundCameraIdentities.add(identity);
+    }
 
     public static List<Face> getFaceList() {
         return faceList;
@@ -631,7 +634,10 @@ public class ThermalActivity extends AppCompatActivity {
     public void setFaceList(List<Face> faceList) {
         faceList = faceList;
     }
-    public static void clearFaceList() { faceList.clear(); }
+
+    public static void clearFaceList() {
+        faceList.clear();
+    }
 }
 
 class FrameDataHolder {
@@ -639,7 +645,7 @@ class FrameDataHolder {
     public final Bitmap msxBitmap;
     public final Bitmap dcBitmap;
 
-    FrameDataHolder(Bitmap msxBitmap, Bitmap dcBitmap){
+    FrameDataHolder(Bitmap msxBitmap, Bitmap dcBitmap) {
         this.msxBitmap = msxBitmap;
         this.dcBitmap = dcBitmap;
     }

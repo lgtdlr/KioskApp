@@ -58,7 +58,7 @@ public class ThermalView extends androidx.appcompat.widget.AppCompatImageView {
                 int id;
                 if (face.getTrackingId() != null) {
                     id = face.getTrackingId();
-                    switch(id) {
+                    switch (id) {
                         case 1:
                             paint.setColor(Color.BLUE);
                             break;
@@ -82,10 +82,10 @@ public class ThermalView extends androidx.appcompat.widget.AppCompatImageView {
 
                 canvas.drawRoundRect(x1, y1, x2, y2, 6, 6, paint);
                 paint.setTextSize(200);
-                canvas.drawText(String.format("%.2f °", ThermalActivity.getTemp()),x1, y1, paint);
+                canvas.drawText(String.format("%.2f °", ThermalActivity.getTemp()), x1, y1, paint);
                 paint.setColor(Color.WHITE);
                 canvas.drawPoint((x2 + x1) / 2, (y2 + y1) / 2, uPaint);
-                canvas.drawPoint(canvas.getWidth()/2, canvas.getHeight()/2, uPaint);
+                canvas.drawPoint(canvas.getWidth() / 2, canvas.getHeight() / 2, uPaint);
 
             }
         }

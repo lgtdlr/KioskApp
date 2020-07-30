@@ -61,6 +61,7 @@ public class CameraSourcePreview extends ViewGroup {
 
     /**
      * Initializes the cameraSource object
+     *
      * @param cameraSource the cameraSource to set the instance variable mCameraSource equal to
      * @throws IOException
      */
@@ -80,8 +81,9 @@ public class CameraSourcePreview extends ViewGroup {
     /**
      * Overloaded version of the above start() function, but sets the instance variable mOverlay based on the
      * GraphicOverlay that is passed in as a parameter
+     *
      * @param cameraSource cameraSource object that is being started
-     * @param overlay graphic overlay object to set to the instance variable mOverlay
+     * @param overlay      graphic overlay object to set to the instance variable mOverlay
      * @throws IOException
      */
     public void start(CameraSource cameraSource, GraphicOverlay overlay) throws IOException {
@@ -110,12 +112,13 @@ public class CameraSourcePreview extends ViewGroup {
 
     /**
      * Starts the preview if start was requested and the surface is available
+     *
      * @throws IOException
      */
     private void startIfReady() throws IOException {
         if (mStartRequested && mSurfaceAvailable) {
             if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA)
-                                                    != PackageManager.PERMISSION_GRANTED) {
+                    != PackageManager.PERMISSION_GRANTED) {
                 System.out.println("COULDN'T INITIALIZE CAMERA BECAUSE PERMISSION NOT GRANTED");
                 return;
             }
@@ -223,6 +226,7 @@ public class CameraSourcePreview extends ViewGroup {
 
     /**
      * Checks if the device is in portrait mode
+     *
      * @return boolean representing whether the device is in portrait mode
      */
     private boolean isPortraitMode() {

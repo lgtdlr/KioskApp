@@ -2,16 +2,13 @@ package com.example.kioskapp.menu;
 
 import android.Manifest;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ListView;
@@ -25,7 +22,6 @@ import com.example.kioskapp.Face;
 import com.example.kioskapp.FaceListAdapter;
 import com.example.kioskapp.FrameMetadata;
 import com.example.kioskapp.R;
-import com.example.kioskapp.VisionProcessorBase;
 import com.example.kioskapp.camera.CameraSource;
 import com.example.kioskapp.camera.CameraSourcePreview;
 import com.example.kioskapp.camera.GraphicOverlay;
@@ -38,15 +34,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -184,6 +175,7 @@ public class LiveDetectActivity extends AppCompatActivity {
         startCameraSource();
 
     }
+
     @Override
     /**
      * Stops the cameraPreview when the app is in the background
@@ -194,6 +186,7 @@ public class LiveDetectActivity extends AppCompatActivity {
             cameraPreview.stop();
         }
     }
+
     @Override
     /**
      * Releases the cameraSource right before the activity is destroyed
@@ -215,7 +208,8 @@ public class LiveDetectActivity extends AppCompatActivity {
                 .build());
         new PostCameraRequest().execute(mBitmap);
     }
-//
+
+    //
     //Switch between front and back camera
     public void onCameraSwitch(View view) {
 

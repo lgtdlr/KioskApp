@@ -35,13 +35,13 @@ import android.util.Size;
 import android.util.TypedValue;
 import android.widget.Toast;
 
-import com.example.kioskapp.tf.CameraActivity;
 import com.example.kioskapp.R;
 import com.example.kioskapp.customview.OverlayView;
 import com.example.kioskapp.customview.OverlayView.DrawCallback;
 import com.example.kioskapp.env.BorderedText;
 import com.example.kioskapp.env.ImageUtils;
 import com.example.kioskapp.env.Logger;
+import com.example.kioskapp.tf.CameraActivity;
 import com.example.kioskapp.tf.Classifier;
 import com.example.kioskapp.tf.TFLiteObjectDetectionAPIModel;
 import com.example.kioskapp.tracking.MultiBoxTracker;
