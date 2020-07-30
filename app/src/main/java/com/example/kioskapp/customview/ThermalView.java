@@ -38,10 +38,18 @@ public class ThermalView extends androidx.appcompat.widget.AppCompatImageView {
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+
+
+        Paint uPaint = new Paint();
+        uPaint.setColor(Color.WHITE);
+        uPaint.setStyle(Paint.Style.STROKE);
+        uPaint.setStrokeWidth(1);
+
         Paint paint = new Paint();
         paint.setColor(Color.WHITE);
         paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(10);
+        paint.setStrokeWidth(4);
+
         List<Face> faces = ThermalActivity.getFaceList();
 
         if (faces != null) {
@@ -53,24 +61,35 @@ public class ThermalView extends androidx.appcompat.widget.AppCompatImageView {
                 int x2 = bounds.right;
                 int y2 = bounds.bottom;
 
-                if (face.getTrackingId() == 1) {
-                    paint.setColor(Color.RED);
+                int id;
+                if (face.getTrackingId() != null) {
+                    id = face.getTrackingId();
+                    switch(id) {
+                        case 1:
+                            paint.setColor(Color.BLUE);
+                            break;
+                        case 2:
+                            paint.setColor(Color.GREEN);
+                            break;
+                        case 3:
+                            paint.setColor(Color.YELLOW);
+                            break;
+                        case 4:
+                            paint.setColor(Color.CYAN);
+                            break;
+                        case 5:
+                            paint.setColor(Color.MAGENTA);
+                            break;
+                        default:
+                            // code block
+                            paint.setColor(Color.WHITE);
+                    }
                 }
-                if (face.getTrackingId() == 2) {
-                    paint.setColor(Color.BLUE);
-                }
-                if (face.getTrackingId() == 0) {
-                    paint.setColor(Color.WHITE);
 
-                    canvas.drawRoundRect(x1, y1, x2, y2, 5, 5, paint);
-                    canvas.drawPoint((x2 + x1) / 2, (y2 + y1) / 2, paint);
-
-
-                }
-
-//            for (int i : setString){
-//                faces.get(i).getLandmark(Landmark.NOSE_BASE).getPosition();
-//            }
+                canvas.drawRoundRect(x1, y1, x2, y2, 6, 6, paint);
+                paint.setColor(Color.WHITE);
+                canvas.drawPoint((x2 + x1) / 2, (y2 + y1) / 2, uPaint);
+                canvas.drawPoint(canvas.getWidth()/2, canvas.getHeight()/2, uPaint);
 
             }
         }

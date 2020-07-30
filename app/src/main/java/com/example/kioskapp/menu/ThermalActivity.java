@@ -105,7 +105,7 @@ public class ThermalActivity extends AppCompatActivity {
     }
 
     public void onCalibrate(View view) {
-        camera.getRemoteControl().getCalibration().nuc();
+        camera.getRemoteControl().getCalibration().autoAdjust();
     }
 
     public void onDebug(View view) {
@@ -363,8 +363,8 @@ public class ThermalActivity extends AppCompatActivity {
 
             try {
                 framesBuffer.put(new FrameDataHolder(msxBitmap,dcBitmap));
-                InputImage image = InputImage.fromBitmap(dcBitmap, CameraSource.getRotationDegrees());
 
+                InputImage image = InputImage.fromBitmap(dcBitmap, CameraSource.getRotationDegrees());
                 //Face detection processing of image
                 Task<List<Face>> result =
                         detector.process(image)
@@ -376,27 +376,6 @@ public class ThermalActivity extends AppCompatActivity {
 
                                                 // Task completed successfully
                                                 // ...
-                                                for (Face face : faces) {
-
-                                                    float rotY = face.getHeadEulerAngleY();  // Head is rotated to the right rotY degrees
-                                                    float rotZ = face.getHeadEulerAngleZ();  // Head is tilted sideways rotZ degrees
-
-                                                    // If landmark detection was enabled (mouth, ears, eyes, cheeks, and
-                                                    // nose available):
-                                                    FaceLandmark leftEar = face.getLandmark(FaceLandmark.LEFT_EAR);
-                                                    if (leftEar != null) {
-                                                        PointF leftEarPos = leftEar.getPosition();
-                                                    }
-
-                                                    // If face tracking was enabled:
-                                                    if (face.getTrackingId() != null) {
-                                                        int id = face.getTrackingId();
-                                                        Set<Integer> setString = new LinkedHashSet<Integer>();
-                                                        setString.add(face.getTrackingId());
-                                                    }
-
-
-                                                }
 
                                             }
                                         })
@@ -408,6 +387,8 @@ public class ThermalActivity extends AppCompatActivity {
                                                 // ...
                                             }
                                         });
+
+
             } catch (InterruptedException e) {
                 //if interrupted while waiting for adding a new item in the queue
                 Log.e(TAG,"images(), unable to add incoming images to frames buffer, exception:"+e);
@@ -466,10 +447,15 @@ public class ThermalActivity extends AppCompatActivity {
             {
                 thermalImage.getFusion().setFusionMode(FusionMode.THERMAL_ONLY);
                 msxBitmap = BitmapAndroid.createBitmap(thermalImage.getImage()).getBitMap();
-                Set<Integer> setString = new LinkedHashSet<Integer>();
+
+
+
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        Point pt = new Point(thermalImage.getWidth()/2, thermalImage.getHeight()/2);
+
                         try {
                             int x1 = 0;
                             int y1 = 0;
@@ -485,51 +471,56 @@ public class ThermalActivity extends AppCompatActivity {
                                     x2 = bounds.right;
                                     y2 = bounds.bottom;
 
-                                    //If face tracking was enabled:
                                     if (face.getTrackingId() != null) {
-                                        int id = face.getTrackingId();
-                                        setString.add(id);
+                                        tempView.setTextColor(Color.WHITE);
+//                                        if (face.getTrackingId() > 0) {
+//                                            tempView.setTextColor(Color.RED*face.getTrackingId());
+//                                        }
                                     }
+
+                                    //Point where to take thermal reading
+                                    Point facePt = new Point((x2 + x1) / 2, (y2 + y1) / 2);
+                                    double temp = (thermalImage.getValueAt(pt) - 273.15) * 9 / 5 + 32;
+                                    tempView.setVisibility(View.VISIBLE);
+                                    tempView.setText(String.format("%.2f °", temp));
                                 }
+//
+//
+//                                    //Face 1 reading
+//                                    if (faceList.size() > 0){
+//
+//                                        //Point where to take thermal reading
+//                                        Point facePt = new Point((int) faceList.get(0).getLandmark(Landmark.NOSE_BASE).getPosition().x,
+//                                                (int) faceList.get(0).getLandmark(Landmark.NOSE_BASE).getPosition().y);
+//
+//                                        double temp = (thermalImage.getValueAt(facePt) - 273.15) * 9 / 5 + 32;
+//                                        tempView.setVisibility(View.VISIBLE);
+//                                        tempView.setText(String.format("%.2f °", temp));
+//                                    } else {
+//                                        tempView.setVisibility(View.INVISIBLE);
+//                                    }
+//
+//
+//                                    //Face 2 reading if available
+//                                    if (faceList.size() > 1) {
+//                                        Point secondFacePt = new Point((int) faceList.get(1).getLandmark(Landmark.NOSE_BASE).getPosition().x, (int) faceList.get(0).getLandmark(Landmark.NOSE_BASE).getPosition().y);
+//                                        double tempTwo = (thermalImage.getValueAt(secondFacePt) - 273.15) * 9 / 5 + 32;
+//                                        secondTempView.setVisibility(View.VISIBLE);
+//                                        secondTempView.setText(String.format("%.2f °", tempTwo));
+//                                    } else {
+//                                        secondTempView.setVisibility(View.INVISIBLE);
+//                                    }
+//
+//                                    //Face 3 reading if available
+//                                    if (faceList.size() == 3) {
+//                                        Point thirdFacePt = new Point((int) faceList.get(1).getLandmark(Landmark.NOSE_BASE).getPosition().x, (int) faceList.get(0).getLandmark(Landmark.NOSE_BASE).getPosition().y);
+//                                        double tempThree = (thermalImage.getValueAt(thirdFacePt) - 273.15) * 9 / 5 + 32;
+//                                        thirdTempView.setVisibility(View.VISIBLE);
+//                                        thirdTempView.setText(String.format("%.2f °", tempThree));
+//                                    } else {
+//                                        thirdTempView.setVisibility(View.INVISIBLE);
+//                                    }
 
-                                if (faceList != null) {
-
-                                    //Face 1 reading
-                                    if (faceList.size() > 0){
-
-                                        //Point where to take thermal reading
-                                        Point facePt = new Point((int) faceList.get(0).getLandmark(Landmark.NOSE_BASE).getPosition().x,
-                                                (int) faceList.get(0).getLandmark(Landmark.NOSE_BASE).getPosition().y);
-
-                                        double temp = (int)(thermalImage.getValueAt(facePt) - 273.15) * 9 / 5 + 32;
-                                        tempView.setVisibility(View.VISIBLE);
-                                        tempView.setText(temp + "");
-                                    } else {
-                                        tempView.setVisibility(View.INVISIBLE);
-                                    }
-
-
-                                    //Face 2 reading if available
-                                    if (faceList.size() > 1) {
-                                        Point secondFacePt = new Point((int) faceList.get(1).getLandmark(Landmark.NOSE_BASE).getPosition().x, (int) faceList.get(0).getLandmark(Landmark.NOSE_BASE).getPosition().y);
-                                        double tempTwo = (int)(thermalImage.getValueAt(secondFacePt) - 273.15) * 9 / 5 + 32;
-                                        secondTempView.setVisibility(View.VISIBLE);
-                                        secondTempView.setText(tempTwo + "");
-                                    } else {
-                                        secondTempView.setVisibility(View.INVISIBLE);
-                                    }
-
-                                    //Face 3 reading if available
-                                    if (faceList.size() == 3) {
-                                        Point thirdFacePt = new Point((int) faceList.get(1).getLandmark(Landmark.NOSE_BASE).getPosition().x, (int) faceList.get(0).getLandmark(Landmark.NOSE_BASE).getPosition().y);
-                                        double tempThree = (int)(thermalImage.getValueAt(thirdFacePt) - 273.15) * 9 / 5 + 32;
-                                        thirdTempView.setVisibility(View.VISIBLE);
-                                        thirdTempView.setText(tempThree + "");
-                                    } else {
-                                        thirdTempView.setVisibility(View.INVISIBLE);
-                                    }
-
-                                }
                             } else {
                                 tempView.setVisibility(View.INVISIBLE);
                                 secondTempView.setVisibility(View.INVISIBLE);
@@ -541,13 +532,16 @@ public class ThermalActivity extends AppCompatActivity {
 
                     }
                 });
-
             }
 
             //Get a bitmap with the visual image, it might have different dimensions then the bitmap from THERMAL_ONLY
-//            Bitmap dcBitmap = BitmapAndroid.createBitmap(thermalImage.getFusion().getPhoto()).getBitMap();
-            thermalImage.getFusion().setFusionMode(FusionMode.VISUAL_ONLY);
-            Bitmap dcBitmap = BitmapAndroid.createBitmap(thermalImage.getImage()).getBitMap();
+            Bitmap dcBitmap = BitmapAndroid.createBitmap(thermalImage.getFusion().getPhoto()).getBitMap();
+//            Bitmap dcBitmap;
+//            {
+//                thermalImage.getFusion().setFusionMode(FusionMode.VISUAL_ONLY);
+//                dcBitmap = BitmapAndroid.createBitmap(thermalImage.getImage()).getBitMap();
+//            }
+//            Bitmap dcBitmap = BitmapAndroid.createBitmap(thermalImage.getImage()).getBitMap();
 
             Log.d(TAG, "adding images to cache");
             streamDataListener.images(msxBitmap, dcBitmap);
