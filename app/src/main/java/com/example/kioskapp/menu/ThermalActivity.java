@@ -16,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.kioskapp.BuildConfig;
 import com.example.kioskapp.R;
 import com.example.kioskapp.camera.CameraSource;
-import com.example.kioskapp.customview.ThermalView;
 import com.flir.thermalsdk.ErrorCode;
 import com.flir.thermalsdk.androidsdk.ThermalSdkAndroid;
 import com.flir.thermalsdk.androidsdk.image.BitmapAndroid;
@@ -480,69 +479,10 @@ public class ThermalActivity extends AppCompatActivity {
 
                                         Point facePt = new Point(face.getBoundingBox().centerX() / 2, face.getBoundingBox().centerY() / 2);
                                         temp = (thermalImage.getValueAt(facePt) - 273.15) * 9 / 5 + 32;
-                                        ThermalView.updateThermal(temp);
-//                                        Paint paint = new Paint();
-//                                        paint.setTextSize(200);
-//                                        canvas.drawText(String.format("%.2f °", temp),x1, y1, paint);
-//                                        if (face.getTrackingId() == 0) {
-//                                            //Point where to take thermal reading
-//                                            double temp = (thermalImage.getValueAt(facePt) - 273.15) * 9 / 5 + 32;
-////                                            tempView.setVisibility(View.VISIBLE);
-////                                            tempView.setText(String.format("%.2f °", temp));
-//                                        }
-//
-//                                        if (face.getTrackingId() == 1) {
-//                                            double tempTwo = (thermalImage.getValueAt(facePt) - 273.15) * 9 / 5 + 32;
-//                                            secondTempView.setVisibility(View.VISIBLE);
-//                                            secondTempView.setText(String.format("%.2f °", tempTwo));
-//                                        }
-//
-//                                        if (face.getTrackingId() > 2) {
-//                                            faceList.clear();
-//                                        }
+
                                     }
 
                                 }
-
-
-//                                    //Face 1 reading
-//                                    if (faceList.size() > 0 && faceList.get(0).getLandmark(Landmark.NOSE_BASE) != null){
-//
-//                                        //Point where to take thermal reading
-//                                        Point facePt = new Point((int) faceList.get(0).getLandmark(Landmark.NOSE_BASE).getPosition().x/2,
-//                                                (int) faceList.get(0).getLandmark(Landmark.NOSE_BASE).getPosition().y/2);
-//
-//                                        double temp = (thermalImage.getValueAt(facePt) - 273.15) * 9 / 5 + 32;
-//                                        tempView.setVisibility(View.VISIBLE);
-//                                        tempView.setText(String.format("%.2f °", temp));
-//                                    } else {
-//                                        tempView.setVisibility(View.INVISIBLE);
-//                                    }
-//
-//
-//                                    //Face 2 reading if available
-//                                    if (faceList.size() > 1 && faceList.get(1).getLandmark(Landmark.NOSE_BASE) != null) {
-//                                        Point secondFacePt = new Point((int) faceList.get(1).getLandmark(Landmark.NOSE_BASE).getPosition().x/2, (int) faceList.get(1).getLandmark(Landmark.NOSE_BASE).getPosition().y/2);
-//                                        double tempTwo = (thermalImage.getValueAt(secondFacePt) - 273.15) * 9 / 5 + 32;
-//                                        secondTempView.setVisibility(View.VISIBLE);
-//                                        secondTempView.setText(String.format("%.2f °", tempTwo));
-//                                    } else {
-//                                        secondTempView.setVisibility(View.INVISIBLE);
-//                                    }
-//
-//                                    //Face 3 reading if available
-//                                    if (faceList.size() == 3 && faceList.get(2).getLandmark(Landmark.NOSE_BASE) != null) {
-//                                        Point thirdFacePt = new Point((int) faceList.get(2).getLandmark(Landmark.NOSE_BASE).getPosition().x/2, (int) faceList.get(2).getLandmark(Landmark.NOSE_BASE).getPosition().y/2);
-//                                        double tempThree = (thermalImage.getValueAt(thirdFacePt) - 273.15) * 9 / 5 + 32;
-//                                        thirdTempView.setVisibility(View.VISIBLE);
-//                                        thirdTempView.setText(String.format("%.2f °", tempThree));
-//                                    } else {
-//                                        thirdTempView.setVisibility(View.INVISIBLE);
-//                                    }
-//
-//                                    if (faceList.size() > 3) {
-//                                        faceList.clear();
-//                                    }
 
                             } else {
                                 tempView.setVisibility(View.INVISIBLE);
@@ -557,14 +497,9 @@ public class ThermalActivity extends AppCompatActivity {
                 });
             }
 
-//Get a bitmap with the visual image, it might have different dimensions then the bitmap from THERMAL_ONLY
+            //Get a bitmap with the visual image, it might have different dimensions then the bitmap from THERMAL_ONLY
             Bitmap dcBitmap = BitmapAndroid.createBitmap(thermalImage.getFusion().getPhoto()).getBitMap();
-//            Bitmap dcBitmap;
-//            {
-//                thermalImage.getFusion().setFusionMode(FusionMode.VISUAL_ONLY);
-//                dcBitmap = BitmapAndroid.createBitmap(thermalImage.getImage()).getBitMap();
-//            }
-//            Bitmap dcBitmap = BitmapAndroid.createBitmap(thermalImage.getImage()).getBitMap();
+
 
             Log.d(TAG, "adding images to cache");
             streamDataListener.images(msxBitmap, dcBitmap);

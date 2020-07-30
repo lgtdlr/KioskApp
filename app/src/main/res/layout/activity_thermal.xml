@@ -55,7 +55,6 @@
     <!--    </com.example.kioskapp.camera.CameraSourcePreview>-->
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/camera_button_id2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
@@ -69,7 +68,6 @@
         app:srcCompat="@drawable/ic_baseline_usb_24" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/emulatorButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
@@ -82,7 +80,6 @@
         app:srcCompat="@android:drawable/stat_notify_sync_noanim" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/calibrateButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
@@ -96,7 +93,6 @@
         app:srcCompat="@drawable/detect_frame" />
 
     <LinearLayout
-        android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/photo_image"

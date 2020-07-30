@@ -8,7 +8,6 @@
     tools:context=".menu.OldVerifyActivity">
 
     <TextView
-        android:id="@+id/postVerifyText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
@@ -57,7 +56,6 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/uploadButton2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
@@ -68,7 +66,6 @@
         app:srcCompat="@android:drawable/stat_sys_upload" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/uploadButton3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
@@ -114,7 +111,6 @@
         app:layout_constraintGuide_begin="181dp" />
 
     <Button
-        android:id="@+id/verifyButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onVerifyClickButton"

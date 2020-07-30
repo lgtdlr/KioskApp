@@ -30,7 +30,6 @@
         app:layout_constraintVertical_bias="0.492">
 
         <Button
-            android:id="@+id/camera_train_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -41,7 +40,6 @@
             android:textColor="#80FFFFFF" />
 
         <Button
-            android:id="@+id/camera_identify_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -52,7 +50,6 @@
             android:textColor="#FFFFFF" />
 
         <Button
-            android:id="@+id/camera_detect_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -99,7 +96,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/camera_button_id2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
@@ -113,7 +109,6 @@
         opencv:srcCompat="@android:drawable/stat_notify_sync_noanim" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/uploadButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"

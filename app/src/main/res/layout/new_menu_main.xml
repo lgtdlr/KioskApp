@@ -10,13 +10,11 @@
 
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/main.appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/Theme.AppCompat.Light">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/main.collapsing"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/white"
@@ -79,7 +77,6 @@
                 app:srcCompat="@drawable/ic_outline_message_24" />
 
             <TextView
-                android:id="@+id/textView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/nhaasgroteskdisp"
@@ -124,7 +121,6 @@
                 android:onClick="onDetectClick">
 
                 <ImageView
-                    android:id="@+id/detect_card_description_icon"
                     android:layout_width="@dimen/card_icon_width"
                     android:layout_height="@dimen/card_icon_height"
                     app:srcCompat="@drawable/ic_outline_people_alt_24"
@@ -137,7 +133,6 @@
                     android:paddingStart="@dimen/margin_10">
 
                     <TextView
-                        android:id="@+id/detect_card_title_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/nhaasgroteskdisp_bold"
@@ -146,7 +141,6 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/detect_card_description_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/nhaasgroteskdisp"
@@ -174,7 +168,6 @@
                 android:onClick="onTrainClick">
 
                 <ImageView
-                    android:id="@+id/train_card_description_icon"
                     android:layout_width="@dimen/card_icon_width"
                     android:layout_height="@dimen/card_icon_height"
                     app:srcCompat="@drawable/ic_outline_person_add_24"
@@ -187,7 +180,6 @@
                     android:paddingStart="@dimen/margin_10">
 
                     <TextView
-                        android:id="@+id/train_card_title_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/nhaasgroteskdisp_bold"
@@ -196,7 +188,6 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/train_card_description_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/nhaasgroteskdisp"
@@ -224,7 +215,6 @@
                 android:onClick="onIdentifyClick">
 
                 <ImageView
-                    android:id="@+id/identify_card_description_icon"
                     android:layout_width="@dimen/card_icon_width"
                     android:layout_height="@dimen/card_icon_height"
                     app:srcCompat="@drawable/ic_baseline_fingerprint_black_24"
@@ -237,7 +227,6 @@
                     android:paddingStart="@dimen/margin_10">
 
                     <TextView
-                        android:id="@+id/identify_card_title_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/nhaasgroteskdisp_bold"
@@ -246,7 +235,6 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/identify_card_description_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/nhaasgroteskdisp"
@@ -274,7 +262,6 @@
                 android:onClick="onCameraClick">
 
                 <ImageView
-                    android:id="@+id/live_services_card_description_icon"
                     android:layout_width="@dimen/card_icon_width"
                     android:layout_height="@dimen/card_icon_height"
                     app:srcCompat="@drawable/ic_outline_camera_alt_24"
@@ -287,7 +274,6 @@
                     android:paddingStart="@dimen/margin_10">
 
                     <TextView
-                        android:id="@+id/live_services_card_title_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/nhaasgroteskdisp_bold"
@@ -296,7 +282,6 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/live_services_card_description_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/nhaasgroteskdisp"
@@ -324,7 +309,6 @@
                 android:onClick="onObjectClick">
 
                 <ImageView
-                    android:id="@+id/object_detection_card_description_icon"
                     android:layout_width="@dimen/card_icon_width"
                     android:layout_height="@dimen/card_icon_height"
                     app:srcCompat="@drawable/ic_outline_local_florist_24"
@@ -337,7 +321,6 @@
                     android:paddingStart="@dimen/margin_10">
 
                     <TextView
-                        android:id="@+id/object_detection_card_title_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/nhaasgroteskdisp_bold"
@@ -346,7 +329,6 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/object_detection_card_description_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/nhaasgroteskdisp"
@@ -374,7 +356,6 @@
                 android:onClick="onDrivingClick">
 
                 <ImageView
-                    android:id="@+id/driving_alerts_card_description_icon"
                     android:layout_width="@dimen/card_icon_width"
                     android:layout_height="@dimen/card_icon_height"
                     app:srcCompat="@drawable/ic_outline_drive_eta_24"
@@ -387,7 +368,6 @@
                     android:paddingStart="@dimen/margin_10">
 
                     <TextView
-                        android:id="@+id/driving_alerts_card_title_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/nhaasgroteskdisp_bold"
@@ -396,7 +376,6 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/driving_alerts_card_description_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/nhaasgroteskdisp"
@@ -424,7 +403,6 @@
                 android:onClick="onThermalClick">
 
                 <ImageView
-                    android:id="@+id/thermal_card_description_icon"
                     android:layout_width="@dimen/card_icon_width"
                     android:layout_height="@dimen/card_icon_height"
                     app:srcCompat="@drawable/ic_outline_whatshot_24"
@@ -437,7 +415,6 @@
                     android:paddingStart="@dimen/margin_10">
 
                     <TextView
-                        android:id="@+id/thermal_card_title_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/nhaasgroteskdisp_bold"
@@ -446,7 +423,6 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/thermal_card_description_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/nhaasgroteskdisp"
