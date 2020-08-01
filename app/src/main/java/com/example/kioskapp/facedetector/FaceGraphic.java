@@ -294,9 +294,11 @@ public class FaceGraphic extends Graphic {
                     canvas.drawText("Emotions: ", rectLeft*scale, rectTop*scale+(int)(textBoundary*3), paint);
 
                     canvas.drawText(emotionsList.get(0).getType(), rectLeft*scale, rectTop*scale+(int)(textBoundary*4), paint);
-                    canvas.drawRoundRect(left - BOX_STROKE_WIDTH, top + yLabelOffset, left + textWidth + (2 * BOX_STROKE_WIDTH), top, 5, 5, paint);
+                    canvas.drawRoundRect(rectLeft+350, rectTop*scale+(int)(textBoundary*4)-40, rectLeft+350+((float)emotionsList.get(0).getValue()*500), rectTop+(int)(textBoundary*4), 20, 20, paint);
                     canvas.drawText(emotionsList.get(1).getType(), rectLeft*scale, rectTop*scale+(int)(textBoundary*5), paint);
+                    canvas.drawRoundRect(rectLeft+350, rectTop*scale+(int)(textBoundary*5)-40, rectLeft+350+((float)emotionsList.get(1).getValue()*500), rectTop+(int)(textBoundary*5), 20, 20, paint);
                     canvas.drawText(emotionsList.get(2).getType(), rectLeft*scale, rectTop*scale+(int)(textBoundary*6), paint);
+                    canvas.drawRoundRect(rectLeft+350, rectTop*scale+(int)(textBoundary*6)-40, rectLeft+350+((float)emotionsList.get(2).getValue()*500), rectTop+(int)(textBoundary*6), 20, 20, paint)   ;
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

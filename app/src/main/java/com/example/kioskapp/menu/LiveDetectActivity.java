@@ -335,9 +335,6 @@ public class LiveDetectActivity extends AppCompatActivity {
         if (detectEnabled) {
             new PostCameraRequest().execute(mBitmap);
         }
-
-
-
     }
 
     private ArrayList<Emotion> getEmotions(JSONObject attributes) throws JSONException {
