@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -54,6 +55,8 @@ public class ThermalView extends androidx.appcompat.widget.AppCompatImageView {
                 int y1 = bounds.top;
                 int x2 = bounds.right;
                 int y2 = bounds.bottom;
+
+                Log.d("TAG", x1+"");
 
                 int id;
                 if (face.getTrackingId() != null) {

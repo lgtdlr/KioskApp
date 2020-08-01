@@ -47,8 +47,11 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 
+
+
 public class DetectActivity extends AppCompatActivity {
 
+    //MEC address
     private static final String BASE_URL = "http://192.168.102.158:5000/face/v1.0/detect?returnFaceAttributes=*";
     private static final int PICK_IMAGE = 1;
     private static final int REQUEST_IMAGE_CAPTURE = 2;
@@ -58,6 +61,7 @@ public class DetectActivity extends AppCompatActivity {
     private ImageView imageSelected;
 //    private ImageView dropDownImage;
 
+    //draw rectangles on image
     public static Bitmap drawRectangles(Bitmap original, LinkedList<JSONObject> rectList) {
         Bitmap bitmap = original.copy(Bitmap.Config.ARGB_8888, true);
         Canvas canvas = new Canvas(bitmap);
@@ -114,6 +118,7 @@ public class DetectActivity extends AppCompatActivity {
 
     }
 
+    //selecting image from camera roll
     private void selectImage() {
         final CharSequence[] items = {"Camera", "Gallery", "Cancel"};
 
@@ -159,6 +164,7 @@ public class DetectActivity extends AppCompatActivity {
         selectImage();
     }
 
+    //this method does commands based on if camera roll was selected or camera
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -186,6 +192,8 @@ public class DetectActivity extends AppCompatActivity {
         }
     }
 
+
+    //this code updates the UI after request is sent
     private void setUiAfterUpdate(JSONArray parent) throws JSONException {
         ArrayList<Face> faces = new ArrayList<>();
         LinkedList<JSONObject> rectList = new LinkedList<>();
@@ -221,6 +229,7 @@ public class DetectActivity extends AppCompatActivity {
 
     }
 
+    //this method parses through JSON object to retrieve emotions
     private ArrayList<Emotion> getEmotions(JSONObject attributes) throws JSONException {
         ArrayList<Emotion> emotionsList = new ArrayList<>();
 
@@ -238,6 +247,7 @@ public class DetectActivity extends AppCompatActivity {
         return emotionsList;
     }
 
+    //this method executes an api request
     private class PostCameraRequest extends AsyncTask<ImageView, String, String> {
         @Override
         protected void onPreExecute() {
