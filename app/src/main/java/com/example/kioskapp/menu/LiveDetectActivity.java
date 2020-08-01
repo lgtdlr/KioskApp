@@ -5,13 +5,13 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,13 +19,13 @@ import androidx.core.app.ActivityCompat;
 
 import com.example.kioskapp.Emotion;
 import com.example.kioskapp.Face;
-import com.example.kioskapp.FaceListAdapter;
 import com.example.kioskapp.FrameMetadata;
 import com.example.kioskapp.R;
 import com.example.kioskapp.camera.CameraSource;
 import com.example.kioskapp.camera.CameraSourcePreview;
 import com.example.kioskapp.camera.GraphicOverlay;
 import com.example.kioskapp.facedetector.FaceDetectorProcessor;
+import com.example.kioskapp.facedetector.FaceGraphic;
 import com.example.kioskapp.utils.BitmapUtils;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 
@@ -55,8 +55,18 @@ public class LiveDetectActivity extends AppCompatActivity {
     private CameraSource cameraSource = null;
     private CameraSourcePreview cameraPreview;
     private GraphicOverlay graphicOverlay;
+    private FaceGraphic faceGraphic;
     private Bitmap mBitmap;
     int facing;
+    ArrayList<Face> faces;
+    LinkedList<JSONObject> rectList;
+    ArrayList<Emotion> emotionsList;
+    int age;
+
+
+
+    String gender;
+    Boolean started = false;
     int facingBack;
     private FrameMetadata frameMetadata;
 
@@ -68,16 +78,7 @@ public class LiveDetectActivity extends AppCompatActivity {
     long startTime = 0;
     long currentTime = 1000;
     private Boolean buttonPressed = false;
-
-
-    public static Bitmap RotateBitmap(Bitmap source, float angle) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(angle);
-        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
-    }
-
-    //----------------------------------------------------------------------------------------
-    //----------------------------------------------------------------------------------------
+    private boolean detectEnabled;
 
 
     @Override
@@ -91,6 +92,8 @@ public class LiveDetectActivity extends AppCompatActivity {
         cameraPreview = findViewById(R.id.preview);
         graphicOverlay = findViewById(R.id.faceOverlay);
         facing = CameraSource.CAMERA_FACING_FRONT;
+        faces = new ArrayList<>();
+        rectList = new LinkedList<>();
 
 //        mOpenCvCameraView = findViewById(R.id.java_camera_view);
 //        mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
@@ -113,6 +116,7 @@ public class LiveDetectActivity extends AppCompatActivity {
                         .build();
 
         createCameraSource();
+        detectEnabled = false;
 
         // Request camera permission if it has not already been granted
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -182,6 +186,7 @@ public class LiveDetectActivity extends AppCompatActivity {
      */
     protected void onPause() {
         super.onPause();
+        detectEnabled = false;
         if (cameraPreview != null) {
             cameraPreview.stop();
         }
@@ -194,6 +199,7 @@ public class LiveDetectActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
+        detectEnabled = false;
         if (cameraSource != null) {
             cameraSource.release();
         }
@@ -201,6 +207,7 @@ public class LiveDetectActivity extends AppCompatActivity {
 
 
     public void onRefreshClick(View view) {
+        detectEnabled = !detectEnabled;
         mBitmap = BitmapUtils.getBitmap(CameraSource.getData(), new FrameMetadata.Builder()
                 .setWidth(CameraSource.getPreviewSize().getWidth())
                 .setHeight(CameraSource.getPreviewSize().getHeight())
@@ -246,13 +253,45 @@ public class LiveDetectActivity extends AppCompatActivity {
     }
 
     private void setUiAfterUpdate(JSONArray parent) throws JSONException {
-        ArrayList<Face> faces = new ArrayList<>();
-        LinkedList<JSONObject> rectList = new LinkedList<>();
-
 //        int orientation = getResources().getConfiguration().orientation;
 //        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
 //            mBitmap = (RotateBitmap(mBitmap, 90));
 //        }
+        faces = new ArrayList<>();
+        rectList = new LinkedList<>();
+
+            float textBoundary = 70;
+            int scale = 1;
+            Paint paint = new Paint();
+            paint.setColor(Color.WHITE);
+            paint.setTextSize(textBoundary);
+            LinkedList<JSONObject> rectList = new LinkedList<>();
+//            for (int i = 0; i < parent.length(); i++) {
+//                JSONObject json_data = parent.getJSONObject(i);
+//                JSONObject faceAttributes = json_data.getJSONObject("faceAttributes");
+//                JSONObject emotions = faceAttributes.getJSONObject("emotion");
+//                JSONObject rectangle = json_data.getJSONObject("faceRectangle");
+//                rectList.add(rectangle);
+//
+//                age = faceAttributes.getInt("age");
+//                gender = faceAttributes.getString("gender");
+//                int centerX = (rectangle.getInt("left") + rectangle.getInt("width"))/2;
+//                int centerY = (rectangle.getInt("top") + rectangle.getInt("height"))/2;
+//                float rectLeft = translateX(centerX) - scale(rectangle.getInt("width") / 2.0f);
+//                float rectTop = translateY(centerY) - scale(rectangle.getInt("top") / 2.0f);
+//
+//                ArrayList<Emotion> emotionsList = getEmotions(emotions);
+//                FaceGraphic.getCanvas().drawText("Age: " + age, rectLeft, rectTop + (int) (textBoundary * 1), paint);
+//                FaceGraphic.getCanvas().drawText("Gender: " + gender, rectLeft, rectTop + (int) (textBoundary * 2), paint);
+//                FaceGraphic.getCanvas().drawText("Emotions: ", rectLeft, rectTop + (int) (textBoundary * 3), paint);
+//
+//                FaceGraphic.getCanvas().drawText(emotionsList.get(0).getType(), rectLeft , rectTop + (int) (textBoundary * 4), paint);
+//                FaceGraphic.getCanvas().drawText(emotionsList.get(1).getType(), rectLeft , rectTop + (int) (textBoundary * 5), paint);
+//                FaceGraphic.getCanvas().drawText(emotionsList.get(2).getType(), rectLeft, rectTop + (int) (textBoundary * 6), paint);
+//
+//            }
+
+
         for (int i = 0; i < parent.length(); i++) {
             JSONObject json_data = parent.getJSONObject(i);
             JSONObject faceAttributes = json_data.getJSONObject("faceAttributes");
@@ -266,25 +305,37 @@ public class LiveDetectActivity extends AppCompatActivity {
                     rectangle.getInt("width"),
                     rectangle.getInt("height"));
 
-            int age = faceAttributes.getInt("age");
-            String gender = faceAttributes.getString("gender");
+            age = faceAttributes.getInt("age");
+            gender = faceAttributes.getString("gender");
             Log.i("Adding faces", "Wait...");
-            ArrayList<Emotion> emotionsList = getEmotions(emotions);
+            emotionsList = getEmotions(emotions);
             Log.i("EMOTIONS", emotionsList.get(0).getType() + " " + emotionsList.get(0).getValue());
             Log.i("EMOTIONS", emotionsList.get(1).getType() + " " + emotionsList.get(1).getValue());
             Log.i("EMOTIONS", emotionsList.get(2).getType() + " " + emotionsList.get(2).getValue());
-
 
             faces.add(new Face(faceBitmap, "Age: " + age, gender, emotionsList.get(0).getType(),
                     emotionsList.get(0).getValue(), emotionsList.get(1).getType(), emotionsList.get(1).getValue(),
                     emotionsList.get(2).getType(), emotionsList.get(2).getValue()));
 
             Log.i("Adding faces", "Success");
+            FaceGraphic.displayDetectData(age, gender, parent);
         }
-        ListView listView = findViewById(R.id.results_list);
-        FaceListAdapter adapter = new FaceListAdapter(LiveDetectActivity.this, R.layout.detect_adapter_view_layout, faces);
-        listView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+
+//        ListView listView = findViewById(R.id.results_list);
+//        FaceListAdapter adapter = new FaceListAdapter(LiveDetectActivity.this, R.layout.detect_adapter_view_layout, faces);
+//        listView.setAdapter(adapter);
+//        adapter.notifyDataSetChanged();
+
+        mBitmap = BitmapUtils.getBitmap(CameraSource.getData(), new FrameMetadata.Builder()
+                .setWidth(CameraSource.getPreviewSize().getWidth())
+                .setHeight(CameraSource.getPreviewSize().getHeight())
+                .setRotation(CameraSource.getRotationDegrees())
+                .build());
+
+        if (detectEnabled) {
+            new PostCameraRequest().execute(mBitmap);
+        }
+
 
 
     }
@@ -320,6 +371,7 @@ public class LiveDetectActivity extends AppCompatActivity {
                 JSONArray parent = new JSONArray(s);
 
                 //Populate ListView with received JSON info
+
                 setUiAfterUpdate(parent);
             } catch (Exception e) {
                 Log.i("Failed to update UI", e.getLocalizedMessage());
@@ -331,6 +383,7 @@ public class LiveDetectActivity extends AppCompatActivity {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmaps[0].compress(Bitmap.CompressFormat.JPEG, 100, stream);
             byte[] byteArray = stream.toByteArray();
+//            byte[] byteArray = BitmapUtils.convertBitmapToYv12Bytes(bitmaps[0]);
 
             try {
                 RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
@@ -356,4 +409,42 @@ public class LiveDetectActivity extends AppCompatActivity {
             }
         }
     }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public ArrayList<Emotion> getEmotionsList() {
+        return emotionsList;
+    }
+
+    /**
+     * Adjusts the x coordinate from the image's coordinate system to the view coordinate system.
+     */
+    public float translateX(float x) {
+        if (graphicOverlay.isImageFlipped) {
+            return graphicOverlay.getWidth() - (scale(x) - graphicOverlay.postScaleWidthOffset);
+        } else {
+            return scale(x) - graphicOverlay.postScaleWidthOffset;
+        }
+    }
+    /**
+     * Adjusts the y coordinate from the image's coordinate system to the view coordinate system.
+     */
+    public float translateY(float y) {
+        return scale(y) - graphicOverlay.postScaleHeightOffset;
+    }
+
+    /**
+     * Adjusts the supplied value from the image scale to the view scale.
+     */
+    public float scale(float imagePixel) {
+        return imagePixel * graphicOverlay.scaleFactor;
+    }
+
+
 }

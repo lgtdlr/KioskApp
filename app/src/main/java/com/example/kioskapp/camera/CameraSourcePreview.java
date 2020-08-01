@@ -46,6 +46,9 @@ public class CameraSourcePreview extends ViewGroup {
 
     private GraphicOverlay mOverlay;
 
+    int childWidth;
+    int childHeight;
+
     public Activity activity;
 
     public CameraSourcePreview(Context context, AttributeSet attrs) {
@@ -222,6 +225,14 @@ public class CameraSourcePreview extends ViewGroup {
         } catch (IOException e) {
             Log.e(tag, "Could not start camera source.", e);
         }
+    }
+
+    public int getChildHeight() {
+        return childHeight;
+    }
+
+    public int getChildWidth() {
+        return childWidth;
     }
 
     /**

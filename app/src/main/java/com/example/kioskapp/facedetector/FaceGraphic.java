@@ -21,14 +21,22 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 
+import com.example.kioskapp.Emotion;
 import com.example.kioskapp.camera.GraphicOverlay;
 import com.example.kioskapp.camera.GraphicOverlay.Graphic;
-import com.example.kioskapp.menu.DrivingActivity;
+import com.example.kioskapp.menu.LiveDetectActivity;
 import com.google.mlkit.vision.face.Face;
 import com.google.mlkit.vision.face.FaceContour;
 import com.google.mlkit.vision.face.FaceLandmark;
 import com.google.mlkit.vision.face.FaceLandmark.LandmarkType;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -37,8 +45,29 @@ import java.util.Locale;
  * graphic overlay view.
  */
 public class FaceGraphic extends Graphic {
+    private static int age;
+    private static String gender;
+    private static JSONObject json_data;
+    private static JSONArray jsonFaces;
+
+    public static Canvas getCanvas() {
+        return canvas;
+    }
+
+    private static Canvas canvas;
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    private float x;
+    private float y;
     private final String TAG = "FaceGraphic";
-    DrivingActivity drivingActivity;
+    private LiveDetectActivity liveDetectActivity;
     private static final float FACE_POSITION_RADIUS = 4.0f;
     private static final float ID_TEXT_SIZE = 30.0f;
     private static final float ID_Y_OFFSET = 40.0f;
@@ -100,14 +129,15 @@ public class FaceGraphic extends Graphic {
      */
     @Override
     public void draw(Canvas canvas) {
+        FaceGraphic.canvas = canvas;
         Face face = this.face;
         if (face == null) {
             return;
         }
 
         // Draws a circle at the position of the detected face, with the face's track id below.
-        float x = translateX(face.getBoundingBox().centerX());
-        float y = translateY(face.getBoundingBox().centerY());
+        x = translateX(face.getBoundingBox().centerX());
+        y = translateY(face.getBoundingBox().centerY());
         canvas.drawCircle(x, y, FACE_POSITION_RADIUS, facePositionPaint);
 
         // Calculate positions.
@@ -233,12 +263,72 @@ public class FaceGraphic extends Graphic {
                     idPaints[colorID]);
         }
 
-
         // Draw facial landmarks
         drawFaceLandmark(canvas, FaceLandmark.LEFT_EYE);
         drawFaceLandmark(canvas, FaceLandmark.RIGHT_EYE);
         drawFaceLandmark(canvas, FaceLandmark.LEFT_CHEEK);
         drawFaceLandmark(canvas, FaceLandmark.RIGHT_CHEEK);
+
+        if (jsonFaces != null) {
+            float textBoundary = 70;
+            int scale = 1;
+            Paint paint = new Paint();
+            paint.setColor(Color.WHITE);
+            paint.setTextSize(textBoundary);
+            LinkedList<JSONObject> rectList = new LinkedList<>();
+            for (int i = 0; i < jsonFaces.length(); i++) {
+                try {
+                    json_data = jsonFaces.getJSONObject(i);
+                    JSONObject faceAttributes = json_data.getJSONObject("faceAttributes");
+                    JSONObject emotions = faceAttributes.getJSONObject("emotion");
+                    JSONObject rectangle = json_data.getJSONObject("faceRectangle");
+                    rectList.add(rectangle);
+                    age = faceAttributes.getInt("age");
+                    gender = faceAttributes.getString("gender");
+                    float rectLeft = x - scale(rectangle.getInt("width") / 2.0f);
+                    float rectTop = y - scale(rectangle.getInt("top") / 2.0f);
+
+                    ArrayList<Emotion>  emotionsList = getEmotions(emotions);
+                    canvas.drawText("Age: " + age, rectLeft*scale, rectTop*scale+(int)(textBoundary*1), paint);
+                    canvas.drawText("Gender: " + gender, rectLeft*scale, rectTop*scale+(int)(textBoundary*2), paint);
+                    canvas.drawText("Emotions: ", rectLeft*scale, rectTop*scale+(int)(textBoundary*3), paint);
+
+                    canvas.drawText(emotionsList.get(0).getType(), rectLeft*scale, rectTop*scale+(int)(textBoundary*4), paint);
+                    canvas.drawRoundRect(left - BOX_STROKE_WIDTH, top + yLabelOffset, left + textWidth + (2 * BOX_STROKE_WIDTH), top, 5, 5, paint);
+                    canvas.drawText(emotionsList.get(1).getType(), rectLeft*scale, rectTop*scale+(int)(textBoundary*5), paint);
+                    canvas.drawText(emotionsList.get(2).getType(), rectLeft*scale, rectTop*scale+(int)(textBoundary*6), paint);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+        }
+    }
+
+    private ArrayList<Emotion> getEmotions(JSONObject attributes) throws JSONException {
+        ArrayList<Emotion> emotionsList = new ArrayList<>();
+
+        emotionsList.add(new Emotion("anger", attributes.getDouble("anger")));
+        emotionsList.add(new Emotion("contempt", attributes.getDouble("contempt")));
+        emotionsList.add(new Emotion("disgust", attributes.getDouble("anger")));
+        emotionsList.add(new Emotion("fear", attributes.getDouble("fear")));
+        emotionsList.add(new Emotion("happiness", attributes.getDouble("happiness")));
+        emotionsList.add(new Emotion("neutral", attributes.getDouble("neutral")));
+        emotionsList.add(new Emotion("sadness", attributes.getDouble("sadness")));
+        emotionsList.add(new Emotion("surprise", attributes.getDouble("surprise")));
+
+        Collections.sort(emotionsList);
+
+        return emotionsList;
+    }
+
+
+    public static void displayDetectData(int detectAge, String detectGender, JSONArray jsonArray) {
+        age = detectAge;
+        gender = detectGender;
+        jsonFaces = jsonArray;
+        
     }
 
     private void drawFaceLandmark(Canvas canvas, @LandmarkType int landmarkType) {
