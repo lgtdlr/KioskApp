@@ -36,7 +36,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -269,43 +268,45 @@ public class FaceGraphic extends Graphic {
         drawFaceLandmark(canvas, FaceLandmark.LEFT_CHEEK);
         drawFaceLandmark(canvas, FaceLandmark.RIGHT_CHEEK);
 
-        if (jsonFaces != null) {
-            float textBoundary = 70;
-            int scale = 1;
-            Paint paint = new Paint();
-            paint.setColor(Color.WHITE);
-            paint.setTextSize(textBoundary);
-            LinkedList<JSONObject> rectList = new LinkedList<>();
-            for (int i = 0; i < jsonFaces.length(); i++) {
-                try {
-                    json_data = jsonFaces.getJSONObject(i);
-                    JSONObject faceAttributes = json_data.getJSONObject("faceAttributes");
-                    JSONObject emotions = faceAttributes.getJSONObject("emotion");
-                    JSONObject rectangle = json_data.getJSONObject("faceRectangle");
-                    rectList.add(rectangle);
-                    age = faceAttributes.getInt("age");
-                    gender = faceAttributes.getString("gender");
-                    float rectLeft = x - scale(rectangle.getInt("width") / 2.0f);
-                    float rectTop = y - scale(rectangle.getInt("top") / 2.0f);
-
-                    ArrayList<Emotion>  emotionsList = getEmotions(emotions);
-                    canvas.drawText("Age: " + age, rectLeft*scale, rectTop*scale+(int)(textBoundary*1), paint);
-                    canvas.drawText("Gender: " + gender, rectLeft*scale, rectTop*scale+(int)(textBoundary*2), paint);
-                    canvas.drawText("Emotions: ", rectLeft*scale, rectTop*scale+(int)(textBoundary*3), paint);
-
-                    canvas.drawText(emotionsList.get(0).getType(), rectLeft*scale, rectTop*scale+(int)(textBoundary*4), paint);
-                    canvas.drawRoundRect(rectLeft+350, rectTop*scale+(int)(textBoundary*4)-40, rectLeft+350+((float)emotionsList.get(0).getValue()*400), rectTop+(int)(textBoundary*4), 20, 20, paint);
-                    canvas.drawText(emotionsList.get(1).getType(), rectLeft*scale, rectTop*scale+(int)(textBoundary*5), paint);
-                    canvas.drawRoundRect(rectLeft+350, rectTop*scale+(int)(textBoundary*5)-40, rectLeft+350+((float)emotionsList.get(1).getValue()*400), rectTop+(int)(textBoundary*5), 20, 20, paint);
-                    canvas.drawText(emotionsList.get(2).getType(), rectLeft*scale, rectTop*scale+(int)(textBoundary*6), paint);
-                    canvas.drawRoundRect(rectLeft+350, rectTop*scale+(int)(textBoundary*6)-40, rectLeft+350+((float)emotionsList.get(2).getValue()*400), rectTop+(int)(textBoundary*6), 20, 20, paint)   ;
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-        }
+        // Draw overlay for face results from LiveDetectActivity
+        // If uncommented be sure to uncomment relevant code in LiveDetectActivity
+//        if (jsonFaces != null) {
+//            float textBoundary = 70;
+//            int scale = 1;
+//            Paint paint = new Paint();
+//            paint.setColor(Color.WHITE);
+//            paint.setTextSize(textBoundary);
+//            LinkedList<JSONObject> rectList = new LinkedList<>();
+//            for (int i = 0; i < jsonFaces.length(); i++) {
+//                try {
+//                    json_data = jsonFaces.getJSONObject(i);
+//                    JSONObject faceAttributes = json_data.getJSONObject("faceAttributes");
+//                    JSONObject emotions = faceAttributes.getJSONObject("emotion");
+//                    JSONObject rectangle = json_data.getJSONObject("faceRectangle");
+//                    rectList.add(rectangle);
+//                    age = faceAttributes.getInt("age");
+//                    gender = faceAttributes.getString("gender");
+//                    float rectLeft = x - scale(rectangle.getInt("width") / 2.0f);
+//                    float rectTop = y - scale(rectangle.getInt("top") / 2.0f);
+//
+//                    ArrayList<Emotion>  emotionsList = getEmotions(emotions);
+//                    canvas.drawText("Age: " + age, rectLeft*scale, rectTop*scale+(int)(textBoundary*1), paint);
+//                    canvas.drawText("Gender: " + gender, rectLeft*scale, rectTop*scale+(int)(textBoundary*2), paint);
+//                    canvas.drawText("Emotions: ", rectLeft*scale, rectTop*scale+(int)(textBoundary*3), paint);
+//
+//                    canvas.drawText(emotionsList.get(0).getType(), rectLeft*scale, rectTop*scale+(int)(textBoundary*4), paint);
+//                    canvas.drawRoundRect(rectLeft+350, rectTop*scale+(int)(textBoundary*4)-40, rectLeft+350+((float)emotionsList.get(0).getValue()*400), rectTop+(int)(textBoundary*4), 20, 20, paint);
+//                    canvas.drawText(emotionsList.get(1).getType(), rectLeft*scale, rectTop*scale+(int)(textBoundary*5), paint);
+//                    canvas.drawRoundRect(rectLeft+350, rectTop*scale+(int)(textBoundary*5)-40, rectLeft+350+((float)emotionsList.get(1).getValue()*400), rectTop+(int)(textBoundary*5), 20, 20, paint);
+//                    canvas.drawText(emotionsList.get(2).getType(), rectLeft*scale, rectTop*scale+(int)(textBoundary*6), paint);
+//                    canvas.drawRoundRect(rectLeft+350, rectTop*scale+(int)(textBoundary*6)-40, rectLeft+350+((float)emotionsList.get(2).getValue()*400), rectTop+(int)(textBoundary*6), 20, 20, paint)   ;
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//
+//        }
     }
 
     private ArrayList<Emotion> getEmotions(JSONObject attributes) throws JSONException {

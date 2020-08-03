@@ -1,7 +1,6 @@
 package com.example.kioskapp.menu;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -12,20 +11,20 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.TextView;
+import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.example.kioskapp.Emotion;
 import com.example.kioskapp.Face;
+import com.example.kioskapp.FaceListAdapter;
 import com.example.kioskapp.FrameMetadata;
 import com.example.kioskapp.R;
 import com.example.kioskapp.camera.CameraSource;
 import com.example.kioskapp.camera.CameraSourcePreview;
 import com.example.kioskapp.camera.GraphicOverlay;
 import com.example.kioskapp.facedetector.FaceDetectorProcessor;
-import com.example.kioskapp.facedetector.FaceGraphic;
 import com.example.kioskapp.utils.BitmapUtils;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 
@@ -55,29 +54,17 @@ public class LiveDetectActivity extends AppCompatActivity {
     private CameraSource cameraSource = null;
     private CameraSourcePreview cameraPreview;
     private GraphicOverlay graphicOverlay;
-    private FaceGraphic faceGraphic;
     private Bitmap mBitmap;
     int facing;
+
+    // Face results
     ArrayList<Face> faces;
     LinkedList<JSONObject> rectList;
     ArrayList<Emotion> emotionsList;
     int age;
-
-
-
     String gender;
-    Boolean started = false;
-    int facingBack;
-    private FrameMetadata frameMetadata;
 
     private static OkHttpClient client = new OkHttpClient();
-    ProgressDialog p;
-
-    TextView fpsTextView;
-    int fps;
-    long startTime = 0;
-    long currentTime = 1000;
-    private Boolean buttonPressed = false;
     private boolean detectEnabled;
 
 
@@ -88,6 +75,7 @@ public class LiveDetectActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         // Initializes camera interface and surface texture view that shows camera feed
         cameraPreview = findViewById(R.id.preview);
         graphicOverlay = findViewById(R.id.faceOverlay);
@@ -95,20 +83,10 @@ public class LiveDetectActivity extends AppCompatActivity {
         faces = new ArrayList<>();
         rectList = new LinkedList<>();
 
-//        mOpenCvCameraView = findViewById(R.id.java_camera_view);
-//        mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
-//        mOpenCvCameraView.setCvCameraViewListener(this);
-
-//        javaCameraView = findViewById(R.id.java_camera_view);
-
-        //Load OpenCV
-//        if (!OpenCVLoader.initDebug()) {
-//            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, baseCallback);
-//        } else {
-//            baseCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-//        }
-
         cameraPreview.activity = this;
+
+        // Settings for face detector
+        // More info at https://developers.google.com/ml-kit/vision/face-detection/android#1.-configure-the-face-detector
         defaultOptions =
                 new FaceDetectorOptions.Builder()
                         .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
@@ -116,23 +94,14 @@ public class LiveDetectActivity extends AppCompatActivity {
                         .build();
 
         createCameraSource();
+
+        // Automatic updates of results is disbaled by default
         detectEnabled = false;
 
         // Request camera permission if it has not already been granted
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, 1);
         }
-
-        //Draw FPS for portrait activity
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                fpsTextView = findViewById(R.id.fps_id);
-            }
-        });
-
-
-        //javaCameraView.setCvCameraViewListener(this);
     }
 
     /**
@@ -207,16 +176,21 @@ public class LiveDetectActivity extends AppCompatActivity {
 
 
     public void onRefreshClick(View view) {
-        detectEnabled = !detectEnabled;
+
+        // Enables/disables continous updating of results
+        // detectEnabled = !detectEnabled;
+
+        // Create a bitmap from camerasource
         mBitmap = BitmapUtils.getBitmap(CameraSource.getData(), new FrameMetadata.Builder()
                 .setWidth(CameraSource.getPreviewSize().getWidth())
                 .setHeight(CameraSource.getPreviewSize().getHeight())
                 .setRotation(CameraSource.getRotationDegrees())
                 .build());
+
+        // Execute post request method
         new PostCameraRequest().execute(mBitmap);
     }
 
-    //
     //Switch between front and back camera
     public void onCameraSwitch(View view) {
 
@@ -252,44 +226,19 @@ public class LiveDetectActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * Updates the UI with the detection results
+     */
     private void setUiAfterUpdate(JSONArray parent) throws JSONException {
-//        int orientation = getResources().getConfiguration().orientation;
-//        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-//            mBitmap = (RotateBitmap(mBitmap, 90));
-//        }
+
         faces = new ArrayList<>();
         rectList = new LinkedList<>();
 
             float textBoundary = 70;
-            int scale = 1;
             Paint paint = new Paint();
             paint.setColor(Color.WHITE);
             paint.setTextSize(textBoundary);
             LinkedList<JSONObject> rectList = new LinkedList<>();
-//            for (int i = 0; i < parent.length(); i++) {
-//                JSONObject json_data = parent.getJSONObject(i);
-//                JSONObject faceAttributes = json_data.getJSONObject("faceAttributes");
-//                JSONObject emotions = faceAttributes.getJSONObject("emotion");
-//                JSONObject rectangle = json_data.getJSONObject("faceRectangle");
-//                rectList.add(rectangle);
-//
-//                age = faceAttributes.getInt("age");
-//                gender = faceAttributes.getString("gender");
-//                int centerX = (rectangle.getInt("left") + rectangle.getInt("width"))/2;
-//                int centerY = (rectangle.getInt("top") + rectangle.getInt("height"))/2;
-//                float rectLeft = translateX(centerX) - scale(rectangle.getInt("width") / 2.0f);
-//                float rectTop = translateY(centerY) - scale(rectangle.getInt("top") / 2.0f);
-//
-//                ArrayList<Emotion> emotionsList = getEmotions(emotions);
-//                FaceGraphic.getCanvas().drawText("Age: " + age, rectLeft, rectTop + (int) (textBoundary * 1), paint);
-//                FaceGraphic.getCanvas().drawText("Gender: " + gender, rectLeft, rectTop + (int) (textBoundary * 2), paint);
-//                FaceGraphic.getCanvas().drawText("Emotions: ", rectLeft, rectTop + (int) (textBoundary * 3), paint);
-//
-//                FaceGraphic.getCanvas().drawText(emotionsList.get(0).getType(), rectLeft , rectTop + (int) (textBoundary * 4), paint);
-//                FaceGraphic.getCanvas().drawText(emotionsList.get(1).getType(), rectLeft , rectTop + (int) (textBoundary * 5), paint);
-//                FaceGraphic.getCanvas().drawText(emotionsList.get(2).getType(), rectLeft, rectTop + (int) (textBoundary * 6), paint);
-//
-//            }
 
 
         for (int i = 0; i < parent.length(); i++) {
@@ -318,20 +267,26 @@ public class LiveDetectActivity extends AppCompatActivity {
                     emotionsList.get(2).getType(), emotionsList.get(2).getValue()));
 
             Log.i("Adding faces", "Success");
-            FaceGraphic.displayDetectData(age, gender, parent);
+
+            // Sends face results over to FaceGraphic class for drawing overlay with face results
+            // Used as an alternative to the ListView
+            // If uncommented be sure to uncomment relevant code in FaceGraphic
+            //FaceGraphic.displayDetectData(age, gender, parent);
         }
 
-//        ListView listView = findViewById(R.id.results_list);
-//        FaceListAdapter adapter = new FaceListAdapter(LiveDetectActivity.this, R.layout.detect_adapter_view_layout, faces);
-//        listView.setAdapter(adapter);
-//        adapter.notifyDataSetChanged();
+        ListView listView = findViewById(R.id.results_list);
+        FaceListAdapter adapter = new FaceListAdapter(LiveDetectActivity.this, R.layout.detect_adapter_view_layout, faces);
+        listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
 
+        // Update bitmap before executing post request again
         mBitmap = BitmapUtils.getBitmap(CameraSource.getData(), new FrameMetadata.Builder()
                 .setWidth(CameraSource.getPreviewSize().getWidth())
                 .setHeight(CameraSource.getPreviewSize().getHeight())
                 .setRotation(CameraSource.getRotationDegrees())
                 .build());
 
+        //execute post request again
         if (detectEnabled) {
             new PostCameraRequest().execute(mBitmap);
         }
@@ -368,7 +323,7 @@ public class LiveDetectActivity extends AppCompatActivity {
                 JSONArray parent = new JSONArray(s);
 
                 //Populate ListView with received JSON info
-
+                // and re-executes PostCameraRequest if detectEnabled is true
                 setUiAfterUpdate(parent);
             } catch (Exception e) {
                 Log.i("Failed to update UI", e.getLocalizedMessage());
@@ -380,7 +335,6 @@ public class LiveDetectActivity extends AppCompatActivity {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmaps[0].compress(Bitmap.CompressFormat.JPEG, 100, stream);
             byte[] byteArray = stream.toByteArray();
-//            byte[] byteArray = BitmapUtils.convertBitmapToYv12Bytes(bitmaps[0]);
 
             try {
                 RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
@@ -418,30 +372,4 @@ public class LiveDetectActivity extends AppCompatActivity {
     public ArrayList<Emotion> getEmotionsList() {
         return emotionsList;
     }
-
-    /**
-     * Adjusts the x coordinate from the image's coordinate system to the view coordinate system.
-     */
-    public float translateX(float x) {
-        if (graphicOverlay.isImageFlipped) {
-            return graphicOverlay.getWidth() - (scale(x) - graphicOverlay.postScaleWidthOffset);
-        } else {
-            return scale(x) - graphicOverlay.postScaleWidthOffset;
-        }
-    }
-    /**
-     * Adjusts the y coordinate from the image's coordinate system to the view coordinate system.
-     */
-    public float translateY(float y) {
-        return scale(y) - graphicOverlay.postScaleHeightOffset;
-    }
-
-    /**
-     * Adjusts the supplied value from the image scale to the view scale.
-     */
-    public float scale(float imagePixel) {
-        return imagePixel * graphicOverlay.scaleFactor;
-    }
-
-
 }

@@ -70,6 +70,9 @@ public class DrivingActivity extends AppCompatActivity {
         sleepAlert = findViewById(R.id.sleep_alert);
         alertOverlay = findViewById(R.id.alert_overlay);
 
+
+        // Runs checkEyes method every 300ms
+        // Should be decreased for lower delays when alerting driver
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -225,7 +228,7 @@ public class DrivingActivity extends AppCompatActivity {
      * at which the alarm was started
      */
     public void startAlarm() {
-        Log.d(TAG, "Call to Trip activity start alarm");
+        Log.d(TAG, "Starting alarm");
 
         // Initializes the media player to play sounds and starts it
 
