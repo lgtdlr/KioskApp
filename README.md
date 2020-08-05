@@ -1,8 +1,10 @@
 # KioskApp
-Android application that interfaces with Microsoft Azure Cognitive Services for a range of face analysis applications
+Android application with a range of face analysis applications.
 
 To run this application:
 
 1. Clone repository into Android Studio
-2. Install OpenCV Android SDK and place in same folder as Kiosk App
-3. Run
+    
+2. Run
+
+Note: FLIR thermal camera USB attachment is required for the Thermal module.
