@@ -16,3 +16,5 @@ To run this application:
 3. Run
 
 Note: FLIR thermal camera USB attachment is required for the Thermal module.
+
+Using the "non-mcs" branch will allow for the application to run without the face container.
