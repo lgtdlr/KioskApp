@@ -55,6 +55,7 @@ public class DrivingActivity extends AppCompatActivity {
 
     private String alarmStartTime;
     private long startTimeLong;
+    private boolean threadActive;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +70,7 @@ public class DrivingActivity extends AppCompatActivity {
         graphicOverlay = findViewById(R.id.faceOverlay);
         sleepAlert = findViewById(R.id.sleep_alert);
         alertOverlay = findViewById(R.id.alert_overlay);
+        threadActive = true;
 
 
         // Runs checkEyes method every 300ms
@@ -76,7 +78,7 @@ public class DrivingActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while (true) {
+                while (threadActive) {
                     try {
                         runOnUiThread(new Runnable() {
                             @Override
@@ -97,7 +99,6 @@ public class DrivingActivity extends AppCompatActivity {
         cameraPreview.activity = this;
         defaultOptions =
                 new FaceDetectorOptions.Builder()
-                        .setMinFaceSize(0.3f)
                         .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
                         .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
                         .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
@@ -168,6 +169,7 @@ public class DrivingActivity extends AppCompatActivity {
         if (cameraPreview != null) {
             cameraPreview.stop();
         }
+        threadActive = false;
     }
 
     @Override
@@ -180,6 +182,7 @@ public class DrivingActivity extends AppCompatActivity {
         if (cameraSource != null) {
             cameraSource.release();
         }
+        threadActive = false;
     }
 
     public void checkEyes() {
@@ -192,8 +195,8 @@ public class DrivingActivity extends AppCompatActivity {
                 } else {
                     Log.d(TAG, "Media player null");
                 }
-                if (face != null) {
-                    if (face.getRightEyeOpenProbability() < 0.3f && face.getLeftEyeOpenProbability() < 0.3f && face.getRightEyeOpenProbability() != null && face.getLeftEyeOpenProbability() != null) {
+                if (face != null && face.getRightEyeOpenProbability() != null && face.getLeftEyeOpenProbability() != null) {
+                    if (face.getRightEyeOpenProbability() < 0.3f && face.getLeftEyeOpenProbability() < 0.3f ) {
                         // Starts the eyes closed "timer" because eyes need to be closed for 1 second for an alarm to go off
                         if (eyesClosedStartTime == 0 && (mediaPlayer == null || !mediaPlayer.isPlaying())) {
                             Log.d(TAG, "Starting eyes closed timer");

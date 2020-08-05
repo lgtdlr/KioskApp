@@ -109,22 +109,26 @@
                 android:layout_width="@dimen/list_horizontal_line_width"
                 android:layout_height="@dimen/list_horizontal_line_height"
                 android:layout_gravity="center"
-                android:background="@color/verizon_cool_gray_3" />
+                android:background="@color/verizon_cool_gray_3"
+                android:visibility="gone"
+                tools:visibility="gone" />
 
             <!-- Detect activity start-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
                 android:layout_marginHorizontal="@dimen/margin_menu_cards_horizontal"
                 android:layout_marginVertical="@dimen/margin_menu_cards_vertical"
-                android:onClick="onDetectClick">
+                android:onClick="onDetectClick"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                tools:visibility="gone">
 
                 <ImageView
                     android:layout_width="@dimen/card_icon_width"
                     android:layout_height="@dimen/card_icon_height"
-                    app:srcCompat="@drawable/ic_outline_people_alt_24"
-                    android:scaleType="fitXY" />
+                    android:scaleType="fitXY"
+                    app:srcCompat="@drawable/ic_outline_people_alt_24" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -156,22 +160,26 @@
                 android:layout_width="@dimen/list_horizontal_line_width"
                 android:layout_height="@dimen/list_horizontal_line_height"
                 android:layout_gravity="center"
-                android:background="@color/verizon_cool_gray_3" />
+                android:background="@color/verizon_cool_gray_3"
+                android:visibility="gone"
+                tools:visibility="gone" />
 
             <!-- Train activity start -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
                 android:layout_marginHorizontal="@dimen/margin_menu_cards_horizontal"
                 android:layout_marginVertical="@dimen/margin_menu_cards_vertical"
-                android:onClick="onTrainClick">
+                android:onClick="onTrainClick"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                tools:visibility="gone">
 
                 <ImageView
                     android:layout_width="@dimen/card_icon_width"
                     android:layout_height="@dimen/card_icon_height"
-                    app:srcCompat="@drawable/ic_outline_person_add_24"
-                    android:scaleType="fitXY" />
+                    android:scaleType="fitXY"
+                    app:srcCompat="@drawable/ic_outline_person_add_24" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -203,22 +211,25 @@
                 android:layout_width="@dimen/list_horizontal_line_width"
                 android:layout_height="@dimen/list_horizontal_line_height"
                 android:layout_gravity="center"
-                android:background="@color/verizon_cool_gray_3" />
+                android:background="@color/verizon_cool_gray_3"
+                android:visibility="gone"
+                tools:visibility="gone" />
 
             <!-- Identify activity start -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
                 android:layout_marginHorizontal="@dimen/margin_menu_cards_horizontal"
                 android:layout_marginVertical="@dimen/margin_menu_cards_vertical"
-                android:onClick="onIdentifyClick">
+                android:onClick="onIdentifyClick"
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <ImageView
                     android:layout_width="@dimen/card_icon_width"
                     android:layout_height="@dimen/card_icon_height"
-                    app:srcCompat="@drawable/ic_baseline_fingerprint_black_24"
-                    android:scaleType="fitXY" />
+                    android:scaleType="fitXY"
+                    app:srcCompat="@drawable/ic_baseline_fingerprint_black_24" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -250,22 +261,25 @@
                 android:layout_width="@dimen/list_horizontal_line_width"
                 android:layout_height="@dimen/list_horizontal_line_height"
                 android:layout_gravity="center"
-                android:background="@color/verizon_cool_gray_3" />
+                android:background="@color/verizon_cool_gray_3"
+                android:visibility="gone"
+                tools:visibility="gone" />
 
             <!-- Live services activity start -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
                 android:layout_marginHorizontal="@dimen/margin_menu_cards_horizontal"
                 android:layout_marginVertical="@dimen/margin_menu_cards_vertical"
-                android:onClick="onCameraClick">
+                android:onClick="onCameraClick"
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <ImageView
                     android:layout_width="@dimen/card_icon_width"
                     android:layout_height="@dimen/card_icon_height"
-                    app:srcCompat="@drawable/ic_outline_camera_alt_24"
-                    android:scaleType="fitXY" />
+                    android:scaleType="fitXY"
+                    app:srcCompat="@drawable/ic_outline_camera_alt_24" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -297,7 +311,9 @@
                 android:layout_width="@dimen/list_horizontal_line_width"
                 android:layout_height="@dimen/list_horizontal_line_height"
                 android:layout_gravity="center"
-                android:background="@color/verizon_cool_gray_3" />
+                android:background="@color/verizon_cool_gray_3"
+                android:visibility="gone"
+                tools:visibility="gone" />
 
             <!-- Object detection card start -->
             <LinearLayout
@@ -431,7 +447,60 @@
                         android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
-            <!-- Detect activity end -->
+            <!-- Thermal activity end -->
+
+
+            <View
+                android:layout_width="@dimen/list_horizontal_line_width"
+                android:layout_height="@dimen/list_horizontal_line_height"
+                android:layout_gravity="center"
+                android:background="@color/verizon_cool_gray_3" />
+
+            <!-- Stress test activity start-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginHorizontal="@dimen/margin_menu_cards_horizontal"
+                android:layout_marginVertical="@dimen/margin_menu_cards_vertical"
+                android:onClick="onStressClick">
+
+                <ImageView
+                    android:layout_width="@dimen/card_icon_width"
+                    android:layout_height="@dimen/card_icon_height"
+                    app:srcCompat="@drawable/ic_outline_av_timer_24"
+                    android:scaleType="fitXY" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/margin_10">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/nhaasgroteskdisp_bold"
+                        android:text="Stress"
+                        android:textColor="#000000"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/nhaasgroteskdisp"
+                        android:text="Test FPS and latencies with high res and accurate face detector options."
+                        android:textColor="#000000"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Horizontal line divider-->
+            <View
+                android:layout_width="@dimen/list_horizontal_line_width"
+                android:layout_height="@dimen/list_horizontal_line_height"
+                android:layout_gravity="center"
+                android:background="@color/verizon_cool_gray_3" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

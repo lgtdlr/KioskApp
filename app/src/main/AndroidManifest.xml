@@ -39,7 +39,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".menu.ThermalActivity"></activity>
+        <activity android:name=".menu.AccuracyDetectActivity"></activity>
+        <activity android:name=".menu.ThermalActivity" />
         <activity android:name=".menu.DrivingActivity" />
         <activity android:name=".menu.LiveDetectActivity" />
         <activity android:name=".menu.LiveTrainActivity" />

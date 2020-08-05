@@ -44,14 +44,14 @@ public class InferenceInfoGraphic extends GraphicOverlay.Graphic {
 
         canvas.drawText(
                 "InputImage size: " + overlay.getImageWidth() + "x" + overlay.getImageHeight(),
-                x,
+                x+500,
                 y,
                 textPaint);
 
         // Draw FPS (if valid) and inference latency
         if (framesPerSecond != null) {
             canvas.drawText(
-                    "FPS: " + framesPerSecond + ", latency: " + latency + " ms", x, y + TEXT_SIZE, textPaint);
+                    "FPS: " + framesPerSecond + ", latency: " + latency + " ms", x+500, y + TEXT_SIZE, textPaint);
         } else {
             canvas.drawText("Latency: " + latency + " ms", x, y + TEXT_SIZE, textPaint);
         }

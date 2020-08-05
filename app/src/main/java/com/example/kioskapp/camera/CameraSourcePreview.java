@@ -173,6 +173,8 @@ public class CameraSourcePreview extends ViewGroup {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         int previewWidth = 320;
         int previewHeight = 240;
+//        int previewWidth = 1480;
+//        int previewHeight = 720;
         if (mCameraSource != null) {
             Size size = CameraSource.getPreviewSize();
             if (size != null) {

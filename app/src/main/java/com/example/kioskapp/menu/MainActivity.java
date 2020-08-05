@@ -5,10 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.ScaleAnimation;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,22 +18,22 @@ import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    Animation animFloat, animDropDown;
-    ImageView wave, fullWave, redOverlay;
+//    Animation animFloat, animDropDown;
+//    ImageView wave, fullWave, redOverlay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        animDropDown = new ScaleAnimation(
-                1f, 1f, // Start and end values for the X axis scaling
-                1f, 15f, // Start and end values for the Y axis scaling
-                Animation.RELATIVE_TO_SELF, 0f, // Pivot point of X scaling
-                Animation.RELATIVE_TO_SELF, 0f); // Pivot point of Y scaling
-        animDropDown.setDuration(1000);
-
-        animFloat = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.floating_animation);
+//        animDropDown = new ScaleAnimation(
+//                1f, 1f, // Start and end values for the X axis scaling
+//                1f, 15f, // Start and end values for the Y axis scaling
+//                Animation.RELATIVE_TO_SELF, 0f, // Pivot point of X scaling
+//                Animation.RELATIVE_TO_SELF, 0f); // Pivot point of Y scaling
+//        animDropDown.setDuration(1000);
+//
+//        animFloat = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.floating_animation);
 
         //wave = findViewById(R.id.main_imageview_placeholder);
         //fullWave = findViewById(R.id.main_imageview_dropdown);
@@ -227,5 +223,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //                startActivity(intent);
 //            }
 //        });
+    }
+
+    public void onStressClick(View view) {
+        Intent intent = new Intent(this, AccuracyDetectActivity.class);
+        startActivity(intent);
     }
 }
