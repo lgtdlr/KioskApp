@@ -28,9 +28,9 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <com.example.kioskapp.customview.ThermalView
+    <com.example.faceapp.customview.ThermalView
         android:id="@+id/photo_image"
-        class="com.example.kioskapp.menu.ThermalActivity"
+        class="com.example.faceapp.menu.ThermalActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="image with only visual image"

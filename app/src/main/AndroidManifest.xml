@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.kioskapp">
+    package="com.example.faceapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -39,29 +39,29 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".menu.AccuracyDetectActivity"></activity>
-        <activity android:name=".menu.ThermalActivity" />
-        <activity android:name=".menu.DrivingActivity" />
-        <activity android:name=".menu.LiveDetectActivity" />
-        <activity android:name=".menu.LiveTrainActivity" />
-        <activity android:name=".menu.LiveIdentifyActivity" />
-        <activity android:name=".menu.ObjectDetectActivity" />
+        <activity android:name="com.example.faceapp.menu.AccuracyDetectActivity"></activity>
+        <activity android:name="com.example.faceapp.menu.ThermalActivity" />
+        <activity android:name="com.example.faceapp.menu.DrivingActivity" />
+        <activity android:name="com.example.faceapp.menu.LiveDetectActivity" />
+        <activity android:name="com.example.faceapp.menu.LiveTrainActivity" />
+        <activity android:name="com.example.faceapp.menu.LiveIdentifyActivity" />
+        <activity android:name="com.example.faceapp.menu.ObjectDetectActivity" />
         <activity
-            android:name=".menu.DetectActivity"
+            android:name="com.example.faceapp.menu.DetectActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".menu.TrainActivity"
+            android:name="com.example.faceapp.menu.TrainActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".menu.IdentifyActivity"
+            android:name="com.example.faceapp.menu.IdentifyActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".menu.OldTrainActivity"
+            android:name="com.example.faceapp.menu.OldTrainActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".menu.OldVerifyActivity"
+            android:name="com.example.faceapp.menu.OldVerifyActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".menu.MainActivity">
+        <activity android:name="com.example.faceapp.menu.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#000000"
     android:orientation="vertical"
-    tools:context="com.example.kioskapp.menu.MainActivity">
+    tools:context="com.example.faceapp.menu.MainActivity">
 
 
     <com.google.android.material.appbar.AppBarLayout

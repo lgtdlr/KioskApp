@@ -7,7 +7,7 @@
     android:background="#000000"
     tools:context=".menu.AccuracyDetectActivity">
 
-    <com.example.kioskapp.camera.CameraSourcePreview
+    <com.example.faceapp.camera.CameraSourcePreview
         android:id="@+id/preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -15,11 +15,11 @@
         app:layout_constraintTop_toTopOf="parent"
         android:onClick="onCameraSwitch">
 
-        <com.example.kioskapp.camera.GraphicOverlay
+        <com.example.faceapp.camera.GraphicOverlay
             android:id="@+id/faceOverlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-    </com.example.kioskapp.camera.CameraSourcePreview>
+    </com.example.faceapp.camera.CameraSourcePreview>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
